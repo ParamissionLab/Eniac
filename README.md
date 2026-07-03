@@ -2,8 +2,6 @@
 
 Eniac is a provider-neutral, agent-agnostic skill and instruction set for token-aware loop engineering and systematic thinking. It helps AI agents work through compact Perceive, Reason, Act, Observe loops while staying scoped, reducing unnecessary context use, and reporting results clearly.
 
-Current version: `1.0.0`
-
 Credit: [ParamissionLab](https://github.com/ParamissionLab)
 
 ## What It Does
