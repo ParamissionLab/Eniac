@@ -1,6 +1,6 @@
 # Eniac
 
-Eniac is a Codex-compatible skill for agent-agnostic, token-aware loop engineering and systematic thinking. It helps AI agents work through compact Perceive, Reason, Act, Observe loops while staying scoped, reducing unnecessary context use, and reporting results clearly.
+Eniac is a provider-neutral, agent-agnostic skill and instruction set for token-aware loop engineering and systematic thinking. It helps AI agents work through compact Perceive, Reason, Act, Observe loops while staying scoped, reducing unnecessary context use, and reporting results clearly.
 
 Current version: `1.0.0`
 
@@ -29,7 +29,7 @@ skills/
 
 ## Installation
 
-Copy `skills/Eniac` into your Codex skills directory, or keep this repository available in a skills path supported by your runtime.
+Copy `skills/Eniac` into any compatible skills, prompts, or agent-instructions directory supported by your runtime. Eniac is not tied to a specific provider, platform, tool, model, or agent runtime.
 
 ## Usage
 
