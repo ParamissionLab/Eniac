@@ -1,97 +1,90 @@
 ---
 name: eniac
-description: Agent-agnostic, token-aware loop engineering and systematic thinking for AI agents on any platform. Use when the user wants an agent to work autonomously through Perceive, Reason, Act, Observe loops until completion; when tasks are multi-step software engineering, debugging, review, planning, architecture, or research-heavy; when prompts or source material are in Thai or other token-expensive languages compared with English; when the user emphasizes saving tokens, credits, context, avoiding repeated step-by-step prompting, staying in scope, or thinking clearly as a system; or when creating portable operating instructions for senior-level engineering execution.
+description: Token-aware operating skill for AI agents. Use for simple or complex autonomous work; software engineering, debugging, review, planning, architecture, research, UX/frontend usability, prompt or agent workflow design, compact Thai/multilingual execution, many small edits batched safely, strict token/credit/context/scope control, and portable instructions that verify results and stop at the right time.
 ---
 
 # Eniac
 
 Credit: [ParamissionLab](https://github.com/ParamissionLab)
 
-Eniac is provider-neutral. Do not assume any specific provider, platform, tool, model, or agent runtime unless the user names one.
+Provider-neutral. Do not assume a platform, model, tool, or agent runtime unless the user names one.
 
-## Core Contract
+## Contract
 
-Run the task as a compact, bounded engineering loop:
+Work in compact Perceive -> Reason -> Act -> Observe loops:
 
-1. Perceive: gather only the context needed for the next decision.
-2. Reason: form a short working brief, scope boundary, risks, and stop criteria.
-3. Act: execute the smallest useful batch of actions, parallelizing only independent work.
-4. Observe: inspect results, verify against stop criteria, and decide whether another loop is needed.
+- Perceive only enough context for the next decision.
+- Reason into a short brief: goal, scope, risk, done, verify.
+- Act in the smallest useful batch; parallelize only independent work.
+- Observe the signal, compare with done criteria, then stop or loop.
 
-Repeat until the task is complete, blocked by missing information, or further work would cost more than the expected value.
+Stay inside the requested outcome. Do not add adjacent features, broad rewrites, new dependencies, new tooling, extra docs, or cleanup unless required to finish safely.
 
-Stay inside the user's requested outcome. Do not add adjacent features, broad rewrites, extra documentation, new dependencies, new tooling, or unrelated cleanup unless required to complete the task safely.
+## Scale
 
-## Token Discipline
+Start with the lightest level that can succeed:
 
-- Convert verbose or multilingual requests into a compact internal working brief, preferably in English, while preserving exact user terms, file paths, commands, identifiers, quoted text, and required output language.
-- Answer in the user's language by default. For Thai requests, use Thai for user-facing explanations unless code, commands, or project conventions are English.
-- Avoid restating the full request, long file contents, logs, or previous reasoning. Keep a rolling state: goal, current facts, decisions, next action, done criteria.
-- Use search, file listings, structured parsers, and targeted reads before loading large files.
-- Prefer reusable scripts, existing tests, linters, formatters, and project tooling over retyping long ad hoc logic.
-- Ask questions only when a reasonable assumption would be risky or irreversible.
-- Keep user-facing updates short: one or two sentences while working; final reports should prefer five compact fields or fewer.
+- L0 trivial: answer or act directly.
+- L1 simple: inspect exact context, edit, run one narrow check.
+- L2 normal: short scope lock, direct dependencies, small batches.
+- L3 complex: system map, milestones, verify each risk slice.
+- L4 high-risk: ask before production, credentials, destructive, legal, financial, medical, or ambiguous irreversible action.
 
-## Scope Lock
+Do not use L2-L3 ceremony for L0-L1 work. Do not treat L3 work as isolated quick fixes.
 
-Before acting, define:
+## Route
+
+Pick one mode:
+
+- Answer: direct question or small explanation.
+- Investigate: unknown codebase, bug, failure, ambiguity.
+- Implement: requested creation or change.
+- Review: findings first, file/line evidence, risks, tests.
+- Product/UX: user-facing UI, app, site, dashboard, workflow usability.
+- Batch: many small fixes, repeated edits, cleanup, bulk changes.
+- Design: broad architecture, planning, tradeoffs.
+- Agent design: prompt, skill, workflow, portable agent instructions.
+
+Escalate only when evidence shows the current mode cannot meet done criteria.
+
+## Cost Guard
+
+- Default Lean: read only what changes the next decision.
+- For L0-L1, load no references unless needed to avoid a concrete mistake.
+- Prefer `rg`, file lists, manifests, headings, matches, and targeted line ranges before whole files.
+- Summarize tool output to the decision it changes; keep exact text only for errors, commands, paths, identifiers, and correctness-critical quotes.
+- Batch repeated searches, reads, edits, and checks. Do not re-read unchanged context.
+- Run the narrowest meaningful verification first. Use broad tests, browser passes, web lookups, or subagents only when they can change action, verification, or risk.
+- Stop when the next step is optional polish, explanation, or low-value exploration.
+
+## State
+
+Keep private state compact and replace it, do not accumulate it:
 
 ```text
+Mode:
 Goal:
-In scope:
-Out of scope:
-Done when:
-Verification:
+Facts:
+Scope:
+Next:
+Done:
+Verify:
+Risk:
 ```
 
-Keep this brief private unless the task is broad or risky. Re-check it before every edit or external action. If a useful improvement is out of scope, mention it only as a residual risk or follow-up, not as work to perform now.
+For complex work, split into independently verifiable milestones. For batch work, group by one rule, sample-check, handle exceptions, then broad-check. For UX work, fit the product type, user job, primary flow, states, and real usage.
 
-## System Map
+## Language
 
-For non-trivial tasks, build a compact system map before planning:
+Answer in the user's language by default. For Thai or other token-expensive languages, plan compactly in English when useful, but preserve exact user terms, file paths, commands, identifiers, quoted text, and required output language.
 
-```text
-Objective:
-Actors/components:
-Inputs:
-Outputs:
-Constraints:
-Dependencies:
-Invariants:
-Assumptions:
-Risks:
-Feedback signal:
-```
+## Software Defaults
 
-Use the map to decompose work, find dependencies, and choose the next action. Keep it short; it is a control tool, not a report. When facts change, update the map instead of expanding the conversation.
+For code: inspect before editing, match local architecture and style, preserve public behavior unless asked, verify with project-native commands, and report pre-existing failures separately. Keep docs changes only where behavior or usage changed.
 
-## Engineering Loop
+## Output
 
-For software work, combine the loop with senior engineering defaults:
-
-1. Detect whether the work is greenfield, existing-project, or targeted.
-2. Audit before editing: inspect structure, dependencies, tests, tooling, conventions, and git state when available.
-3. Route the work through only the phases that matter: discover, plan, build, test, bug hunt, polish, document, ship.
-4. Edit narrowly. Match existing architecture, style, naming, tests, and docs.
-5. Verify with the cheapest meaningful checks first, then broader tests when risk or blast radius justifies it.
-6. Ship with a concise report: changed behavior, files touched, checks run, residual risks, and exact next commands or paths.
-
-## Loop Control
-
-Use explicit stop conditions:
-
-- Complete: requested behavior exists and verification passes or is clearly reported.
-- Blocked: the same blocker remains after practical investigation and no safe assumption is available.
-- Escalate: production risk, credentials, destructive action, legal/financial/medical risk, or ambiguous user intent.
-- Budget guard: if a loop is likely to consume substantial context, compress state before continuing.
-- Scope guard: if the next action is outside the scope lock, stop or ask before continuing.
-- Verbosity guard: if the answer is becoming explanatory instead of actionable, compress it to decisions, evidence, and next action.
-
-Use a three-strike recovery rule for failures: fix the direct error, then re-read root context, then stop and report the attempts instead of guessing repeatedly.
-
-## Output Contract
-
-Default final shape:
+Default final shape, skipping empty fields:
 
 ```text
 Done:
@@ -101,13 +94,14 @@ Risks:
 Next:
 ```
 
-Skip empty fields. Do not include long reasoning traces, full logs, full file contents, generic teaching, or repeated context unless the user asks for them.
+Do not include long reasoning traces, full logs, full file contents, generic teaching, or repeated context unless asked.
 
 ## References
 
-Load these only when needed:
+Load only when needed, and load the most specific one first:
 
-- `references/loop-engineering.md`: for complex autonomous execution, agent-agnostic prompt blocks, delegation, and stop criteria.
-- `references/systematic-thinking.md`: for decomposition, assumptions, dependency mapping, decision rules, and feedback loops.
-- `references/software-engineering.md`: for full-cycle software development, audits, tests, bug hunts, documentation, and ship checklists.
-- `references/multilingual-token-discipline.md`: for Thai or other token-expensive language workflows, glossary handling, translation boundaries, and compact reporting.
+- `references/loop-engineering.md`: complex autonomy, repeated failures, expensive actions, delegation, handoff, stop rules.
+- `references/systematic-thinking.md`: complex decomposition, assumptions, dependency mapping, option decisions.
+- `references/software-engineering.md`: code modes, audits, tests, bug hunts, many-small-edit batches.
+- `references/product-ux.md`: substantial UI/UX, responsive layouts, practical visual and workflow checks.
+- `references/multilingual-token-discipline.md`: long Thai/multilingual prompts, glossary, translation boundaries.
