@@ -6,7 +6,8 @@ The current supported version is:
 
 | Version | Supported |
 | --- | --- |
-| 1.0.0 | Yes |
+| 1.1.x | Yes |
+| 1.0.x | No |
 
 ## Reporting a Vulnerability
 
@@ -32,6 +33,7 @@ Security issues may include:
 - Guidance that could encourage leaking secrets, credentials, private files, or sensitive user data.
 - Prompt patterns that could bypass user intent, scope boundaries, or approval requirements.
 - Documentation that misrepresents supported behavior in a way that creates operational risk.
+- Installation or update instructions that overwrite user data unexpectedly.
 
 ## Handling
 

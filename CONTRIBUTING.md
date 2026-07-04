@@ -2,7 +2,7 @@
 
 Thank you for contributing to Eniac.
 
-Current version: `1.0.0`
+Current version: `1.1.0`
 
 ## Project Goals
 
@@ -11,6 +11,7 @@ Eniac should remain:
 - Provider-neutral.
 - Agent-agnostic.
 - Token-aware.
+- Cost-conscious for tokens, credits, tool calls, and context.
 - Practical for real engineering work.
 - Clear about scope, stop conditions, and verification.
 
@@ -21,7 +22,7 @@ skills/Eniac/SKILL.md
 skills/Eniac/references/
 ```
 
-Edit `SKILL.md` for core behavior. Edit files in `references/` only when the deeper guidance needs to change.
+Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit files in `references/` for deeper task-specific guidance such as loop engineering, software engineering, product UX, systematic thinking, or multilingual token discipline.
 
 ## Contribution Guidelines
 
@@ -29,6 +30,8 @@ Edit `SKILL.md` for core behavior. Edit files in `references/` only when the dee
 - Preserve provider-neutral language unless a section explicitly discusses a named platform.
 - Avoid adding new dependencies, tools, or workflows unless they are necessary.
 - Keep instructions concise and operational.
+- Prefer progressive disclosure: keep `SKILL.md` lean and move optional detail into a reference file.
+- Do not add reference content that will be loaded for simple tasks unless it prevents a concrete failure.
 - Do not include secrets, credentials, private URLs, or sensitive user data.
 - Use Markdown that renders cleanly on GitHub.
 
@@ -38,6 +41,7 @@ Edit `SKILL.md` for core behavior. Edit files in `references/` only when the dee
 - Use short headings and compact lists.
 - Keep examples portable across agent runtimes.
 - Preserve exact file paths, command names, and technical terms when they matter.
+- Include installation or update commands only when they are copy-pasteable and platform-specific enough to be safe.
 
 ## Testing Changes
 
@@ -47,6 +51,7 @@ Before submitting, check:
 - Links point to existing files or valid external pages.
 - `skills/Eniac/SKILL.md` still has valid front matter.
 - New guidance does not conflict with the existing scope and token discipline rules.
+- Simple tasks still avoid unnecessary reference loading.
 
 ## Pull Requests
 
