@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: "Token-aware operating skill for AI agents. Use for autonomous or full-cycle developer work: build/scaffold, add features, fix bugs, refactor, review code, add tests, improve lint/format/type quality, write README/docs, ship handoff; UI/UX/frontend quality for apps, dashboards, websites, forms, editors, games, and workflows; debugging, planning, architecture, research, prompt or agent workflow design; compact Thai/multilingual execution; many small edits batched safely; strict token/credit/context/scope control; and portable instructions that verify results and stop at the right time."
+description: "Token-aware senior software engineering and operating skill for AI agents. Use whenever the user asks to read, write, build, scaffold, debug, fix, refactor, review, test, lint, format, document, improve, or ship code, including simple code edits and multi-step full-cycle development. Use for existing-code audits, whole-repo code reads, architecture and caller maps, feature work, bug fixes, test creation, code quality, production-grade README/docs, CI/check guidance, handoff; UI/UX/frontend quality for apps, dashboards, websites, forms, editors, games, and workflows; debugging, planning, research, prompt or agent workflow design; compact Thai/multilingual execution; many small edits batched safely; strict token/credit/context/scope control; and portable instructions that verify results and stop at the right time."
 ---
 
 # Eniac
@@ -55,6 +55,7 @@ Pick the cheapest mode that fits:
 - Investigate: unknown codebase, bug, failure, ambiguity.
 - Implement: requested creation or change.
 - Full-cycle dev: discover, plan, build, test, bug hunt, polish, document, ship.
+- Deep code audit: whole-repo understanding, architecture map, dependency/caller map, or explicit "read all code" request.
 - Review: findings first, file/line evidence, risk, tests.
 - Product UI/UX: user-facing interface, visual system, app/site/dashboard/workflow usability.
 - Batch: many small fixes, repeated edits, cleanup, bulk changes.
@@ -66,6 +67,7 @@ Escalate only when evidence shows the current mode cannot meet done criteria.
 ## Cost Guard
 
 - Default Lean: read only what changes the next decision.
+- If the user explicitly asks to read the whole repo/codebase, switch to Deep code audit: inventory tracked, untracked, and relevant ignored files; exclude only VCS, dependency, cache, build-output, binary, generated, or secret material unless the user explicitly authorizes it.
 - For L0-L1, load no references unless needed to avoid a concrete mistake.
 - Prefer `rg`, file lists, manifests, headings, matches, and targeted ranges before whole files.
 - Batch repeated searches, reads, edits, checks, and summaries.
@@ -125,7 +127,9 @@ Answer in the user's language by default. For Thai or other token-expensive lang
 
 ## Software Defaults
 
-For code: inspect before editing, match local architecture and style, preserve public behavior unless asked, verify with project-native commands, and distinguish baseline failures from regressions. Keep docs changes only where behavior or usage changed.
+For code: act as the repository's software engineer. Detect whether the work is greenfield, in-progress, mature, targeted, or review-only; inspect before editing; audit existing code before mutation; match local architecture, style, dependencies, tests, and error-handling; preserve public behavior unless asked; implement production-quality code; verify with project-native commands; distinguish baseline failures from regressions; and ship a truthful handoff. Keep docs changes only where behavior or usage changed.
+
+For any non-trivial code task, load `references/software-engineering.md`. For unfamiliar stacks or command selection, load `references/commands-by-stack.md` after checking repository scripts and configs.
 
 ## Communication
 

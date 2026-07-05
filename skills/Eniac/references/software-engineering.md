@@ -24,6 +24,19 @@ Use every phase for greenfield or broad work. For targeted work, abbreviate the 
 
 Announce only phase changes that help the user track risk or progress. Close a phase with its concrete signal, for example: `Test complete — 31 passing, 0 failing`.
 
+## Engineering Contract
+
+Treat code work as engineering delivery, not text editing:
+
+- Own the requested outcome from discovery through verification and handoff.
+- Determine project state first: greenfield, in-progress, mature, targeted, review-only, or explain-only.
+- In existing projects, read the relevant code, tests, configs, and nearby patterns before changing anything.
+- Build on what exists: same framework, package manager, test style, architecture, naming, errors, and docs style.
+- Keep the change scoped, but do not stop after writing code if tests, lint, type checks, docs, or a smoke path are needed to prove the result.
+- Prefer small, reviewable patches with clear contracts over broad rewrites.
+- Report broader problems as risks unless they block the requested outcome.
+- Ship only when the requested behavior exists and the best relevant verification has run or a blocker is named.
+
 ## Mode
 
 | Signal | Mode | Entry | Proof |
@@ -48,6 +61,31 @@ Announce only phase changes that help the user track risk or progress. Close a p
 | UI/frontend | inspect design system and states | pretty but unusable | affected flow renders/works |
 
 Report broader problems as risks unless they block the requested outcome.
+
+## Project State Detection
+
+Start every code task by classifying the repository:
+
+```text
+State:
+Stack:
+Entry points:
+Package manager/build tool:
+Tests:
+Tooling:
+Docs:
+Git state:
+Immediate scope:
+```
+
+Use the classification to choose entry point:
+
+- Greenfield: gather requirements, choose stack, scaffold minimal runnable project, add run/test scripts, smoke check.
+- In-progress: audit structure, manifests, direct modules, tests/tooling, then implement against existing patterns.
+- Mature: identify the narrow touched surface, capture baseline when cheap, preserve public contracts, run regression signal.
+- Targeted: inspect exact file/symbol, local analogs, direct callers, and relevant tests; skip broad audit unless evidence requires it.
+- Review-only: do not edit; findings first with file/line evidence, severity, user impact, and test gaps.
+- Explain-only: inspect enough to answer; do not mutate.
 
 ## Discovery
 
@@ -81,6 +119,42 @@ Open question: (only if blocking or high-impact)
 
 Use `commands-by-stack.md` when concrete discovery commands will reduce uncertainty. Run only the sections that can affect the next decision; do not execute a full audit mechanically.
 
+## Codebase Reading Depth
+
+Choose the reading depth deliberately:
+
+| Depth | Use | Required signal |
+| --- | --- | --- |
+| Targeted | exact bug/file/symbol known | requested path, local analogs, direct callers |
+| Surface audit | unfamiliar existing project or multi-file change | inventory, manifests, tests/tooling, relevant modules |
+| Deep code audit | architecture, broad refactor, repeated failure, security-sensitive change, or user asks to read all code/repo | full source inventory, module map, entry points, data/control flow, tests/tooling, risks |
+
+For a Deep code audit:
+
+1. Build a complete inventory before reading content. Include tracked and untracked files. Include ignored workspace files only when they are project artifacts or the user asked for all repo/code; still exclude `.git`, dependencies, caches, build outputs, binaries, minified bundles, lockfile blobs unless dependency state matters, and likely secret files.
+2. Classify files by role: app source, tests, config/tooling, docs, generated/output, demos/examples, assets, scripts, data, unknown.
+3. Read all human-authored source and test files that are small enough to fit safely. For large files, first read headings, symbols, imports/exports, and key ranges; then read the full file only if it can affect the implementation, review, or architecture answer.
+4. Map entry points, shared types/contracts, state owners, side effects, external boundaries, and direct callers before editing.
+5. Report any skipped file class explicitly with reason, for example binary asset, dependency cache, generated bundle, or possible secret.
+6. Convert the audit into action: exact files to touch, behavior to preserve, tests to run, and risks. Do not keep auditing after the next decision is clear unless the user asked for a complete read report.
+
+Deep code audit output:
+
+```text
+Inventory:
+Stack:
+Entry points:
+Source map:
+Tests/tooling:
+Conventions:
+Invariants/contracts:
+Risks:
+Skipped:
+Next edit/verify:
+```
+
+When the user explicitly says "read all code", "อ่านโค้ดทั้งหมด", "whole repo", or equivalent, do not stop at manifests or snippets. Read every relevant human-authored source file or state precisely why a file was not read.
+
 ## Plan
 
 Keep plans proportional:
@@ -106,6 +180,21 @@ Rollback:
 
 For L2-L4 mutation work, persist this boundary and milestone checklist in the disposable plan file defined in `SKILL.md`. Update the file in place as state changes; do not turn chat or the file into an execution diary.
 
+For software delivery, the plan must name:
+
+```text
+Reuse:
+Create/change:
+Preserve:
+Contracts:
+Tests:
+Static checks:
+Docs:
+Ship signal:
+```
+
+Ask only when a high-impact product, API, data, dependency, security, or deployment choice cannot be verified locally. Otherwise make a conservative choice that matches the repo.
+
 ## Build
 
 - Match local architecture, style, names, imports, errors, and tests.
@@ -115,6 +204,17 @@ For L2-L4 mutation work, persist this boundary and milestone checklist in the di
 - Avoid new frameworks, formatters, runners, state managers, or dependencies without concrete need.
 - Preserve public interfaces and serialized shapes unless explicitly changed.
 - For greenfield work, include run/test scripts, minimal README, `.gitignore`, and a smoke check.
+
+Production code bar:
+
+- Names reveal intent; avoid vague names, magic values, and hidden global coupling.
+- Functions and modules do one coherent job; extract only when it removes real duplication or complexity.
+- Error paths are handled deliberately; user-facing errors are actionable and internal errors preserve debugging context.
+- External input is validated at boundaries; data contracts are explicit.
+- Async, concurrency, lifecycle, cancellation, and cleanup paths are handled where the stack requires them.
+- No hardcoded secrets, debug prints, commented-out dead code, or unrequested dependency churn.
+- Public APIs, schemas, events, config keys, CLI flags, URLs, and persisted shapes remain compatible unless the user requested a breaking change.
+- New code has tests when behavior, contracts, or regression risk justify them.
 
 ## Batch Edits
 
@@ -141,6 +241,8 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 - Cover happy, boundary, and meaningful failure cases when risk justifies it.
 - Keep tests isolated; avoid shared mutable state.
 - Report pre-existing failures separately.
+- Do not delete, skip, or weaken failing tests to pass.
+- Add tests in the same framework/style as existing tests; do not introduce a new test runner without concrete need.
 
 Common signals: `package.json`, `pyproject.toml`, `go test ./...`, `cargo test`, `dotnet test`, `mvn test`, `gradle test`, `bundle exec rspec`.
 
@@ -165,6 +267,17 @@ Check changed files and direct dependencies for:
 
 For review-only work, make findings only with concrete evidence and user impact.
 
+Bug report shape when issues are found during delivery:
+
+```text
+Severity:
+Location:
+Problem:
+Impact:
+Fix or decision:
+Verification:
+```
+
 ## Polish
 
 - Run configured formatter/linter/type/build checks relevant to touched files.
@@ -172,6 +285,7 @@ For review-only work, make findings only with concrete evidence and user impact.
 - Remove unused imports, dead code introduced by the change, commented-out code, and debug prints.
 - Update generated files only when they are source-controlled outputs for touched inputs.
 - Do not add global formatting churn unless requested.
+- Keep formatting diffs narrow. If a tool rewrites unrelated files, stop, inspect, and avoid absorbing the churn unless the user asked for it.
 
 ## Docs And Ship
 
@@ -203,6 +317,8 @@ Next:
 ```
 
 If verification could not run, say why and name the best next command.
+
+Do not claim "done" from code edits alone. Claim done only from implemented behavior plus a relevant signal: test, type/lint/build, smoke path, visual check, or review evidence for read-only work.
 
 ## Failure Recovery
 

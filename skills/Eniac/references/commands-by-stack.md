@@ -16,6 +16,16 @@ git log -20 --oneline
 
 Then read only the detected manifest, project-local instructions, relevant config, and direct call sites. Exclude dependency, VCS, cache, and build-output directories from broader searches.
 
+For explicit whole-repo/codebase reads, build an inventory that includes ignored project files while still excluding non-source bulk:
+
+```text
+rg --files --hidden --no-ignore -g '!/.git/**' -g '!node_modules/**' -g '!vendor/**' -g '!dist/**' -g '!build/**' -g '!target/**' -g '!coverage/**' -g '!__pycache__/**'
+git ls-files
+git status --short --ignored
+```
+
+Use `--no-ignore` only when the user asks for all repo/code or ignored files may contain project artifacts. Before reading content, classify very large, binary, generated, dependency, cache, build-output, and likely secret files; report exclusions instead of dumping them into context.
+
 Mode signals:
 
 | Signal | Mode | Start |
