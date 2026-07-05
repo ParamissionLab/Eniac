@@ -89,17 +89,22 @@ Proceed only when the expected signal is worth the token/tool cost.
 
 ## Delegation Template
 
-Use for subagents or parallel AI workers:
+Use only when delegation is authorized by the active runtime/user and independent work will save meaningful time or context. Give each worker one atomic outcome:
 
 ```text
-TASK: One atomic outcome.
-CONTEXT: Minimal relevant facts and paths.
-SCOPE: Files or areas to read/write; files not to touch.
+TASK: One specific outcome.
+CONTEXT: Relevant plan milestone, interfaces, facts, and paths.
+SCOPE:
+  Modify: Explicit files or areas allowed.
+  Read for patterns: Existing examples to inspect first.
+  Do NOT touch: Shared, unrelated, or user-owned files.
 DONE WHEN: Verifiable criteria.
-STYLE: Existing patterns to follow.
-CONSTRAINTS: Token, safety, compatibility, and language requirements.
+STYLE: Exact local pattern or example to follow.
+CONSTRAINTS: Compatibility, safety, token, language, and invariant requirements.
 REPORT: Changed files, checks run, failures, residual risks.
 ```
+
+Parallelize independent modules or layers only when they do not modify the same files and do not depend on an unfinished interface. Keep work sequential when tasks share files, task B needs task A's output, or integration decisions are unresolved. The primary agent owns the plan file, integration, broad verification, and cleanup; delegates must not delete or overwrite it.
 
 ## Portable Agent Prompt
 

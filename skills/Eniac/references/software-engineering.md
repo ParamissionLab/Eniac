@@ -12,6 +12,8 @@ Discover -> Plan -> Build -> Test -> Bug hunt -> Polish -> Document -> Ship
 
 Use every phase for greenfield or broad work. For targeted work, abbreviate the phases but do not edit existing code blind.
 
+Announce only phase changes that help the user track risk or progress. Close a phase with its concrete signal, for example: `Test complete — 31 passing, 0 failing`.
+
 ## Mode
 
 | Signal | Mode | Entry | Proof |
@@ -55,6 +57,20 @@ Verify:
 
 Prefer `rg --files`, manifests, scripts, configs, tests, nearby examples, and call sites before whole-file or whole-repo reads. For tiny fixes, compress discovery to exact file, pattern, command, and risk.
 
+For L2+ existing-code work, publish this compact audit before mutation:
+
+```text
+Stack:
+Relevant surface:
+Tests/tooling:
+Conventions:
+Risk:
+Verification:
+Open question: (only if blocking or high-impact)
+```
+
+Use `commands-by-stack.md` when concrete discovery commands will reduce uncertainty. Run only the sections that can affect the next decision; do not execute a full audit mechanically.
+
 ## Plan
 
 Keep plans proportional:
@@ -77,6 +93,8 @@ Not changing:
 Verification:
 Rollback:
 ```
+
+For L2-L4 mutation work, persist this boundary and milestone checklist in the disposable plan file defined in `SKILL.md`. Update the file in place as state changes; do not turn chat or the file into an execution diary.
 
 ## Build
 
@@ -115,6 +133,8 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 
 Common signals: `package.json`, `pyproject.toml`, `go test ./...`, `cargo test`, `dotnet test`, `mvn test`, `gradle test`, `bundle exec rspec`.
 
+Use the project-native scripts first. If the repository does not expose the needed command, select a compatible command from `commands-by-stack.md`. Report the observed counts when available: `X passing, Y failing, Z% coverage`.
+
 For UI/frontend changes, use `references/product-ux.md` when layout, visual hierarchy, controls, responsive behavior, or primary flow changed.
 
 ## Bug Hunt
@@ -135,6 +155,7 @@ For review-only work, make findings only with concrete evidence and user impact.
 ## Polish
 
 - Run configured formatter/linter/type/build checks relevant to touched files.
+- Use `commands-by-stack.md` only after checking the repository's existing config and scripts.
 - Remove unused imports, dead code introduced by the change, commented-out code, and debug prints.
 - Update generated files only when they are source-controlled outputs for touched inputs.
 - Do not add global formatting churn unless requested.
@@ -145,11 +166,16 @@ Update docs only where behavior or usage changed. Do not write broad tutorials u
 
 Before handoff:
 
-- requested behavior exists
-- relevant checks passed or blockers are named
-- no known high-confidence regressions remain
-- affected docs/examples are accurate
-- exact next command/path is available if useful
+- [ ] Requested behavior exists.
+- [ ] Existing and new relevant tests pass, or blockers are named.
+- [ ] Relevant lint, type, build, and static checks pass.
+- [ ] No known high-confidence or high/critical regressions remain.
+- [ ] Affected README, docs, and examples are accurate.
+- [ ] No debug logs, hardcoded secrets, or accidental telemetry were introduced.
+- [ ] `.gitignore` covers newly introduced secrets, caches, and build artifacts.
+- [ ] `.env.example` reflects required environment variables without values, when applicable.
+- [ ] A clean-start or representative smoke path works when risk justifies it.
+- [ ] The current task's disposable plan file is deleted after verification succeeds.
 
 Final report:
 
@@ -165,7 +191,13 @@ If verification could not run, say why and name the best next command.
 
 ## Failure Recovery
 
-After a failed attempt:
+Count materially different attempts against the same blocker, not every command failure.
+
+- **Strike 1:** Fix the direct cause, then rerun the narrow check.
+- **Strike 2:** Re-read the relevant path, revise the root-cause hypothesis, and try a different approach.
+- **Strike 3:** Stop mutating. Preserve evidence and report the blocker.
+
+After each failed attempt:
 
 ```text
 Failure:
@@ -176,4 +208,15 @@ Next different action:
 Stop if:
 ```
 
-Use at most three materially different attempts before reporting the blocker and needed decision. Do not delete failing tests to pass. Revert only your own changes when reverting is necessary.
+After strike 3, report:
+
+```text
+What I tried:
+What failed:
+Likely cause:
+Ruled out:
+Last known working state:
+Needed decision or input:
+```
+
+Do not delete or weaken failing tests to pass. Do not keep making speculative edits. Revert only changes owned by the current task, and only when the exact safe boundary is known; never discard or stash unrelated user work. Keep the disposable plan file so the task can resume.

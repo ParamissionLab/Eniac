@@ -77,6 +77,27 @@ Risk:
 
 For complex work, split into independently verifiable milestones. For batch work, group by one rule, sample-check, handle exceptions, then broad-check. For UI/UX work, fit the product type, visual hierarchy, components, states, primary flow, and real usage.
 
+### Disposable Plan File
+
+For L2-L4 implementation, full-cycle, batch, or long autonomous work, write a short plan file before the first mutation. Default to `.eniac-plan.md` in the workspace root unless local instructions name another location.
+
+```text
+Owner: current task
+Goal:
+Scope:
+Preserve:
+Milestones: [ ] ...
+Current:
+Verify:
+Risk:
+```
+
+- Keep it operational, not explanatory. Replace `Current` and checklist state instead of appending logs or reasoning.
+- Read it after context loss or before a new milestone; do not repeatedly restate the plan in chat.
+- If `.eniac-plan.md` already exists and is not clearly owned by this task, do not overwrite it; use a unique `.eniac-plan-<short-id>.md` path and remember that exact path.
+- Delete only the plan file created by the current task after done criteria and verification are satisfied. Keep it when blocked or interrupted so work can resume; state its path in the handoff.
+- Skip the file for L0-L1 work, read-only answers/reviews, or a change that finishes in one focused edit and check.
+
 ## Language
 
 Answer in the user's language by default. For Thai or other token-expensive languages, plan compactly in English when useful, but preserve exact user terms, file paths, commands, identifiers, quoted text, and required output language.
@@ -84,6 +105,14 @@ Answer in the user's language by default. For Thai or other token-expensive lang
 ## Software Defaults
 
 For code: inspect before editing, match local architecture and style, preserve public behavior unless asked, verify with project-native commands, and report pre-existing failures separately. Keep docs changes only where behavior or usage changed.
+
+## Communication
+
+- Announce only meaningful phases or decisions; do not narrate routine tool calls.
+- For existing code at L2+, share a compact audit before mutation: stack, relevant surface, conventions, risk, and verification.
+- Explain non-obvious choices with decision, reason, and risk.
+- Close milestones with one status line containing the observed verification signal.
+- Ask only when a high-impact choice cannot be verified or safely reversed.
 
 ## Output
 
@@ -104,7 +133,12 @@ Do not include long reasoning traces, full logs, full file contents, generic tea
 Load only when needed, and load the most specific one first:
 
 - `references/software-engineering.md`: full-cycle code work, audits, tests, bug hunts, many-small-edit batches.
+- `references/commands-by-stack.md`: ready-to-use discovery, test, static-analysis, lint, format, and audit commands selected by detected stack and shell.
 - `references/product-ux.md`: substantial UI/UX, responsive layouts, visual hierarchy, controls, states, accessibility, workflow checks.
 - `references/loop-engineering.md`: complex autonomy, repeated failures, expensive actions, delegation, handoff, stop rules.
 - `references/systematic-thinking.md`: complex decomposition, assumptions, dependency mapping, option decisions.
 - `references/multilingual-token-discipline.md`: long Thai/multilingual prompts, glossary, translation boundaries.
+
+## Platform Notes
+
+Keep the instructions provider-neutral. Common installation targets are Codex `~/.codex/skills/Eniac/SKILL.md`, OpenCode `~/.config/opencode/skills/eniac/SKILL.md`, Cursor `.cursor/rules/eniac.mdc`, Claude Code `CLAUDE.md` or an `@AGENTS.md` import, Cline `.clinerules/eniac.md`, Windsurf `.windsurf/rules/eniac.md`, Aider `--read`, and GitHub Copilot `.github/copilot-instructions.md`. Adapt frontmatter to the host format without changing the operating contract.
