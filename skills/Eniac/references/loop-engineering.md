@@ -2,6 +2,14 @@
 
 Use this reference when a task needs autonomous repeated execution rather than one-shot advice.
 
+## Contents
+
+- [State and budget](#minimal-loop-state)
+- [Perceive, reason, act, observe](#perceive)
+- [Checkpoint and resume](#checkpoint-and-resume)
+- [Delegation](#delegation-template)
+- [Portable prompt and stop rules](#portable-agent-prompt)
+
 ## Minimal Loop State
 
 Keep only decision-relevant facts and replace the state after each Observe step:
@@ -87,6 +95,27 @@ Proceed only when the expected signal is worth the token/tool cost.
   - unrelated pre-existing failure
 - Update loop state and continue only if the next action is materially different.
 
+Prefer evidence in this order: direct tool output, reproducible behavior, project-native tests, source/config inspection, then inference. Label inference and unresolved uncertainty; do not let a plausible explanation replace a proving signal.
+
+## Checkpoint And Resume
+
+At a milestone, interruption, context boundary, or costly failure, replace the disposable plan state with:
+
+```text
+Status:
+Completed:
+Decision:
+Last signal:
+Changed paths:
+Next action:
+Verify next:
+Risk or blocker:
+```
+
+On resume, read the plan once, inspect current git/filesystem state, and invalidate stale claims before editing. Continue from the first incomplete milestone rather than replaying completed discovery. If state diverged, treat current files and direct signals as authoritative and update the plan.
+
+For repeated failures, keep one compact attempt ledger: hypothesis, action, observed signal, and why the next attempt is materially different. Three variants of the same guess count as one approach, not three independent fixes.
+
 ## Delegation Template
 
 Use only when delegation is authorized by the active runtime/user and independent work will save meaningful time or context. Give each worker one atomic outcome:
@@ -105,6 +134,8 @@ REPORT: Changed files, checks run, failures, residual risks.
 ```
 
 Parallelize independent modules or layers only when they do not modify the same files and do not depend on an unfinished interface. Keep work sequential when tasks share files, task B needs task A's output, or integration decisions are unresolved. The primary agent owns the plan file, integration, broad verification, and cleanup; delegates must not delete or overwrite it.
+
+Before accepting delegated work, inspect its diff/output, verify scope compliance, and run the relevant integration signal. If it fails, diagnose the specific gap; repair a small gap locally or re-delegate one explicit correction. Do not merge multiple uncertain agent outputs and debug the combined result blindly.
 
 ## Portable Agent Prompt
 

@@ -2,6 +2,16 @@
 
 Use when creating, reading, modifying, testing, reviewing, documenting, or shipping code.
 
+## Contents
+
+- [Full-cycle and mode](#full-cycle-shape)
+- [Task playbook](#playbook)
+- [Discovery and planning](#discovery)
+- [Build and batch edits](#build)
+- [Test, bug hunt, and polish](#test)
+- [Documentation and shipping](#docs-and-ship)
+- [Failure recovery](#failure-recovery)
+
 ## Full-Cycle Shape
 
 Own the path to a verified handoff:
@@ -126,6 +136,7 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 
 - Use the existing framework and project scripts.
 - Run the narrowest useful check first, then broaden if risk justifies it.
+- Capture a comparable baseline first when the suite is cheap, the repository is already failing, or attribution would otherwise be ambiguous.
 - Test behavior, not implementation details.
 - Cover happy, boundary, and meaningful failure cases when risk justifies it.
 - Keep tests isolated; avoid shared mutable state.
@@ -134,6 +145,8 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 Common signals: `package.json`, `pyproject.toml`, `go test ./...`, `cargo test`, `dotnet test`, `mvn test`, `gradle test`, `bundle exec rspec`.
 
 Use the project-native scripts first. If the repository does not expose the needed command, select a compatible command from `commands-by-stack.md`. Report the observed counts when available: `X passing, Y failing, Z% coverage`.
+
+Use the verification ladder in `safety-and-delivery.md` for public contracts, dependencies, data, infrastructure, generated files, external effects, or any L4 task.
 
 For UI/frontend changes, use `references/product-ux.md` when layout, visual hierarchy, controls, responsive behavior, or primary flow changed.
 
@@ -176,6 +189,8 @@ Before handoff:
 - [ ] `.env.example` reflects required environment variables without values, when applicable.
 - [ ] A clean-start or representative smoke path works when risk justifies it.
 - [ ] The current task's disposable plan file is deleted after verification succeeds.
+
+Apply checklist items only when relevant. `Not applicable` is valid when the task did not touch that surface; do not create CI, coverage, docs, `.env.example`, or clean-checkout work solely to satisfy ceremony.
 
 Final report:
 
