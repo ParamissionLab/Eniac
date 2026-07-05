@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning where practical.
 
+## [1.1.1] - 2026-07-05
+
+### Changed
+
+- Re-compressed `SKILL.md` back into a lean control plane while preserving full-cycle developer routing.
+- Tightened token/credit cost guards with explicit Lean/Standard/Deep budget modes and cost checkpoints.
+- Expanded `references/product-ux.md` from product UX guidance into concise Product UI/UX guidance for layout, visual hierarchy, components, states, responsive behavior, accessibility, and verification.
+- Condensed `references/software-engineering.md` into a shorter full-cycle developer playbook with build, test, bug hunt, polish, docs, and ship gates.
+- Updated README and contributing docs for version `1.1.1`.
+
 ## [1.1.0] - 2026-07-04
 
 ### Added

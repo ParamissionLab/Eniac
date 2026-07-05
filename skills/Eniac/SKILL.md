@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: Token-aware operating skill for AI agents. Use for simple or complex autonomous work; software engineering, debugging, review, planning, architecture, research, UX/frontend usability, prompt or agent workflow design, compact Thai/multilingual execution, many small edits batched safely, strict token/credit/context/scope control, and portable instructions that verify results and stop at the right time.
+description: "Token-aware operating skill for AI agents. Use for autonomous or full-cycle developer work: build/scaffold, add features, fix bugs, refactor, review code, add tests, improve lint/format/type quality, write README/docs, ship handoff; UI/UX/frontend quality for apps, dashboards, websites, forms, editors, games, and workflows; debugging, planning, architecture, research, prompt or agent workflow design; compact Thai/multilingual execution; many small edits batched safely; strict token/credit/context/scope control; and portable instructions that verify results and stop at the right time."
 ---
 
 # Eniac
@@ -22,27 +22,30 @@ Stay inside the requested outcome. Do not add adjacent features, broad rewrites,
 
 ## Scale
 
-Start with the lightest level that can succeed:
+Start at the lightest level that can succeed:
 
-- L0 trivial: answer or act directly.
-- L1 simple: inspect exact context, edit, run one narrow check.
-- L2 normal: short scope lock, direct dependencies, small batches.
-- L3 complex: system map, milestones, verify each risk slice.
-- L4 high-risk: ask before production, credentials, destructive, legal, financial, medical, or ambiguous irreversible action.
+| Level | Use | Work style |
+| --- | --- | --- |
+| L0 trivial | direct answer/action | no references, no ceremony |
+| L1 simple | exact file/error known | targeted read, edit, narrow check |
+| L2 normal | multi-file or uncertain | short scope lock, direct dependencies |
+| L3 complex | architecture, broad feature, repeated failure | system map, milestones, risk checks |
+| L4 high-risk | production, credentials, destructive, legal/financial/medical, irreversible ambiguity | ask before acting |
 
-Do not use L2-L3 ceremony for L0-L1 work. Do not treat L3 work as isolated quick fixes.
+Do not use L2-L3 ceremony for L0-L1 work. Do not treat L3 work as an isolated quick fix.
 
 ## Route
 
-Pick one mode:
+Pick the cheapest mode that fits:
 
 - Answer: direct question or small explanation.
 - Investigate: unknown codebase, bug, failure, ambiguity.
 - Implement: requested creation or change.
-- Review: findings first, file/line evidence, risks, tests.
-- Product/UX: user-facing UI, app, site, dashboard, workflow usability.
+- Full-cycle dev: discover, plan, build, test, bug hunt, polish, document, ship.
+- Review: findings first, file/line evidence, risk, tests.
+- Product UI/UX: user-facing interface, visual system, app/site/dashboard/workflow usability.
 - Batch: many small fixes, repeated edits, cleanup, bulk changes.
-- Design: broad architecture, planning, tradeoffs.
+- Design: architecture, planning, tradeoffs.
 - Agent design: prompt, skill, workflow, portable agent instructions.
 
 Escalate only when evidence shows the current mode cannot meet done criteria.
@@ -51,10 +54,10 @@ Escalate only when evidence shows the current mode cannot meet done criteria.
 
 - Default Lean: read only what changes the next decision.
 - For L0-L1, load no references unless needed to avoid a concrete mistake.
-- Prefer `rg`, file lists, manifests, headings, matches, and targeted line ranges before whole files.
-- Summarize tool output to the decision it changes; keep exact text only for errors, commands, paths, identifiers, and correctness-critical quotes.
-- Batch repeated searches, reads, edits, and checks. Do not re-read unchanged context.
-- Run the narrowest meaningful verification first. Use broad tests, browser passes, web lookups, or subagents only when they can change action, verification, or risk.
+- Prefer `rg`, file lists, manifests, headings, matches, and targeted ranges before whole files.
+- Batch repeated searches, reads, edits, checks, and summaries.
+- Keep exact text only for errors, commands, paths, identifiers, contracts, and correctness-critical quotes.
+- Run the narrowest meaningful verification first. Use broad tests, browser passes, web lookups, or subagents only when the result can change action, verification, or risk.
 - Stop when the next step is optional polish, explanation, or low-value exploration.
 
 ## State
@@ -72,7 +75,7 @@ Verify:
 Risk:
 ```
 
-For complex work, split into independently verifiable milestones. For batch work, group by one rule, sample-check, handle exceptions, then broad-check. For UX work, fit the product type, user job, primary flow, states, and real usage.
+For complex work, split into independently verifiable milestones. For batch work, group by one rule, sample-check, handle exceptions, then broad-check. For UI/UX work, fit the product type, visual hierarchy, components, states, primary flow, and real usage.
 
 ## Language
 
@@ -100,8 +103,8 @@ Do not include long reasoning traces, full logs, full file contents, generic tea
 
 Load only when needed, and load the most specific one first:
 
+- `references/software-engineering.md`: full-cycle code work, audits, tests, bug hunts, many-small-edit batches.
+- `references/product-ux.md`: substantial UI/UX, responsive layouts, visual hierarchy, controls, states, accessibility, workflow checks.
 - `references/loop-engineering.md`: complex autonomy, repeated failures, expensive actions, delegation, handoff, stop rules.
 - `references/systematic-thinking.md`: complex decomposition, assumptions, dependency mapping, option decisions.
-- `references/software-engineering.md`: code modes, audits, tests, bug hunts, many-small-edit batches.
-- `references/product-ux.md`: substantial UI/UX, responsive layouts, practical visual and workflow checks.
 - `references/multilingual-token-discipline.md`: long Thai/multilingual prompts, glossary, translation boundaries.

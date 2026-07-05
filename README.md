@@ -4,12 +4,14 @@ Eniac is a provider-neutral, agent-agnostic operating skill for token-aware AI a
 
 Credit: [ParamissionLab](https://github.com/ParamissionLab)
 
+Current version: `1.1.1`
+
 ## What It Does
 
 - Runs compact Perceive -> Reason -> Act -> Observe loops.
 - Scales effort from tiny edits to complex architecture, debugging, research, and review work.
 - Keeps context use lean with cost guards, targeted reads, batching, and narrow verification first.
-- Supports software engineering, UX/frontend usability, prompt or agent workflow design, and many-small-edit batches.
+- Supports full-cycle software engineering, UI/UX/frontend quality, prompt or agent workflow design, and many-small-edit batches.
 - Handles Thai and other token-expensive languages with compact planning while preserving exact paths, commands, identifiers, and quotes.
 - Loads deeper references only when needed.
 
@@ -64,7 +66,7 @@ Use the `eniac` skill when you want:
 - autonomous work that should continue until done or genuinely blocked
 - strict token, credit, context, or scope control
 - software engineering, debugging, review, planning, architecture, or research
-- UX/frontend work that should fit the product type and real user workflow
+- UI/UX/frontend work that should fit the product type, visual system, and real user workflow
 - many small edits that should be batched safely
 - Thai or multilingual work that should stay concise
 
@@ -79,6 +81,10 @@ Use eniac to improve this dashboard UX for real daily operations without making 
 ```
 
 ```text
+Use eniac to tighten this app UI: layout, controls, states, responsive behavior, and accessibility, without adding visual noise.
+```
+
+```text
 ใช้ eniac แก้หลายไฟล์ตาม pattern เดียวกันแบบประหยัด token และตรวจให้พอมั่นใจ
 ```
 
@@ -89,6 +95,7 @@ Eniac is designed to reduce waste:
 - simple work should not load extra references
 - large files should be searched or read by targeted ranges first
 - repeated edits should be batched by one safe rule
+- installed references should stay specific so UI/UX, software, loop, and multilingual guidance load only when they can change the result
 - broad tests, browser checks, web lookups, and subagents should run only when they can change the decision or risk report
 - final reports should summarize changed behavior, verification, risks, and next steps without long reasoning traces
 

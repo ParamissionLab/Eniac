@@ -2,7 +2,7 @@
 
 Thank you for contributing to Eniac.
 
-Current version: `1.1.0`
+Current version: `1.1.1`
 
 ## Project Goals
 
@@ -12,7 +12,7 @@ Eniac should remain:
 - Agent-agnostic.
 - Token-aware.
 - Cost-conscious for tokens, credits, tool calls, and context.
-- Practical for real engineering work.
+- Practical for real full-cycle engineering and UI/UX work.
 - Clear about scope, stop conditions, and verification.
 
 ## Repository Layout
@@ -22,7 +22,7 @@ skills/Eniac/SKILL.md
 skills/Eniac/references/
 ```
 
-Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit files in `references/` for deeper task-specific guidance such as loop engineering, software engineering, product UX, systematic thinking, or multilingual token discipline.
+Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit files in `references/` for deeper task-specific guidance such as loop engineering, software engineering, product UI/UX, systematic thinking, or multilingual token discipline.
 
 ## Contribution Guidelines
 
@@ -32,6 +32,7 @@ Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit f
 - Keep instructions concise and operational.
 - Prefer progressive disclosure: keep `SKILL.md` lean and move optional detail into a reference file.
 - Do not add reference content that will be loaded for simple tasks unless it prevents a concrete failure.
+- Keep UI/UX guidance practical: interface structure, states, responsive behavior, accessibility, and verification should matter more than decorative preference.
 - Do not include secrets, credentials, private URLs, or sensitive user data.
 - Use Markdown that renders cleanly on GitHub.
 

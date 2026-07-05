@@ -1,67 +1,66 @@
 # Multilingual Token Discipline
 
-Use when the request, source, or required output is Thai or another token-expensive language.
+Use this reference when the request, source material, or required output is in Thai or another language that tends to consume more tokens than English.
 
-## Policy
+## Language Policy
 
 - Reply in the user's language by default.
 - Keep code, commands, API names, file paths, identifiers, stack traces, and quoted source text unchanged.
-- Plan in compact English only when it saves tokens; do not expose unnecessary English reasoning.
-- For bilingual output, keep one primary language and use short parenthetical translations only where useful.
+- Use English internally for compact planning when it reduces tokens, but do not expose unnecessary English reasoning to the user.
+- If the final answer must be bilingual, keep one language primary and use short parenthetical translations only where they add value.
 
-## Brief
+## Compact Working Brief
 
-For long non-English prompts:
+For long non-English prompts, create a short private brief:
 
 ```text
-Lang:
-Output:
+User language:
+Desired output language:
 Goal:
-Preserve:
+Must preserve exactly:
 Constraints:
-Done:
-Risk:
+Done criteria:
+Open risks:
 ```
 
-Translate intent, not bulk text.
+Avoid translating the whole prompt. Translate intent, not bulk content.
 
 ## Thai Compression
 
-- Preserve user-specific Thai terms.
-- Keep exact Thai quotes when wording matters.
-- Prefer paths, commands, and concrete outcomes over prose.
-- Use project-native technical nouns naturally: `build`, `lint`, `typecheck`, API names, file paths.
-- If "ยังไง" appears in an open repo, infer whether advice or implementation is intended from context; implement only when the workspace and request imply it.
+- Preserve user-specific Thai terms when wording matters.
+- Use compact English internally for planning only when it saves tokens.
+- Prefer paths, commands, file/line references, and concrete outcomes over prose.
+- Keep exact Thai quotes only when the wording is part of the task.
+- Infer "do it" vs "explain it" from workspace context; ask only when the wrong assumption would be costly.
 
 ## Glossary
 
-Maintain a tiny glossary only for correctness-critical repeated terms. Do not define obvious or one-off words.
+Maintain a tiny glossary only for terms that affect correctness:
 
-## Extraction
+```text
+"งานวนซ้ำ" = iterative loop work
+"เครดิต" = paid usage/compute budget
+"สำเร็จลุล่วง" = complete according to stop criteria
+```
 
-- Summarize repeated requirements once.
-- For long documents, extract headings, decisions, obligations, and exact clauses only when needed.
-- For logs/errors, keep exact failing lines and summarize surrounding prose.
-- For code/review, prefer file paths and line references.
+Do not create a glossary for obvious words or terms that appear once.
 
-## Reports
+## Compression Rules
 
-Implementation:
+- Summarize repeated user requirements once and refer back to the compact brief.
+- For long Thai or multilingual documents, extract headings, decisions, obligations, and exact quoted clauses only when needed.
+- For logs or errors in any language, keep exact failing lines and summarize surrounding prose.
+- For code review or engineering tasks, prefer file paths and line references over prose explanations.
+
+## User-Facing Reports
+
+Use concise Thai or the user's language:
 
 ```text
 ทำแล้ว:
 ตรวจสอบ:
-ความเสี่ยง:
-ไฟล์:
+ยังเหลือความเสี่ยง:
+ไฟล์สำคัญ:
 ```
 
-Recommendation:
-
-```text
-ควรปรับ:
-เหตุผล:
-ทำก่อน:
-ระวัง:
-```
-
-Skip empty fields. Do not expose hidden chain-of-thought or verbose loop traces.
+Skip sections that are empty. Do not include hidden chain-of-thought or verbose loop traces.
