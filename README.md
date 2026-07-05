@@ -20,42 +20,23 @@ skills/
   Eniac/
     SKILL.md
     references/
+      commands-by-stack.md
       loop-engineering.md
       multilingual-token-discipline.md
+      platform-portability.md
       product-ux.md
+      safety-and-delivery.md
       software-engineering.md
       systematic-thinking.md
 ```
 
 `SKILL.md` is the lightweight control plane. The files in `references/` are loaded only for deeper task-specific guidance.
 
-## Install For Codex
+## Installation
 
-Copy the skill folder into your Codex skills directory.
+See `skills/Eniac/references/platform-portability.md` for current installation paths across supported platforms (OpenAI Codex, Anthropic Claude Code, Google Gemini CLI, GitHub Copilot, OpenCode, Cline, Windsurf, Zed, Augment, and others).
 
-### Windows PowerShell
-
-```powershell
-git clone https://github.com/ParamissionLab/Eniac.git
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse -Force ".\Eniac\skills\Eniac" "$env:USERPROFILE\.codex\skills"
-```
-
-### macOS/Linux
-
-```bash
-git clone https://github.com/ParamissionLab/Eniac.git
-mkdir -p ~/.codex/skills
-cp -R Eniac/skills/Eniac ~/.codex/skills/
-```
-
-Restart Codex or start a new thread so the skill list refreshes.
-
-## Install For Other Agents
-
-Use `skills/Eniac/SKILL.md` as the main instruction file. Keep the `references/` folder next to it so the agent can load deeper guidance only when needed.
-
-If your runtime does not support skill loading, paste the short contract from `SKILL.md` into your agent instructions and point the agent at the reference files as optional material.
+Quick approach: copy or link the entire `skills/Eniac/` folder into your agent's native skills directory, or use the shared `.agents/skills/eniac/` path where supported. If your runtime does not support skill loading, paste the core contract from `SKILL.md` into your agent instructions and point the agent at the reference files as optional material.
 
 ## Usage
 
@@ -99,21 +80,13 @@ Eniac is designed to reduce waste:
 
 ## Updating
 
-To update an installed copy:
-
 ```bash
 git -C Eniac pull
-cp -R Eniac/skills/Eniac ~/.codex/skills/
+# Then copy the skills/Eniac folder to your agent's skill directory
+# See platform-portability.md for your target platform path
 ```
 
-On Windows PowerShell:
-
-```powershell
-git -C .\Eniac pull
-Copy-Item -Recurse -Force ".\Eniac\skills\Eniac" "$env:USERPROFILE\.codex\skills"
-```
-
-Restart Codex or open a new thread after updating.
+Restart your agent or start a new session after updating.
 
 ## Versioning
 

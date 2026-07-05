@@ -1,14 +1,5 @@
 # Security Policy
 
-## Supported Versions
-
-The current supported version is:
-
-| Version | Supported |
-| --- | --- |
-| 1.1.x | Yes |
-| 1.0.x | No |
-
 ## Reporting a Vulnerability
 
 If you find a security issue in Eniac, please report it privately before creating a public issue.
