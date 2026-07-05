@@ -2,8 +2,6 @@
 
 Thank you for contributing to Eniac.
 
-Current version: `1.1.1`
-
 ## Project Goals
 
 Eniac should remain:
