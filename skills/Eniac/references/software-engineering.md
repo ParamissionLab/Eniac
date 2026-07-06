@@ -41,7 +41,7 @@ Treat code work as engineering delivery, not text editing:
 
 | Signal | Mode | Entry | Proof |
 | --- | --- | --- | --- |
-| Empty/new project | Greenfield | requirements, stack, plan | app/library runs |
+| Empty/new project | Greenfield | product contract, stack decision, walking skeleton | acceptance flow runs |
 | Existing source, weak tests/docs | In-progress | audit requested area | focused checks pass |
 | Stable tests/docs/CI | Mature | abbreviated audit | regression signal passes |
 | Bug, review, refactor, small feature | Targeted | relevant files/callers | failing case or flow works |
@@ -80,7 +80,7 @@ Immediate scope:
 
 Use the classification to choose entry point:
 
-- Greenfield: gather requirements, choose stack, scaffold minimal runnable project, add run/test scripts, smoke check.
+- Greenfield: load `greenfield-launch-sequence.md`; establish the product contract before stack selection, then build and prove a production-shaped walking skeleton before expanding capability slices.
 - In-progress: audit structure, manifests, direct modules, tests/tooling, then implement against existing patterns.
 - Mature: identify the narrow touched surface, capture baseline when cheap, preserve public contracts, run regression signal.
 - Targeted: inspect exact file/symbol, local analogs, direct callers, and relevant tests; skip broad audit unless evidence requires it.
@@ -205,7 +205,7 @@ Ask only when a high-impact product, API, data, dependency, security, or deploym
 - Keep changes scoped to the request and touched files.
 - Avoid new frameworks, formatters, runners, state managers, or dependencies without concrete need.
 - Preserve public interfaces and serialized shapes unless explicitly changed.
-- For greenfield work, include run/test scripts, minimal README, `.gitignore`, and a smoke check.
+- For greenfield work, follow `greenfield-launch-sequence.md`; keep the system runnable after every vertical slice and prove the acceptance flow through the real entry point.
 
 Production code bar:
 

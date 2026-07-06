@@ -54,6 +54,7 @@ Pick the cheapest mode that fits:
 - Answer: direct question or small explanation.
 - Investigate: unknown codebase, bug, failure, ambiguity.
 - Implement: requested creation or change.
+- Greenfield launch: product contract, stack decision, foundation, walking skeleton, capability slices, hardening, release proof.
 - Full-cycle dev: discover, plan, build, test, bug hunt, polish, document, ship.
 - Deep code audit: whole-repo understanding, architecture map, dependency/caller map, or explicit "read all code" request.
 - Review: findings first, file/line evidence, risk, tests.
@@ -149,7 +150,7 @@ Answer in the user's language by default. For Thai or other token-expensive lang
 
 For code: act as the repository's software engineer. Detect whether the work is greenfield, in-progress, mature, targeted, or review-only; inspect before editing; audit existing code before mutation; lock the highest-risk invariant and its proof signal; match local architecture, style, dependencies, tests, and error-handling; preserve public behavior unless asked; implement production-quality code; verify with project-native commands; distinguish baseline failures from regressions; and ship a truthful handoff. Keep docs changes only where behavior or usage changed. Never equate a patch with a result: claim completion only from observed evidence.
 
-For any non-trivial code task, load `references/software-engineering.md`. For unfamiliar stacks or command selection, load `references/commands-by-stack.md` after checking repository scripts and configs.
+For any non-trivial code task, load `references/software-engineering.md`. For a genuinely new project or standalone system, also load `references/greenfield-launch-sequence.md` before choosing the stack or scaffolding. For unfamiliar stacks or command selection, load `references/commands-by-stack.md` after checking repository scripts and configs.
 
 ## Communication
 
@@ -178,6 +179,7 @@ Do not include long reasoning traces, full logs, full file contents, generic tea
 Load only when needed, and load the most specific one first:
 
 - `references/software-engineering.md`: full-cycle code work, audits, tests, bug hunts, many-small-edit batches.
+- `references/greenfield-launch-sequence.md`: staged product contract, stack choice, walking skeleton, capability slices, hardening, and clean-start proof for new systems.
 - `references/commands-by-stack.md`: ready-to-use discovery, test, static-analysis, lint, format, and audit commands selected by detected stack and shell.
 - `references/stack-risk-matrix.md`: detected-stack invariants, silent failure modes, boundary risks, and proof signals; load only the relevant rows.
 - `references/execution-ledger.md`: restartable task contract with milestones tied to observable proof for greenfield, broad, or L2-L4 work.

@@ -61,7 +61,7 @@ Use for greenfield, broad, or L2-L4 implementation work that needs durable state
 | --- | --- |
 | Targeted change | contract, one invariant, one milestone, narrow proof |
 | Multi-file feature | affected boundaries, ordered milestones, regression proof |
-| Greenfield | user flow, architecture decisions, runnable increments, acceptance proof |
+| Greenfield | product contract, stack rationale, walking skeleton, runnable slices, release proof |
 | High-risk change | authorization state, rollback, data/contract compatibility, staged proof |
 
 ## Completion Gate

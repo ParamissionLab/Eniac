@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning where practical.
 
+## [1.2.0] - 2026-07-06
+
+### Added
+
+- Added `references/execution-ledger.md` for structured, restartable task state with milestone-level proof signals.
+- Added `references/project-interface-contract.md` for evidence-backed README, onboarding, configuration, and operating guidance.
+- Added `references/delivery-proof-pipelines.md` for deriving CI as a repository-specific proof graph instead of copying generic workflows.
+- Added `references/stack-risk-matrix.md` for runtime, framework, data, concurrency, and boundary-specific failure analysis.
+- Added `references/greenfield-launch-sequence.md` with staged product contracts, stack decisions, foundation gates, walking skeletons, capability slices, hardening, and clean-start release proof.
+
+### Changed
+
+- Made Eniac the explicit default for code-file and software-delivery work, including simple requests.
+- Strengthened software delivery with invariant selection, observable proof signals, and evidence-backed completion claims.
+- Reworked disposable plans into aligned Markdown sections with separate contracts, milestones, proof, and active state fields.
+- Expanded Greenfield routing across the control plane, execution ledger, engineering playbook, and README while keeping the detailed workflow conditionally loaded.
+
 ## [1.1.1] - 2026-07-05
 
 ### Changed
@@ -16,11 +33,6 @@ This project follows semantic versioning where practical.
 - Strengthened Eniac's software engineering guidance with an explicit Deep code audit mode for whole-repo code reads, architecture mapping, and broad existing-code work.
 - Added discovery commands for full repository inventories that can include ignored project files while excluding dependency, cache, build, binary, generated, and secret material.
 - Raised the software engineering contract to behave more like a full-cycle senior engineer: detect project state, audit before mutation, preserve local conventions, build production-quality code, test, bug hunt, polish, document, and ship with verified handoff.
-- Strengthened code-task triggering to always route code-file and software-delivery requests through Eniac.
-- Added Eniac-specific execution ledger, project interface contract, delivery proof pipelines, and stack risk matrix.
-- Strengthened the software control plane with explicit invariant selection and evidence-backed completion claims.
-- Reworked disposable plan output into aligned Markdown sections with one milestone, proof, and state field per line.
-
 
 ## [1.1.0] - 2026-07-04
 
