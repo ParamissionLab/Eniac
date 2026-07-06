@@ -7,11 +7,14 @@ Credit: [ParamissionLab](https://github.com/ParamissionLab)
 ## What It Does
 
 - Runs compact Perceive -> Reason -> Act -> Observe loops.
-- Scales effort from tiny edits to complex architecture, debugging, research, and review work.
+- Scales effort from tiny edits (L0) to complex architecture (L3) and high-risk production work (L4).
 - Keeps context use lean with cost guards, targeted reads, batching, and narrow verification first.
 - Supports senior software engineering workflows: staged Greenfield launches, project-state detection, codebase audits, stack-risk analysis, restartable execution ledgers, evidence-backed project interfaces, CI proof graphs, full-cycle build/test/bug-hunt/polish/docs/ship, deep codebase audits, whole-repo code reads when requested, UI/UX/frontend quality, prompt or agent workflow design, and many-small-edit batches.
+- Provides ready-to-adapt CI templates for 8 stacks (Node.js, Python, Go, Rust, Zig, Ruby, Java, .NET) plus release workflows.
+- Includes concrete code pitfalls and good patterns for 11 stacks with bad-to-good examples.
+- Ships README and plan templates for consistent, high-quality documentation and planning.
 - Handles Thai and other token-expensive languages with compact planning while preserving exact paths, commands, identifiers, and quotes.
-- Loads deeper references only when needed.
+- Loads deeper references only when needed (17 reference files, loaded on demand).
 
 ## Structure
 
@@ -20,22 +23,36 @@ skills/
   Eniac/
     SKILL.md
     references/
+      ci-templates-by-stack.md
       commands-by-stack.md
       delivery-proof-pipelines.md
       execution-ledger.md
       greenfield-launch-sequence.md
       loop-engineering.md
       multilingual-token-discipline.md
+      plan-template-extended.md
       platform-portability.md
       product-ux.md
       project-interface-contract.md
+      readme-template.md
       safety-and-delivery.md
       software-engineering.md
+      stack-patterns-and-pitfalls.md
       stack-risk-matrix.md
       systematic-thinking.md
 ```
 
-`SKILL.md` is the lightweight control plane. The files in `references/` are loaded only for deeper task-specific guidance.
+`SKILL.md` is the lightweight control plane. The 17 files in `references/` are loaded only when deeper task-specific guidance is needed:
+
+| Category | Files | Loaded when |
+|----------|-------|-------------|
+| Core engineering | `software-engineering.md`, `commands-by-stack.md` | Non-trivial code work |
+| Actionable templates | `ci-templates-by-stack.md`, `readme-template.md`, `plan-template-extended.md` | Creating CI, README, or plans for broad work |
+| Stack knowledge | `stack-risk-matrix.md`, `stack-patterns-and-pitfalls.md` | Stack-specific correctness risk |
+| Greenfield | `greenfield-launch-sequence.md`, `execution-ledger.md` | New project or broad milestoned work |
+| Safety | `safety-and-delivery.md`, `delivery-proof-pipelines.md` | L4, CI, dependencies, production |
+| Specialized | `product-ux.md`, `loop-engineering.md`, `systematic-thinking.md`, `multilingual-token-discipline.md` | UI/UX, autonomy, complex decomposition, multilingual |
+| Meta | `project-interface-contract.md`, `platform-portability.md` | README rewrites, platform installation |
 
 ## Installation
 

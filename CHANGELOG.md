@@ -13,6 +13,11 @@ This project follows semantic versioning where practical.
 - Added `references/delivery-proof-pipelines.md` for deriving CI as a repository-specific proof graph instead of copying generic workflows.
 - Added `references/stack-risk-matrix.md` for runtime, framework, data, concurrency, and boundary-specific failure analysis.
 - Added `references/greenfield-launch-sequence.md` with staged product contracts, stack decisions, foundation gates, walking skeletons, capability slices, hardening, and clean-start release proof.
+- Added `references/ci-templates-by-stack.md` with ready-to-adapt GitHub Actions YAML for Node.js, Python, Go, Rust, Zig, Ruby, Java/Gradle, .NET, and release workflows (npm, PyPI). Includes setup checklist.
+- Added `references/stack-patterns-and-pitfalls.md` with concrete bad-to-good code examples for 11 stacks: TypeScript/Node.js, Python, Go, Rust, Zig, Ruby, Java/Kotlin, C#/.NET, React/Next.js, REST API patterns, and database patterns.
+- Added `references/readme-template.md` with a full formatted README skeleton including centered hero, badges, feature bullets, quick start, configuration table, development setup, architecture section, and a quality checklist.
+- Added `references/plan-template-extended.md` with a rich planning template for L2-L3 work: users/use cases, architecture rationale table, task breakdown with complexity tags, risk table with likelihood/impact/mitigation, constraints, open questions, and phase progress log.
+- Added Zig language support across all stack-aware references: CI templates, patterns/pitfalls (5 pitfalls + good patterns), stack-risk-matrix row, commands-by-stack (discovery, test, static analysis, format), and delivery-proof-pipelines ecosystem derivation.
 
 ### Changed
 
@@ -20,6 +25,14 @@ This project follows semantic versioning where practical.
 - Strengthened software delivery with invariant selection, observable proof signals, and evidence-backed completion claims.
 - Reworked disposable plans into aligned Markdown sections with separate contracts, milestones, proof, and active state fields.
 - Expanded Greenfield routing across the control plane, execution ledger, engineering playbook, and README while keeping the detailed workflow conditionally loaded.
+- Updated `references/software-engineering.md` discovery section: audit format now includes size estimate and tech debt fields; added explicit instruction to share audit with user before mutation for L2+ work; added pointer to extended plan template for broad work.
+- Updated `references/delivery-proof-pipelines.md` with Zig ecosystem derivation row and pointer to `ci-templates-by-stack.md`.
+- Updated `references/stack-risk-matrix.md` with Zig invariants/failure-radar row and pointer to `stack-patterns-and-pitfalls.md`.
+- Updated `references/project-interface-contract.md` with pointer to `readme-template.md` for formatted starting skeleton.
+- Updated `references/commands-by-stack.md` with Zig commands (build, test, fmt, discovery) and `build.zig`/`build.zig.zon` in manifest discovery.
+- Updated `references/loop-engineering.md` with platform-specific execution model table (12 platforms), parallelizable vs sequential work rules, and sub-agent failure recovery protocol.
+- Updated `SKILL.md` Communication section with structured phase announcement format for L2+ full-cycle work.
+- Updated `SKILL.md` References section to list all 17 reference files with descriptions and load conditions.
 
 ## [1.1.1] - 2026-07-05
 

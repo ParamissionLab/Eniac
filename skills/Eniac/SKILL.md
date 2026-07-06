@@ -160,6 +160,27 @@ For any non-trivial code task, load `references/software-engineering.md`. For a 
 - Close milestones with one status line containing the observed verification signal.
 - Ask only when a high-impact choice cannot be verified or safely reversed.
 
+### Phase Format (L2+ full-cycle work)
+
+When running full-cycle or multi-phase work, announce phase transitions with a short structured line:
+
+```text
+[Phase] Discover — auditing existing code before changes
+[Phase] Plan — 4 tasks identified, 1 risk flagged
+[Phase] Build — implementing auth middleware
+[Phase] Test — 12 passing, 0 failing, 94% coverage
+[Phase] Bug hunt — 1 warning found (unvalidated input at line 42)
+[Phase] Polish — formatted 3 files, removed 2 unused imports
+[Phase] Document — updated README quick-start section
+[Phase] Ship — all checks pass, ready for review
+```
+
+Rules:
+- Use `[Phase]` prefix for visual scanning. Skip emoji when tokens are constrained.
+- Include one concrete signal per announcement (count, file, command, or decision).
+- Skip phases that have no meaningful work (do not announce empty phases).
+- For L0-L1 work, do not announce phases at all — just do the work and report the result.
+
 ## Output
 
 Default final shape, skipping empty fields:

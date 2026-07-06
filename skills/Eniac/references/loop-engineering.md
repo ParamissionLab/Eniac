@@ -133,6 +133,45 @@ CONSTRAINTS: Compatibility, safety, token, language, and invariant requirements.
 REPORT: Changed files, checks run, failures, residual risks.
 ```
 
+### Platform Execution Model
+
+Different platforms support different parallelism. Choose the right model:
+
+| Platform | Parallel mechanism | How to delegate |
+|----------|-------------------|-----------------|
+| OpenAI Codex | Background tasks via CLI | `codex --task "..." &` or spawn multiple sessions |
+| Claude Code | Sub-agent via `Task` tool | Spawn independent `Task` calls in parallel |
+| Gemini CLI | Background tasks | `task()` with concurrent execution |
+| GitHub Copilot | Agent mode (sequential) | Decompose mentally, execute one at a time |
+| OpenCode | `task()` with `run_in_background=true` | Spawn multiple background tasks |
+| Kiro | `invoke_sub_agent` tool | Spawn general-task-execution sub-agents |
+| Cline | Sequential only | One task at a time; decompose into steps |
+| Windsurf Cascade | Sequential only | Decompose into steps, execute in order |
+| Cursor | Multiple Composer threads | Parallel Composer tabs for independent work |
+| Zed Agent | Sequential only | One task at a time |
+| Augment | Background tasks | Parallel task spawning when supported |
+| Aider | `--message` in separate terminals | Multiple terminal sessions per task |
+
+**Parallelizable work:**
+- Independent modules that don't share files
+- Independent layers (database + API + frontend)
+- Independent concerns (implementation + tests + docs)
+
+**Must stay sequential:**
+- Tasks that modify the same files
+- Task B depends on Task A's output types/interfaces
+- Integration decisions are unresolved
+- Shared mutable state or conflicting edits
+
+### Sub-Agent Failure Recovery
+
+If a sub-agent returns broken or incomplete work:
+1. Inspect its output before doing anything — read the diff/files it produced.
+2. Identify specific gaps: missing files, wrong patterns, compilation errors, scope violations.
+3. Fix locally if small (< 5 lines); re-delegate with explicit correction if larger.
+4. Re-delegation prompt: include what failed, why, and what the new attempt must do differently.
+5. Never merge multiple uncertain sub-agent outputs and debug the combined result blindly.
+
 Parallelize independent modules or layers only when they do not modify the same files and do not depend on an unfinished interface. Keep work sequential when tasks share files, task B needs task A's output, or integration decisions are unresolved. The primary agent owns the plan file, integration, broad verification, and cleanup; delegates must not delete or overwrite it.
 
 Before accepting delegated work, inspect its diff/output, verify scope compliance, and run the relevant integration signal. If it fails, diagnose the specific gap; repair a small gap locally or re-delegate one explicit correction. Do not merge multiple uncertain agent outputs and debug the combined result blindly.
