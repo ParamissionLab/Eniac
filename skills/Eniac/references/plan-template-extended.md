@@ -7,7 +7,6 @@ Use for L2-L3 greenfield or broad feature work where the minimal `.eniac-plan.md
 ```markdown
 # Plan: <Project or Feature Name>
 
-> Owner: <task id or label>
 > Status: active | blocked | done
 > Created: <date>
 

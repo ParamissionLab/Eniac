@@ -103,7 +103,6 @@ For L2-L4 implementation, full-cycle, batch, or long autonomous work, write a sh
 ```markdown
 # Eniac Execution: <short outcome>
 
-> Owner: <task id or short label>
 > Status: active | blocked | done
 
 ## Contract
