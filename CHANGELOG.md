@@ -16,6 +16,10 @@ This project follows semantic versioning where practical.
 - Strengthened Eniac's software engineering guidance with an explicit Deep code audit mode for whole-repo code reads, architecture mapping, and broad existing-code work.
 - Added discovery commands for full repository inventories that can include ignored project files while excluding dependency, cache, build, binary, generated, and secret material.
 - Raised the software engineering contract to behave more like a full-cycle senior engineer: detect project state, audit before mutation, preserve local conventions, build production-quality code, test, bug hunt, polish, document, and ship with verified handoff.
+- Strengthened code-task triggering to always route code-file and software-delivery requests through Eniac.
+- Added Eniac-specific execution ledger, project interface contract, delivery proof pipelines, and stack risk matrix.
+- Strengthened the software control plane with explicit invariant selection and evidence-backed completion claims.
+- Reworked disposable plan output into aligned Markdown sections with one milestone, proof, and state field per line.
 
 
 ## [1.1.0] - 2026-07-04

@@ -9,7 +9,7 @@ Credit: [ParamissionLab](https://github.com/ParamissionLab)
 - Runs compact Perceive -> Reason -> Act -> Observe loops.
 - Scales effort from tiny edits to complex architecture, debugging, research, and review work.
 - Keeps context use lean with cost guards, targeted reads, batching, and narrow verification first.
-- Supports senior software engineering workflows: project-state detection, codebase audits, full-cycle build/test/bug-hunt/polish/docs/ship, deep codebase audits, whole-repo code reads when requested, UI/UX/frontend quality, prompt or agent workflow design, and many-small-edit batches.
+- Supports senior software engineering workflows: project-state detection, codebase audits, stack-risk analysis, restartable execution ledgers, evidence-backed project interfaces, CI proof graphs, full-cycle build/test/bug-hunt/polish/docs/ship, deep codebase audits, whole-repo code reads when requested, UI/UX/frontend quality, prompt or agent workflow design, and many-small-edit batches.
 - Handles Thai and other token-expensive languages with compact planning while preserving exact paths, commands, identifiers, and quotes.
 - Loads deeper references only when needed.
 
@@ -21,12 +21,16 @@ skills/
     SKILL.md
     references/
       commands-by-stack.md
+      delivery-proof-pipelines.md
+      execution-ledger.md
       loop-engineering.md
       multilingual-token-discipline.md
       platform-portability.md
       product-ux.md
+      project-interface-contract.md
       safety-and-delivery.md
       software-engineering.md
+      stack-risk-matrix.md
       systematic-thinking.md
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: "Token-aware senior software engineering and operating skill for AI agents. Use whenever the user asks to read, write, build, scaffold, debug, fix, refactor, review, test, lint, format, document, improve, or ship code, including simple code edits and multi-step full-cycle development. Use for existing-code audits, whole-repo code reads, architecture and caller maps, feature work, bug fixes, test creation, code quality, production-grade README/docs, CI/check guidance, handoff; UI/UX/frontend quality for apps, dashboards, websites, forms, editors, games, and workflows; debugging, planning, research, prompt or agent workflow design; compact Thai/multilingual execution; many small edits batched safely; strict token/credit/context/scope control; and portable instructions that verify results and stop at the right time."
+description: "Token-aware senior software engineering and operating skill for AI agents. ALWAYS use for any request involving code files or software delivery, even if it sounds simple: read, write, build, scaffold, debug, fix, refactor, review, test, lint, format, document, improve, or ship code. Use for simple code edits, multi-step full-cycle development, existing-code audits, whole-repo code reads, architecture and caller maps, feature work, bug fixes, test creation, code quality, production-grade README/docs, CI/check guidance, handoff; UI/UX/frontend quality for apps, dashboards, websites, forms, editors, games, and workflows; debugging, planning, research, prompt or agent workflow design; compact Thai/multilingual execution; many small edits batched safely; strict token/credit/context/scope control; and portable instructions that verify results and stop at the right time."
 ---
 
 # Eniac
@@ -99,22 +99,42 @@ For complex work, split into independently verifiable milestones. For batch work
 
 For L2-L4 implementation, full-cycle, batch, or long autonomous work, write a short plan file before the first mutation. Default to `.eniac-plan.md` in the workspace root unless local instructions name another location.
 
-```text
-Owner: current task or unique task id
-Status: active | blocked | done
-Goal:
-Scope:
-Preserve:
-Milestones: [ ] ...
-Current:
-Decision:
-Last signal:
-Next:
-Verify:
-Risk:
+```markdown
+# Eniac Execution: <short outcome>
+
+> Owner: <task id or short label>
+> Status: active | blocked | done
+
+## Contract
+
+- **Goal:** <requested result>
+- **Done when:** <observable completion criteria>
+- **Scope:** <authorized files, behavior, or systems>
+- **Preserve:** <contracts, data, compatibility, user changes>
+- **Exclude:** <explicit non-goals>
+
+## Milestones
+
+- [ ] **M1 - <outcome>**
+  - Proof: `<command>` or <observed signal>
+- [ ] **M2 - <outcome>**
+  - Proof: `<command>` or <observed signal>
+
+## Active State
+
+- **Current:** <one active milestone or action>
+- **Invariant:** <condition that must remain true>
+- **Decision:** <binding choice and short reason>
+- **Last signal:** <latest useful evidence>
+- **Next:** <one concrete action>
+- **Verify:** `<next command>` or <next observation>
+- **Blocker:** none | <exact missing input or state>
+- **Risk:** <highest remaining risk>
 ```
 
-- Keep it operational, not explanatory. Replace `Current` and checklist state instead of appending logs or reasoning.
+- Keep one semantic item per line. Never pack milestones, checks, or status fields together with semicolons.
+- Keep it operational, not explanatory. Replace `Active State` and checklist state instead of appending logs or reasoning.
+- Wrap long values onto an indented continuation line; keep labels and checklist markers visually aligned.
 - Record only decisions that constrain later work, the last useful signal, and the next action. Never store secrets or full logs.
 - Read it after context loss, interruption, or before a new milestone; verify that repository state still matches it before resuming. Do not repeatedly restate the plan in chat.
 - If `.eniac-plan.md` already exists and is not clearly owned by this task, do not overwrite it; use a unique `.eniac-plan-<short-id>.md` path and remember that exact path.
@@ -127,7 +147,7 @@ Answer in the user's language by default. For Thai or other token-expensive lang
 
 ## Software Defaults
 
-For code: act as the repository's software engineer. Detect whether the work is greenfield, in-progress, mature, targeted, or review-only; inspect before editing; audit existing code before mutation; match local architecture, style, dependencies, tests, and error-handling; preserve public behavior unless asked; implement production-quality code; verify with project-native commands; distinguish baseline failures from regressions; and ship a truthful handoff. Keep docs changes only where behavior or usage changed.
+For code: act as the repository's software engineer. Detect whether the work is greenfield, in-progress, mature, targeted, or review-only; inspect before editing; audit existing code before mutation; lock the highest-risk invariant and its proof signal; match local architecture, style, dependencies, tests, and error-handling; preserve public behavior unless asked; implement production-quality code; verify with project-native commands; distinguish baseline failures from regressions; and ship a truthful handoff. Keep docs changes only where behavior or usage changed. Never equate a patch with a result: claim completion only from observed evidence.
 
 For any non-trivial code task, load `references/software-engineering.md`. For unfamiliar stacks or command selection, load `references/commands-by-stack.md` after checking repository scripts and configs.
 
@@ -159,6 +179,10 @@ Load only when needed, and load the most specific one first:
 
 - `references/software-engineering.md`: full-cycle code work, audits, tests, bug hunts, many-small-edit batches.
 - `references/commands-by-stack.md`: ready-to-use discovery, test, static-analysis, lint, format, and audit commands selected by detected stack and shell.
+- `references/stack-risk-matrix.md`: detected-stack invariants, silent failure modes, boundary risks, and proof signals; load only the relevant rows.
+- `references/execution-ledger.md`: restartable task contract with milestones tied to observable proof for greenfield, broad, or L2-L4 work.
+- `references/project-interface-contract.md`: evidence-backed project onboarding and operations contract for new or materially rewritten READMEs.
+- `references/delivery-proof-pipelines.md`: derive CI gates as a repository-specific proof graph; load only when adding, repairing, or reviewing CI.
 - `references/safety-and-delivery.md`: authorization gates, secrets, risky change classes, verification ladder, baseline/regression handling, and truthful completion.
 - `references/product-ux.md`: substantial UI/UX, responsive layouts, visual hierarchy, controls, states, accessibility, workflow checks.
 - `references/loop-engineering.md`: complex autonomy, repeated failures, expensive actions, delegation, handoff, stop rules.

@@ -180,6 +180,8 @@ Rollback:
 
 For L2-L4 mutation work, persist this boundary and milestone checklist in the disposable plan file defined in `SKILL.md`. Update the file in place as state changes; do not turn chat or the file into an execution diary.
 
+Load `execution-ledger.md` when creating durable, restartable state for greenfield, broad, or multi-milestone software delivery. Tie each milestone to an observed proof signal.
+
 For software delivery, the plan must name:
 
 ```text
@@ -215,6 +217,8 @@ Production code bar:
 - No hardcoded secrets, debug prints, commented-out dead code, or unrequested dependency churn.
 - Public APIs, schemas, events, config keys, CLI flags, URLs, and persisted shapes remain compatible unless the user requested a breaking change.
 - New code has tests when behavior, contracts, or regression risk justify them.
+
+Load `stack-risk-matrix.md` when stack-specific behavior can affect correctness. Select only the detected runtime and touched boundary; convert the highest relevant failure mode into an invariant and proof.
 
 ## Batch Edits
 
@@ -290,6 +294,8 @@ Verification:
 ## Docs And Ship
 
 Update docs only where behavior or usage changed. Do not write broad tutorials unless requested.
+
+Load `project-interface-contract.md` when creating a new README or doing a major README rewrite. Load `delivery-proof-pipelines.md` only when adding, repairing, or reviewing CI.
 
 Before handoff:
 
