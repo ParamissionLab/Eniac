@@ -12,6 +12,8 @@ Input boundary -> normalization/validation -> domain operation -> side effect ->
 
 Then select the stack risks that can violate that path. Do not turn this matrix into a generic checklist.
 
+For concrete code examples of these risks (bad patterns, good patterns, and setup commands per language), load `references/stack-patterns-and-pitfalls.md` and read only the detected stack section.
+
 ## Runtime And Language Risks
 
 | Stack signal | High-value invariants | Silent failure radar | Best proof |
@@ -20,6 +22,7 @@ Then select the stack risks that can violate that path. Do not turn this matrix 
 | Python | explicit package imports; specific exception contracts; isolated mutable state; public type boundaries | mutable defaults, broad catches, import-path-only success, fixture leakage | project test command from package root plus type/lint when configured |
 | Go | every error handled with operation context; cancellation propagated; goroutine ownership defined | leaked goroutines, dropped errors, nil interface surprises, partial writes | table/race tests where relevant, `go test`, configured vet/static checks |
 | Rust | typed error paths; ownership cost intentional; feature behavior explicit | production `unwrap`, clone masking design, feature-only compile failure, blocking in async path | fmt/clippy plus tests for enabled feature set |
+| Zig | explicit allocator ownership; error union handling at every call site; comptime vs runtime boundary clear; sentinel and slice semantics correct | silent `unreachable` crashes, use-after-free from deferred deinit, `@intCast` UB, ignored error unions, allocator leaks without defer | `zig build test` plus format check; test with `std.testing.failing_allocator` for OOM paths |
 | Java / Kotlin | nullability explicit; resources scoped; DTO/entity/API boundaries preserved | hidden nulls, blocking async pools, raw generic drift, transaction leakage | wrapper-native test/build and contract tests |
 | .NET | async and cancellation propagated; enumeration/materialization intentional; comparison semantics explicit | `async void`, sync-over-async, repeated queries, culture-sensitive bugs | solution/project test plus analyzer/build signal |
 | Ruby / Rails | validation and transaction ownership clear; query shape bounded; boundary objects explicit | callback side effects, N+1 queries, nil masking, global monkey patches | focused specs plus query/job/request proof |

@@ -37,6 +37,7 @@ Omit gates unsupported by the repository. Do not add a new linter, test framewor
 | `pyproject.toml` / requirements | project-declared environment install | configured test/type/lint commands |
 | `go.mod` | `go mod download` when needed | `go test ./...`, configured vet/static checks |
 | `Cargo.lock` | cargo resolves locked graph | format check, clippy when configured, tests |
+| `build.zig` / `build.zig.zon` | `zig build` resolves dependencies | `zig build test`, `zig fmt --check` |
 | Maven/Gradle/.NET/Ruby | wrapper or locked project tool | repository-native build and test tasks |
 
 Repository scripts override these fallbacks.
@@ -57,3 +58,7 @@ Repository scripts override these fallbacks.
 Capture the first meaningful failing step, reproduce its repository command locally when possible, and classify the failure as workflow syntax, environment, dependency, code regression, flaky test, permission, or external service. Fix the cause, not the symptom. A retry without a changed hypothesis is not a repair.
 
 Before handoff, validate workflow syntax, event filters, working directories, runtime versions, lockfile/cache paths, secret names, artifact paths, and the exact repository commands each gate invokes.
+
+## Stack-Specific Starting Templates
+
+For ready-to-adapt GitHub Actions YAML for common stacks (Node.js, Python, Go, Rust, Ruby, Java, .NET, and release workflows), load `references/ci-templates-by-stack.md`. Use these as starting points to adapt, not drop-in replacements. Repository scripts and existing workflows always take priority.

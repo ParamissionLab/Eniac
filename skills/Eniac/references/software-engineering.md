@@ -105,17 +105,21 @@ Verify:
 
 Prefer `rg --files`, manifests, scripts, configs, tests, nearby examples, and call sites before whole-file or whole-repo reads. For tiny fixes, compress discovery to exact file, pattern, command, and risk.
 
-For L2+ existing-code work, publish this compact audit before mutation:
+For L2+ existing-code work, share this audit with the user before mutation:
 
 ```text
 Stack:
+Size: ~N files, ~N lines (rough estimate)
 Relevant surface:
 Tests/tooling:
 Conventions:
+Tech debt spotted:
 Risk:
 Verification:
 Open question: (only if blocking or high-impact)
 ```
+
+The audit serves two purposes: internal state for decision-making, and user-facing communication for alignment and trust. Share it explicitly — do not proceed to mutation without the user seeing the audit for L2+ work on unfamiliar or broad codebases. For L2 work on familiar small changes, a one-line summary is sufficient.
 
 Use `commands-by-stack.md` when concrete discovery commands will reduce uncertainty. Run only the sections that can affect the next decision; do not execute a full audit mechanically.
 
@@ -179,6 +183,8 @@ Rollback:
 ```
 
 For L2-L4 mutation work, persist this boundary and milestone checklist in the disposable plan file defined in `SKILL.md`. Update the file in place as state changes; do not turn chat or the file into an execution diary.
+
+For L2-L3 greenfield or broad feature work with multiple unknowns, risks, or architecture decisions, load `references/plan-template-extended.md` for a richer planning structure with users, architecture rationale, risk table, complexity tags, and progress tracking.
 
 Load `execution-ledger.md` when creating durable, restartable state for greenfield, broad, or multi-milestone software delivery. Tie each milestone to an observed proof signal.
 

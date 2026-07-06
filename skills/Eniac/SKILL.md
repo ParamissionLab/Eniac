@@ -182,6 +182,10 @@ Load only when needed, and load the most specific one first:
 - `references/greenfield-launch-sequence.md`: staged product contract, stack choice, walking skeleton, capability slices, hardening, and clean-start proof for new systems.
 - `references/commands-by-stack.md`: ready-to-use discovery, test, static-analysis, lint, format, and audit commands selected by detected stack and shell.
 - `references/stack-risk-matrix.md`: detected-stack invariants, silent failure modes, boundary risks, and proof signals; load only the relevant rows.
+- `references/stack-patterns-and-pitfalls.md`: concrete code examples of common pitfalls and good patterns per language; load only the detected stack section.
+- `references/ci-templates-by-stack.md`: ready-to-adapt GitHub Actions YAML for Node.js, Python, Go, Rust, Ruby, Java, .NET, and release workflows; load only when adding or repairing CI.
+- `references/plan-template-extended.md`: rich planning template with users, architecture, risks, complexity tags, and progress tracking; load for L2-L3 greenfield or broad feature work.
+- `references/readme-template.md`: formatted README skeleton with badges, sections, and quality checklist; load when creating a new README.
 - `references/execution-ledger.md`: restartable task contract with milestones tied to observable proof for greenfield, broad, or L2-L4 work.
 - `references/project-interface-contract.md`: evidence-backed project onboarding and operations contract for new or materially rewritten READMEs.
 - `references/delivery-proof-pipelines.md`: derive CI gates as a repository-specific proof graph; load only when adding, repairing, or reviewing CI.

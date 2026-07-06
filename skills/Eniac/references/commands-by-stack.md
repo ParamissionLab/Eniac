@@ -8,7 +8,7 @@ Start with fast, read-only signals:
 
 ```text
 rg --files
-rg --files -g package.json -g pyproject.toml -g go.mod -g Cargo.toml -g Gemfile -g pom.xml -g "*.csproj"
+rg --files -g package.json -g pyproject.toml -g go.mod -g Cargo.toml -g Gemfile -g pom.xml -g "*.csproj" -g build.zig -g build.zig.zon
 rg --files -g "*.test.*" -g "*.spec.*" -g "test_*.py" -g "*_test.go" -g "*_test.rs" -g "*Test.java" -g "*Tests.cs"
 git status --short
 git log -20 --oneline
@@ -42,6 +42,7 @@ Node.js: npm test; configured coverage script, or npx jest --coverage
 Python: pytest -v --cov=src --cov-report=term-missing
 Go: go test ./... -v -cover
 Rust: cargo test -- --nocapture
+Zig: zig build test
 Ruby: bundle exec rspec
 Java/Maven: mvn test
 Java/Gradle: ./gradlew test
@@ -59,6 +60,7 @@ TypeScript/JavaScript: npx tsc --noEmit; npx eslint .
 Python: python -m mypy src/ --ignore-missing-imports; python -m bandit -r src/
 Go: go vet ./...; staticcheck ./...
 Rust: cargo clippy -- -D warnings
+Zig: zig build (compiler errors are the static analysis); zig fmt --check src/
 Ruby: bundle exec rubocop
 Java/Maven: mvn spotbugs:check
 Java/Gradle: ./gradlew spotbugsMain
@@ -76,6 +78,7 @@ JavaScript/TypeScript: npx prettier --write <touched paths>; npx eslint <touched
 Python: black <touched paths>; isort <touched paths>; ruff check --fix <touched paths>
 Go: gofmt -w <touched files>
 Rust: cargo fmt
+Zig: zig fmt src/
 Ruby: bundle exec rubocop -A <touched paths>
 Java/Kotlin: ./gradlew spotlessApply; mvn spotless:apply
 .NET: dotnet format

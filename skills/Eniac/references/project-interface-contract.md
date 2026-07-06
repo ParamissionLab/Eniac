@@ -82,3 +82,7 @@ Expected: <observable success signal, URL, output, or artifact>
 - If a command cannot be verified, label that limitation in the handoff instead of presenting it as proven.
 
 For small behavior changes, patch only affected sections. Do not replace a mature README merely to impose this structure.
+
+## Formatted Starting Template
+
+For a full visual template with badges, centered header, section structure, and quality checklist, load `references/readme-template.md`. Use it as the skeleton and fill content from the evidence pass above.
