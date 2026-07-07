@@ -215,14 +215,24 @@ Ask only when a high-impact product, API, data, dependency, security, or deploym
 
 Production code bar:
 
-- Names reveal intent; avoid vague names, magic values, and hidden global coupling.
-- Functions and modules do one coherent job; extract only when it removes real duplication or complexity.
-- Error paths are handled deliberately; user-facing errors are actionable and internal errors preserve debugging context.
-- External input is validated at boundaries; data contracts are explicit.
-- Async, concurrency, lifecycle, cancellation, and cleanup paths are handled where the stack requires them.
-- No hardcoded secrets, debug prints, commented-out dead code, or unrequested dependency churn.
+- Identifiers communicate intent without requiring context: prefer `find_user_by_email` over `find`, `RETRY_LIMIT` over `3`, `SessionStore` over `ss`.
+- One coherent responsibility per function/module; extract only when real duplication or testability demands it.
+- Inline comments justify non-obvious decisions, not narrate operations: `// bypass cache for admin — stale permissions are a security escalation path`.
+- Error paths terminate or propagate deliberately; user-visible messages state the problem and a recovery hint; internal errors preserve the chain for diagnosis.
+- All data crossing a trust boundary is validated before use; schemas and contracts are explicit, not inferred from usage.
+- Avoid magic literals; define named constants at the appropriate scope.
+- Async, concurrency, lifecycle, cancellation, and resource-cleanup obligations are satisfied where the runtime demands them.
+- No leaked secrets, residual debug output, commented-out dead code, or speculative dependency additions.
 - Public APIs, schemas, events, config keys, CLI flags, URLs, and persisted shapes remain compatible unless the user requested a breaking change.
 - New code has tests when behavior, contracts, or regression risk justify them.
+- Respect the idiomatic naming of the detected language: `camelCase` in JS/TS/Java, `snake_case` in Python/Ruby/Rust/Zig, `PascalCase` for Go exported symbols, `UPPER_SNAKE` for compile-time or environment constants.
+
+### Working in existing codebases
+
+- Inspect 2-3 local analogs before adding a new function or module. Derive the pattern from what exists, not from preference.
+- Scope edits to the requested outcome. Adjacent cleanup is permitted only within files you already modified for the task.
+- Adopt the repository's conventions: naming style, error propagation, import ordering, and module boundaries. Introducing a new convention requires justification.
+- Propose structural changes only when they unblock the task or address a concrete defect — not for aesthetic preference.
 
 Load `stack-risk-matrix.md` when stack-specific behavior can affect correctness. Select only the detected runtime and touched boundary; convert the highest relevant failure mode into an invariant and proof.
 
@@ -254,6 +264,32 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 - Do not delete, skip, or weaken failing tests to pass.
 - Add tests in the same framework/style as existing tests; do not introduce a new test runner without concrete need.
 
+### Test isolation
+
+Each test must own its state. Initialize fresh instances per case using factory functions, `beforeEach`, `setUp`, or equivalent. Cross-test mutation causes non-deterministic failures that obscure real regressions and waste substantial debugging effort.
+
+### Test coverage guidance
+
+Match depth to what the project ships:
+
+| Delivery shape | Focus | Minimum useful signal |
+|---|---|---|
+| Library / shared module | Unit tests on exported surface | Every public function has at least one behavior case |
+| HTTP/RPC service | Request-level integration | Success, auth-fail, and invalid-input paths per endpoint |
+| CLI | End-to-end with fixture I/O | Primary command happy path + one error exit |
+| UI component | Render + interaction | Mounts, responds to primary action, handles empty/error state |
+| Orchestration / full app | Layered: unit + integration + one flow | Critical user path verifiable from entry point |
+| Script / one-shot job | Smoke with representative input | Expected output produced from sample data |
+
+### Test naming
+
+Describe the behavior under test as a readable assertion:
+- `"rejects negative transfer amounts with INVALID_AMOUNT"`
+- `"resumes upload from last checkpoint after network failure"`
+- `"excludes soft-deleted records from search results"`
+
+Uninformative names (`test1`, `works`, `basic`) make failure reports useless.
+
 Common signals: `package.json`, `pyproject.toml`, `go test ./...`, `cargo test`, `dotnet test`, `mvn test`, `gradle test`, `bundle exec rspec`.
 
 Use the project-native scripts first. If the repository does not expose the needed command, select a compatible command from `commands-by-stack.md`. Report the observed counts when available: `X passing, Y failing, Z% coverage`.
@@ -264,29 +300,41 @@ For UI/frontend changes, use `references/product-ux.md` when layout, visual hier
 
 ## Bug Hunt
 
-Check changed files and direct dependencies for:
+Proactively inspect for defects in changed code and its immediate dependents.
 
-- invalid or untrusted inputs
-- swallowed errors or unhandled async paths
-- secrets, debug logs, or accidental telemetry
-- lifecycle, cancellation, race, or cleanup issues
-- hot-loop cost, N+1 queries, or avoidable broad work
-- null, empty, duplicate, large, unicode, timezone, and locale cases
-- compatibility drift in public APIs, schemas, URLs, events, or persisted data
-- UI state regressions: loading, empty, error, disabled, focus, selected, hover
+### Inspection order
 
-For review-only work, make findings only with concrete evidence and user impact.
+1. Files modified during Build (highest regression probability)
+2. Functions and modules that call or are called by the changed surface
+3. Shared state, configuration, or contracts touched by the change
 
-Bug report shape when issues are found during delivery:
+### Defect radar
+
+- [ ] External inputs reach domain logic without validation
+- [ ] Errors swallowed or caught too broadly (e.g., bare `except`, `.catch(() => {})`)
+- [ ] Secrets, tokens, or PII present in source, logs, or error output
+- [ ] User-facing error messages lack context for recovery
+- [ ] Expensive operations inside iteration or hot paths (N+1, unbounded allocations)
+- [ ] Concurrency assumptions without synchronization or cancellation handling
+- [ ] Boundary values unhandled: empty/null/zero, maximum size, unicode, timezone offset
+- [ ] Residual debug output: `console.log`, `print()`, `fmt.Println`, `println!`, `puts`, `System.out.println`, `dd()`, `debugger`, `std.debug.print`
+- [ ] Resource or subscription leaks (open handles, unstopped timers, dangling listeners)
+- [ ] Public API, schema, URL, event, or persisted data contract broken by this change
+- [ ] UI state gaps: missing loading, empty, error, disabled, or focus indicators
+- [ ] Dead code introduced by this change; previously reachable code now orphaned
+
+For review-only work, report findings with file/line evidence and concrete user impact.
+
+### Defect report shape
 
 ```text
-Severity:
-Location:
-Problem:
-Impact:
-Fix or decision:
-Verification:
+[Critical|Warning|Info] — <one-line summary>
+Where: <file>:<line>
+What: <observed problem and consequence>
+Action: <fix applied or recommendation>
 ```
+
+Resolve all Critical and Warning findings before shipping. Info-level items may be deferred if they do not affect correctness.
 
 ## Polish
 
@@ -303,29 +351,49 @@ Update docs only where behavior or usage changed. Do not write broad tutorials u
 
 Load `project-interface-contract.md` when creating a new README or doing a major README rewrite. Load `delivery-proof-pipelines.md` only when adding, repairing, or reviewing CI.
 
-Before handoff:
+### Inline documentation
 
-- [ ] Requested behavior exists.
-- [ ] Existing and new relevant tests pass, or blockers are named.
-- [ ] Relevant lint, type, build, and static checks pass.
-- [ ] No known high-confidence or high/critical regressions remain.
-- [ ] Affected README, docs, and examples are accurate.
-- [ ] No debug logs, hardcoded secrets, or accidental telemetry were introduced.
-- [ ] `.gitignore` covers newly introduced secrets, caches, and build artifacts.
-- [ ] `.env.example` reflects required environment variables without values, when applicable.
-- [ ] A clean-start or representative smoke path works when risk justifies it.
-- [ ] The current task's disposable plan file is deleted after verification succeeds.
+Add doc comments to functions you authored or significantly modified using the language-native format:
 
-Apply checklist items only when relevant. `Not applicable` is valid when the task did not touch that surface; do not create CI, coverage, docs, `.env.example`, or clean-checkout work solely to satisfy ceremony.
+| Language | Format |
+|----------|--------|
+| JavaScript/TypeScript | `/** @param ... @returns ... */` |
+| Python | Triple-quote docstrings on first line of body |
+| Go | Comment block immediately above the declaration |
+| Rust / Zig | `///` line comments above the item |
+| Ruby | YARD/RDoc `#` comments above the method |
+| Java/Kotlin | `/** ... */` Javadoc/KDoc |
 
-Final report:
+Include a brief module-level comment for files whose purpose is not obvious from the filename. Mark known incomplete work with `TODO` or `FIXME` followed by a short explanation — a visible limitation is better than a hidden one.
+
+### Ship checklist
+
+Before handoff, verify each applicable item:
+
+- [ ] Requested behavior exists and is exercisable through the intended entry point.
+- [ ] All relevant tests pass (existing + any added); blockers are stated if not.
+- [ ] Type checks, linters, and build complete without introduced errors.
+- [ ] No high-confidence regressions remain unfixed.
+- [ ] No residual debug output (`console.log`, `print`, `fmt.Println`, `println!`, `puts`, `System.out.println`, `dd`, `debugger`, `std.debug.print`, `pry`).
+- [ ] No secrets, tokens, or credentials in source or output.
+- [ ] Documentation covering changed behavior is accurate.
+- [ ] `.gitignore` includes generated directories and environment files relevant to the stack.
+- [ ] `.env.example` enumerates required variables without values, when environment configuration exists.
+- [ ] A representative smoke path succeeds from a clean or near-clean state when complexity warrants it.
+- [ ] The disposable plan file is removed after verification confirms success.
+
+Skip items that do not apply to the task surface. Ceremony for its own sake is waste.
+
+### Final report
 
 ```text
 Mode:
 Changed:
+Tests: X passing (+N new), Y% coverage
 Verified:
 Risks:
 Next:
+To run: <exact commands>
 ```
 
 If verification could not run, say why and name the best next command.

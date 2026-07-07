@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning where practical.
 
+## [1.2.1] - 2026-07-06
+
+### Added
+
+- Added Mode Announcement in `SKILL.md` Route section: agent states its project classification and chosen route in one line before acting, giving the user early correction opportunity.
+- Added Test Coverage Guidance table in `software-engineering.md`: maps delivery shape (library, service, CLI, component, app, script) to appropriate test focus and minimum useful signal.
+- Added Test Isolation rule in `software-engineering.md`: each test must own its state via fresh initialization; cross-test mutation is prohibited.
+- Added Test Naming convention: describe the behavior under test as a readable assertion.
+- Added Inline Documentation section in Docs And Ship: language-native doc-comment format table, module-level comment guidance, and TODO/FIXME for acknowledged limitations.
+- Added Working In Existing Codebases section in Build: inspect local analogs first, scope edits to the task, adopt repository conventions, propose structural changes only when they unblock work or fix a defect.
+- Added `To run:` field to final report so users get exact reproduction commands.
+
+### Changed
+
+- Rewrote Production Code Bar in `software-engineering.md` with original phrasing: intent-revealing identifiers, single-responsibility extraction rule, decision-justifying comments, actionable error messages, trust-boundary validation, no magic literals, and idiomatic naming per language.
+- Rewrote Bug Hunt section in `software-engineering.md` as "Defect Radar" with original checklist structure (12 items organized by risk class), priority-ordered inspection path, and structured defect report format.
+- Rewrote Ship Checklist in `software-engineering.md` with concise verification items, stack-generated directory exclusion guidance, and "ceremony for its own sake is waste" principle.
+- Rewrote `references/systematic-thinking.md` with Deep Reasoning Protocol (6 steps), Dependency & Impact Mapping with ripple analysis and radius classification, Root Cause Analysis, Decision quality checks, Assumption tracking, and Complex Refactoring Thinking with strangler-fig progression.
+- Added Refactor route in `SKILL.md` with explicit boundary lock, wave-based execution, invariant verification between waves, and prohibition on mixing refactoring with behavior changes.
+- Enforced strict plan file naming: `.eniac-plan.md` with numeric-only suffixes (`-2`, `-3`). Descriptive or creative suffixes are forbidden.
+
 ## [1.2.0] - 2026-07-06
 
 ### Added
@@ -18,6 +39,7 @@ This project follows semantic versioning where practical.
 - Added `references/readme-template.md` with a full formatted README skeleton including centered hero, badges, feature bullets, quick start, configuration table, development setup, architecture section, and a quality checklist.
 - Added `references/plan-template-extended.md` with a rich planning template for L2-L3 work: users/use cases, architecture rationale table, task breakdown with complexity tags, risk table with likelihood/impact/mitigation, constraints, open questions, and phase progress log.
 - Added Zig language support across all stack-aware references: CI templates, patterns/pitfalls (5 pitfalls + good patterns), stack-risk-matrix row, commands-by-stack (discovery, test, static analysis, format), and delivery-proof-pipelines ecosystem derivation.
+- Added Refactor route in `SKILL.md` with explicit boundary lock, wave-based execution for large refactors (>10 files), invariant verification after each wave, and strict rule against mixing refactoring with behavior changes.
 
 ### Changed
 
@@ -33,6 +55,8 @@ This project follows semantic versioning where practical.
 - Updated `references/loop-engineering.md` with platform-specific execution model table (12 platforms), parallelizable vs sequential work rules, and sub-agent failure recovery protocol.
 - Updated `SKILL.md` Communication section with structured phase announcement format for L2+ full-cycle work.
 - Updated `SKILL.md` References section to list all 17 reference files with descriptions and load conditions.
+- Enforced strict plan file naming: `.eniac-plan.md` with numeric-only suffixes (`.eniac-plan-2.md`, `.eniac-plan-3.md`) when collisions exist. Creative suffixes, descriptions, or task names in filenames are explicitly forbidden.
+- Rewrote `references/systematic-thinking.md` from ~50 lines to ~250 lines: added Deep Reasoning Protocol (6-step framework for problems that resist straightforward decomposition), Dependency & Impact Mapping with ripple analysis and radius classification, Root Cause Analysis (5-whys for repeated failures), Decision quality checks, Assumption tracking with status, Complex Refactoring Thinking (strangler-fig pattern: understand → introduce → migrate → verify → remove), and explicit signs-you-need-to-stop checklist.
 
 ## [1.1.1] - 2026-07-05
 

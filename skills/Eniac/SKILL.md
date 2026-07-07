@@ -54,6 +54,7 @@ Pick the cheapest mode that fits:
 - Answer: direct question or small explanation.
 - Investigate: unknown codebase, bug, failure, ambiguity.
 - Implement: requested creation or change.
+- Refactor: restructure existing code without changing behavior; explicit boundary, invariant, and regression proof required.
 - Greenfield launch: product contract, stack decision, foundation, walking skeleton, capability slices, hardening, release proof.
 - Full-cycle dev: discover, plan, build, test, bug hunt, polish, document, ship.
 - Deep code audit: whole-repo understanding, architecture map, dependency/caller map, or explicit "read all code" request.
@@ -63,7 +64,42 @@ Pick the cheapest mode that fits:
 - Design: architecture, planning, tradeoffs.
 - Agent design: prompt, skill, workflow, portable agent instructions.
 
+### Refactor Discipline
+
+Large refactors drift easily. Lock these before touching code:
+
+```text
+Behavior preserved:
+Boundary: <files/modules authorized to change>
+Not touching: <adjacent code, unrelated modules, formatting-only files>
+Invariant: <the one thing that must stay true — e.g., all existing tests pass>
+Proof: <command or signal that proves invariant holds>
+Rollback: <how to undo if invariant breaks>
+```
+
+Rules for refactors:
+- Define the boundary explicitly before the first edit. Files outside the boundary are read-only.
+- Verify the invariant (run tests, type check, build) after each logical group of changes — not just at the end.
+- Do not combine refactoring with behavior changes in the same pass. Separate them into distinct milestones.
+- Do not rename/move things "while you're at it" outside the stated scope.
+- If the refactor reveals a bug or improvement opportunity outside scope, report it in the handoff — do not fix it silently.
+- For large refactors (>10 files), work in waves: define wave boundary → edit wave → verify invariant → next wave. Never edit all files then check once at the end.
+- Load `references/systematic-thinking.md` when the refactor involves complex dependency chains or the change can propagate in non-obvious ways.
+
 Escalate only when evidence shows the current mode cannot meet done criteria.
+
+### Mode Announcement
+
+After classifying the project and selecting a route, state the classification to the user in one line before acting:
+
+```text
+[Mode] Existing TypeScript/Express service — will inspect touched surface and patterns first.
+[Mode] New system — establishing product contract before stack selection.
+[Mode] Scoped fix — isolating the failure, then targeted repair with regression signal.
+[Mode] Structural refactor — boundary locked to src/auth/*, invariant: full test suite green.
+```
+
+This gives the user a chance to redirect early if the classification is off.
 
 ## Cost Guard
 
@@ -137,7 +173,8 @@ For L2-L4 implementation, full-cycle, batch, or long autonomous work, write a sh
 - Wrap long values onto an indented continuation line; keep labels and checklist markers visually aligned.
 - Record only decisions that constrain later work, the last useful signal, and the next action. Never store secrets or full logs.
 - Read it after context loss, interruption, or before a new milestone; verify that repository state still matches it before resuming. Do not repeatedly restate the plan in chat.
-- If `.eniac-plan.md` already exists and is not clearly owned by this task, do not overwrite it; use a unique `.eniac-plan-<short-id>.md` path and remember that exact path.
+- If `.eniac-plan.md` already exists and is not clearly owned by this task, do not overwrite it; use `.eniac-plan-2.md` (incrementing the number if that also exists). Never invent creative suffixes, descriptions, or task names in the filename — only use numeric suffixes: `.eniac-plan.md`, `.eniac-plan-2.md`, `.eniac-plan-3.md`.
+- The plan filename must always start with `.eniac-plan` and end with `.md`. No other naming patterns are acceptable.
 - Set `Status: done`, confirm done criteria and verification, then delete only the plan file created by the current task. Keep it when blocked or interrupted so work can resume; state its path in the handoff.
 - Skip the file for L0-L1 work, read-only answers/reviews, or a change that finishes in one focused edit and check.
 
