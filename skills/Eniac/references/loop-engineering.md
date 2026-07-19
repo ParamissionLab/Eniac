@@ -1,6 +1,6 @@
 # Loop Engineering Reference
 
-Use this reference when a task needs autonomous repeated execution rather than one-shot advice.
+Use this reference when a task needs autonomous repeated execution rather than one-shot advice. For L2+ loops that modify, diagnose, review, or plan software, load `algorithm-workflow.md` to keep cause, coverage, weighting, and documentation impact explicit.
 
 ## Contents
 
@@ -71,6 +71,7 @@ Proceed only when the expected signal is worth the token/tool cost.
 - Check whether the next step is inside scope, necessary, and verifiable.
 - Choose the action that reduces the most uncertainty per token or moves the task closest to a verified stop condition.
 - Decide whether parallel work is safe. Parallelize only work that does not touch the same files or depend on unfinished interfaces.
+- For L3 work, load `workstream-orchestration.md` before dispatching workers or running parallel lanes. Establish a design gate, disjoint mutable scope, output contract, acceptance proof, and integration owner first.
 - Choose verification before editing when behavior is unclear.
 
 ## Act
@@ -85,6 +86,7 @@ Proceed only when the expected signal is worth the token/tool cost.
 ## Observe
 
 - Compare outputs to stop criteria.
+- Reweight the next action using impact, urgency, dependency leverage, uncertainty, irreversibility, and verification gap; do not follow a stale task order after a material signal.
 - Compare actions taken to the scope boundary; if drift occurred, stop and correct course.
 - Compare the observed signal to the expected signal before deciding the next action.
 - If verification fails, classify the failure:
@@ -94,12 +96,14 @@ Proceed only when the expected signal is worth the token/tool cost.
   - incomplete context
   - unrelated pre-existing failure
 - Update loop state and continue only if the next action is materially different.
+- For a defect or unexpected result, record the symptom, immediate cause, contributors, root-cause hypothesis, containment, and proof. A containment patch is not final closure unless causal uncertainty and ownership are explicit.
+- Assess documentation impact: update the execution context and the smallest durable doc when a decision-relevant fact, behavior, contract, risk, or handoff changes; otherwise avoid activity-log churn.
 
 Prefer evidence in this order: direct tool output, reproducible behavior, project-native tests, source/config inspection, then inference. Label inference and unresolved uncertainty; do not let a plausible explanation replace a proving signal.
 
 ## Checkpoint And Resume
 
-At a milestone, interruption, context boundary, or costly failure, replace the disposable plan state with:
+At a milestone, interruption, context boundary, or costly failure, replace the plan's mutable state with:
 
 ```text
 Status:
@@ -112,7 +116,7 @@ Verify next:
 Risk or blocker:
 ```
 
-On resume, read the plan once, inspect current git/filesystem state, and invalidate stale claims before editing. Continue from the first incomplete milestone rather than replaying completed discovery. If state diverged, treat current files and direct signals as authoritative and update the plan.
+For L3/multi-workstream work, also preserve the system facts, workflow, workstream status, evidence, decisions, and integration proof that a fresh session needs. On resume, read the plan once, inspect current git/filesystem state, and invalidate stale claims before editing. Continue from the first incomplete or unaccepted gate rather than replaying completed discovery. If state diverged, treat current files and direct signals as authoritative and update the plan.
 
 For repeated failures, keep one compact attempt ledger: hypothesis, action, observed signal, and why the next attempt is materially different. Three variants of the same guess count as one approach, not three independent fixes.
 
@@ -172,7 +176,7 @@ If a sub-agent returns broken or incomplete work:
 4. Re-delegation prompt: include what failed, why, and what the new attempt must do differently.
 5. Never merge multiple uncertain sub-agent outputs and debug the combined result blindly.
 
-Parallelize independent modules or layers only when they do not modify the same files and do not depend on an unfinished interface. Keep work sequential when tasks share files, task B needs task A's output, or integration decisions are unresolved. The primary agent owns the plan file, integration, broad verification, and cleanup; delegates must not delete or overwrite it.
+Parallelize independent modules or layers only when they do not modify the same files and do not depend on an unfinished interface. Keep work sequential when tasks share files, task B needs task A's output, or integration decisions are unresolved. The primary agent owns the exact plan path, plan owner, integration, broad verification, and cleanup; delegates must not delete, overwrite, or finalize it.
 
 Before accepting delegated work, inspect its diff/output, verify scope compliance, and run the relevant integration signal. If it fails, diagnose the specific gap; repair a small gap locally or re-delegate one explicit correction. Do not merge multiple uncertain agent outputs and debug the combined result blindly.
 

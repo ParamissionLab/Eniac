@@ -17,7 +17,13 @@ Eniac should remain:
 
 ```text
 skills/Eniac/SKILL.md
+skills/Eniac/scripts/
+  finalize_plan.py                 — verified plan finalization/deletion
+skills/Eniac/tests/
+  test_finalize_plan.py            — finalizer regression tests
 skills/Eniac/references/
+  architecture-evidence.md        — evidence-first architecture passes and handoff
+  algorithm-workflow.md           — cause, coverage, weighting, and documentation loop
   ci-templates-by-stack.md        — CI YAML templates (8 stacks + release)
   commands-by-stack.md            — discovery, test, lint, format commands
   delivery-proof-pipelines.md     — CI as proof graph + principles
@@ -35,6 +41,7 @@ skills/Eniac/references/
   stack-patterns-and-pitfalls.md  — code examples (11 stacks)
   stack-risk-matrix.md            — invariants, failure radar, proof
   systematic-thinking.md          — decomposition and options
+  workstream-orchestration.md     — dependency-aware workflow and durable context
 ```
 
 Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit files in `references/` for deeper task-specific guidance such as loop engineering, software engineering, product UI/UX, systematic thinking, CI templates, stack patterns, or multilingual token discipline.
@@ -46,6 +53,10 @@ Edit `SKILL.md` only for core behavior, routing, and reference discovery. Edit f
 - Avoid adding new dependencies, tools, or workflows unless they are necessary.
 - Keep instructions concise and operational.
 - Prefer progressive disclosure: keep `SKILL.md` lean and move optional detail into a reference file.
+- Keep complex-workflow guidance provider-neutral: use dependency gates, owned mutable scope, integration proof, and an explicit primary owner rather than assuming a specific sub-agent runtime.
+- Treat L3 plan files as durable execution context during execution: keep only decision-relevant system facts, contracts, proofs, and resume state; delete them on completion by default, and retain only on explicit request or repository policy. Do not append activity logs or hidden reasoning.
+- For defects and unexpected results, record an evidenced causal chain or an explicit unverified follow-up. A temporary containment is never a completed fix by itself.
+- Update plans and durable docs after material signals that change facts, behavior, contracts, risks, decisions, or handoff; use `Doc impact: none` where relevant instead of creating activity-log churn.
 - Do not add reference content that will be loaded for simple tasks unless it prevents a concrete failure.
 - Keep UI/UX guidance practical: interface structure, states, responsive behavior, accessibility, and verification should matter more than decorative preference.
 - Template files (`ci-templates-by-stack.md`, `readme-template.md`, `plan-template-extended.md`, `stack-patterns-and-pitfalls.md`) should always note "adapt to actual project" — they are starting points, not drop-in replacements.
@@ -70,6 +81,7 @@ Before submitting, check:
 - `skills/Eniac/SKILL.md` still has valid front matter.
 - New guidance does not conflict with the existing scope and token discipline rules.
 - Simple tasks still avoid unnecessary reference loading.
+- `python skills/Eniac/tests/test_finalize_plan.py` passes after changing plan-finalization behavior.
 
 ## Pull Requests
 

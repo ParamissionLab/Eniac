@@ -1,6 +1,6 @@
 # Systematic Thinking Reference
 
-Use when a direct fix may miss dependencies, hidden assumptions, tradeoffs, or feedback effects. Also use for any task requiring deep reasoning: complex architecture decisions, multi-system interactions, unfamiliar domains, or when the first two attempts failed and you need to think differently.
+Use when a direct fix may miss dependencies, hidden assumptions, tradeoffs, or feedback effects. Also use for any task requiring deep reasoning: complex architecture decisions, multi-system interactions, unfamiliar domains, or when the first two attempts failed and you need to think differently. For L2+ delivery loops, pair it with `algorithm-workflow.md` so analysis produces an explicit weighted next action, coverage record, causal claim, and documentation impact.
 
 ## Contents
 
@@ -204,9 +204,9 @@ Pick one active pattern:
 
 Switch patterns only when evidence stops fitting.
 
-### Root cause analysis (for repeated failures)
+### Root cause analysis (for every defect; deepen for repeated failures)
 
-When the same problem keeps recurring or fixes don't stick:
+For every defect, unexpected result, or regression, distinguish the observed symptom from its direct trigger before calling the work fixed. When the same problem keeps recurring or fixes do not stick, extend the analysis to contributors and system conditions:
 
 ```text
 Symptom (what you observe):
@@ -221,7 +221,7 @@ Ask "why?" at least 3 times:
 - Why is the import path wrong? → Because the module was moved but references weren't updated.
 - Why weren't references updated? → Because there's no automated check for stale imports.
 
-Fix at the deepest level that's within scope.
+Fix at the deepest level that's within scope. If an urgent containment is needed first, label it as containment, then continue the causal investigation. If the root cause is outside scope or cannot be proven, record the evidence, confidence, owner, and next discriminating check instead of claiming resolution.
 
 ## Decision
 

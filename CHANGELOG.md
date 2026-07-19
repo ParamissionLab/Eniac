@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning where practical.
 
+## [Unreleased]
+
+### Added
+
+- Added `references/architecture-evidence.md`: a load-on-demand, evidence-first architecture pass for existing systems. It covers Scan/Focus/Full sizing, claim labels, narrow inspection, caller and blast-radius mapping, evidence-backed findings, change/documentation gates, validation, and handoff.
+- Added the `Architecture-First Gate` to `SKILL.md`, so structural or non-local work is mapped before change while local work stays lean.
+- Added `references/workstream-orchestration.md`: dependency-aware sequential/parallel/pipeline/recovery workflows, workstream contracts, design/dispatch/integration gates, acceptance rules, conflict containment, and durable execution context.
+- Added `references/algorithm-workflow.md`: a reusable Frame/Weight/Map/Diagnose/Contain/Change/Prove/Contextualize/Decide algorithm with causal records, coverage matrix, and per-loop documentation-impact checks.
+
+### Changed
+
+- Strengthened Eniac's architecture and deep-audit route with explicit pass-promotion criteria, separation of facts from proposals, and traceable impact analysis.
+- Upgraded L3 plan files from disposable checklists to reusable execution context when they carry system facts, decisions, workflow state, proof, and handoff value; task-only L2 plans remain disposable.
+- Strengthened loop, ledger, and extended-plan references with workstream ownership, dependency waves, integration proof, and safe resume rules.
+- Corrected plan cleanup semantics: plans remain stable context while active but default to delete-on-complete at every level, with explicit retention opt-in and a verified deletion gate.
+- Added `scripts/finalize_plan.py` to make plan finalization deterministic, safe, idempotent, and verifiable.
+- Added owner- and workspace-boundary validation plus regression tests for the plan finalizer.
+- Made root-cause tracing mandatory before defect closure; emergency containment remains allowed but is labeled separately from a proven systemic correction.
+- Added work weighting, coverage, causal status, and documentation impact to core delivery, architecture, workflow, ledger, and plan references.
+
 ## [1.2.1] - 2026-07-06
 
 ### Added

@@ -1,6 +1,6 @@
 # Software Engineering Reference
 
-Use when creating, reading, modifying, testing, reviewing, documenting, or shipping code.
+Use when creating, reading, modifying, testing, reviewing, documenting, or shipping code. For L2+ work, load `algorithm-workflow.md` to make weighting, causal diagnosis, coverage, and documentation impact part of each material loop.
 
 ## Contents
 
@@ -17,7 +17,7 @@ Use when creating, reading, modifying, testing, reviewing, documenting, or shipp
 Own the path to a verified handoff:
 
 ```text
-Discover -> Plan -> Build -> Test -> Bug hunt -> Polish -> Document -> Ship
+Discover -> Plan -> Build -> Test -> Bug hunt -> Document -> Ship
 ```
 
 Use every phase for greenfield or broad work. For targeted work, abbreviate the phases but do not edit existing code blind.
@@ -33,6 +33,8 @@ Treat code work as engineering delivery, not text editing:
 - In existing projects, read the relevant code, tests, configs, and nearby patterns before changing anything.
 - Build on what exists: same framework, package manager, test style, architecture, naming, errors, and docs style.
 - Keep the change scoped, but do not stop after writing code if tests, lint, type checks, docs, or a smoke path are needed to prove the result.
+- Treat every defect, regression, or unexpected signal as a causal investigation. Contain urgent impact when needed, but do not call a symptom patch a fix without an evidenced cause or an explicit unverified follow-up.
+- At each material loop, update the execution context and decide whether durable documentation changed; do not add narrative churn when it did not.
 - Prefer small, reviewable patches with clear contracts over broad rewrites.
 - Report broader problems as risks unless they block the requested outcome.
 - Ship only when the requested behavior exists and the best relevant verification has run or a blocker is named.
@@ -52,7 +54,7 @@ Treat code work as engineering delivery, not text editing:
 
 | Task | First action | Main risk | Proof |
 | --- | --- | --- | --- |
-| Bug fix | reproduce or inspect failing path | symptom patch | failing case passes |
+| Bug fix | reproduce or inspect failing path | symptom patch | causal record + failing case passes |
 | Feature | find local analogs | pattern drift | behavior test/manual flow |
 | Refactor | list preserved contracts | behavior drift | tests or equivalence |
 | Build failure | capture first meaningful error | chasing noise | build reaches next state |
@@ -302,6 +304,8 @@ For UI/frontend changes, use `references/product-ux.md` when layout, visual hier
 
 Proactively inspect for defects in changed code and its immediate dependents.
 
+For every discovered defect, use the causal-record shape in `algorithm-workflow.md` before closure. Start with the cheapest discriminating check; a green test after a narrow workaround does not by itself prove the root cause is addressed.
+
 ### Inspection order
 
 1. Files modified during Build (highest regression probability)
@@ -347,7 +351,7 @@ Resolve all Critical and Warning findings before shipping. Info-level items may 
 
 ## Docs And Ship
 
-Update docs only where behavior or usage changed. Do not write broad tutorials unless requested.
+At every material loop, assess documentation impact. Update docs where behavior, usage, configuration, public contract, operating procedure, architecture decision, risk, or future-agent handoff changed; record `Doc impact: none` when an L2+ decision needs that trace. Do not write broad tutorials or activity logs unless requested.
 
 Load `project-interface-contract.md` when creating a new README or doing a major README rewrite. Load `delivery-proof-pipelines.md` only when adding, repairing, or reviewing CI.
 
@@ -376,11 +380,11 @@ Before handoff, verify each applicable item:
 - [ ] No high-confidence regressions remain unfixed.
 - [ ] No residual debug output (`console.log`, `print`, `fmt.Println`, `println!`, `puts`, `System.out.println`, `dd`, `debugger`, `std.debug.print`, `pry`).
 - [ ] No secrets, tokens, or credentials in source or output.
-- [ ] Documentation covering changed behavior is accurate.
+- [ ] Documentation/context impact is assessed and all changed behavior, contracts, operations, decisions, or handoff guidance are accurate.
 - [ ] `.gitignore` includes generated directories and environment files relevant to the stack.
 - [ ] `.env.example` enumerates required variables without values, when environment configuration exists.
 - [ ] A representative smoke path succeeds from a clean or near-clean state when complexity warrants it.
-- [ ] The disposable plan file is removed after verification confirms success.
+- [ ] The task-owned plan is finalized with its exact path, workspace root, and matching owner; its absence is checked unless explicit retention was requested or required by repository policy; deletion failures are reported as blockers.
 
 Skip items that do not apply to the task surface. Ceremony for its own sake is waste.
 

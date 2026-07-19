@@ -87,4 +87,4 @@ Escalate upward only when a lower layer cannot prove the relevant risk. For read
 
 Call work complete only when requested behavior exists, relevant verification passed, risky side effects were checked, documentation/contracts are accurate, and residual risks are stated. Use `partial` or `blocked` when any required outcome remains. Never convert an unrun check into an implied pass.
 
-Before final handoff, confirm the diff/changed-state boundary, remove task-owned temporary artifacts, and delete the disposable plan only after its completion gate succeeds.
+Before final handoff, confirm the diff/changed-state boundary, remove task-owned temporary artifacts, and finalize the disposable plan only after its completion gate succeeds. Use its exact path, explicit workspace root, and matching task owner; verify deletion unless explicit retention was authorized. Treat any finalization failure as a blocker, not a successful handoff.
