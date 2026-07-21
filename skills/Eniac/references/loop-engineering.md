@@ -101,6 +101,19 @@ Proceed only when the expected signal is worth the token/tool cost.
 
 Prefer evidence in this order: direct tool output, reproducible behavior, project-native tests, source/config inspection, then inference. Label inference and unresolved uncertainty; do not let a plausible explanation replace a proving signal.
 
+## Context Budget For Large Work
+
+Large refactors and multi-file bug hunts fail most often from context loss, not from wrong decisions. Manage the budget explicitly instead of reading until the window fills.
+
+- **Chunk by verification boundary, not by convenience.** A chunk is the largest set of files that can be changed and re-verified together while the invariant holds. For refactors, this is the wave boundary from `SKILL.md` Refactor Discipline; for a bug hunt spanning many call sites, it is one call site plus its direct test.
+- **Re-ground after every chunk, not just at the end.** Before starting the next chunk, re-read the plan's `Active State`/`Resume State`, not the full prior chat. Trust the plan file and current filesystem/git state over memory of earlier turns — memory of a long session degrades; the plan and the repo do not.
+- **Externalize facts the moment they are confirmed**, not when the task ends. A confirmed contract, invariant, or ruled-out hypothesis that only lives in conversation is lost on compaction. Write it to the plan file's `Evidence And Decisions` or `Confirmed facts` the same turn it is established.
+- **Prefer targeted re-reads over re-scanning.** After a compaction or interruption, do not re-run the discovery pass that already happened; re-read only the plan file, the files touched in the current wave, and the specific signal needed for the next decision.
+- **Cap working-set size deliberately.** Hold in active context only: the current wave's target files, their direct callers/tests, and the plan file. Everything else (completed waves, ruled-out hypotheses, historical exploration) belongs in the plan file as a compact fact, not in live context.
+- **Signal when the budget is the constraint, not the task.** If continuing would mean re-deriving already-established facts because they were not externalized, that is a process failure — write the missing fact to the plan now rather than pushing forward on a degraded picture.
+
+This applies together with the wave discipline in `SKILL.md` Refactor Discipline and the workstream gates in `workstream-orchestration.md`: those define wave/gate boundaries; this section defines what crosses a compaction boundary safely.
+
 ## Checkpoint And Resume
 
 At a milestone, interruption, context boundary, or costly failure, replace the plan's mutable state with:

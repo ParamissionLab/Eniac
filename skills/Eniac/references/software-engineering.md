@@ -54,7 +54,7 @@ Treat code work as engineering delivery, not text editing:
 
 | Task | First action | Main risk | Proof |
 | --- | --- | --- | --- |
-| Bug fix | reproduce or inspect failing path | symptom patch | causal record + failing case passes |
+| Bug fix | reproduce or inspect failing path (load `debugging-protocol.md`) | symptom patch | causal record + failing case passes |
 | Feature | find local analogs | pattern drift | behavior test/manual flow |
 | Refactor | list preserved contracts | behavior drift | tests or equivalence |
 | Build failure | capture first meaningful error | chasing noise | build reaches next state |
@@ -304,7 +304,7 @@ For UI/frontend changes, use `references/product-ux.md` when layout, visual hier
 
 Proactively inspect for defects in changed code and its immediate dependents.
 
-For every discovered defect, use the causal-record shape in `algorithm-workflow.md` before closure. Start with the cheapest discriminating check; a green test after a narrow workaround does not by itself prove the root cause is addressed.
+For every discovered defect, use the causal-record shape in `algorithm-workflow.md` before closure. Start with the cheapest discriminating check; a green test after a narrow workaround does not by itself prove the root cause is addressed. For non-trivial defects, run the full loop in `debugging-protocol.md`: reproduce, localize, discriminate hypotheses, fix minimally, lock with a regression test.
 
 ### Inspection order
 

@@ -52,14 +52,14 @@ Scale discovery, planning, verification, communication, and recovery independent
 Pick the cheapest mode that fits:
 
 - Answer: direct question or small explanation.
-- Investigate: unknown codebase, bug, failure, ambiguity.
+- Investigate: unknown codebase, bug, failure, ambiguity. For defects, load `references/debugging-protocol.md`: reproduce, localize, discriminate hypotheses, fix minimally, lock with regression proof.
 - Implement: requested creation or change.
 - Refactor: restructure existing code without changing behavior; explicit boundary, invariant, and regression proof required.
 - Greenfield launch: product contract, stack decision, foundation, walking skeleton, capability slices, hardening, release proof.
 - Full-cycle dev: discover, plan, build, test, bug hunt, polish, document, ship.
 - Deep code audit: whole-repo understanding, architecture map, dependency/caller map, or explicit "read all code" request.
 - Review: findings first, file/line evidence, risk, tests.
-- Product UI/UX: user-facing interface, visual system, app/site/dashboard/workflow usability.
+- Product UI/UX: user-facing interface, visual system, app/site/dashboard/workflow usability. Hold the premium bar in `references/product-ux.md`: system-driven type/spacing/color, designed states, engineered responsiveness, anti-slop checklist.
 - Batch: many small fixes, repeated edits, cleanup, bulk changes.
 - Design: architecture, planning, tradeoffs.
 - Agent design: prompt, skill, workflow, portable agent instructions.
@@ -111,8 +111,20 @@ Rules for refactors:
 - If the refactor reveals a bug or improvement opportunity outside scope, report it in the handoff — do not fix it silently.
 - For large refactors (>10 files), work in waves: define wave boundary → edit wave → verify invariant → next wave. Never edit all files then check once at the end.
 - Load `references/systematic-thinking.md` when the refactor involves complex dependency chains or the change can propagate in non-obvious ways.
+- For refactors or bug hunts large enough to risk context loss across waves, load `references/loop-engineering.md#context-budget-for-large-work`: externalize confirmed facts into the plan file the moment they are established, re-ground from the plan and current repo state at each wave boundary instead of replaying prior chat, and keep the live working set to the current wave plus the plan file.
 
 Escalate only when evidence shows the current mode cannot meet done criteria.
+
+### Decision Discipline
+
+Apply to every non-trivial choice (approach, fix site, scope call, tool, escalation):
+
+- Evidence hierarchy: observed signal > read source > repo convention > documentation > inference > prior/memory. Never let a lower tier override a higher one; state which tier a decision rests on when tiers conflict.
+- Classify reversibility first. Reversible decision with a cheap verification: decide and act — deliberation past that point is waste. Hard-to-reverse or contract-changing decision: generate at least two options, name the discriminating evidence, and prefer the choice that keeps future options open.
+- Confidence gate: act when the evidence supports one option; gather the single cheapest discriminating fact when it doesn't. Never break a tie by familiarity or by whichever option was generated first.
+- Every material decision commits to a falsifier: the signal that would show it was wrong and the checkpoint where it will be seen. A decision with no observable failure signal is a guess — label it as one.
+- When new evidence contradicts an earlier decision, re-decide explicitly; do not defend the old choice with patches.
+- For bug-cause decisions, use `references/debugging-protocol.md`; for wide option spaces or architecture decisions, use `references/systematic-thinking.md`.
 
 ### Mode Announcement
 
@@ -301,6 +313,7 @@ Do not include long reasoning traces, full logs, full file contents, generic tea
 Load only when needed, and load the most specific one first:
 
 - `references/software-engineering.md`: full-cycle code work, audits, tests, bug hunts, many-small-edit batches.
+- `references/debugging-protocol.md`: hands-on bug fixing — reproduction, localization/bisection, hypothesis discrimination, instrumentation, minimal fix, regression lock, bug-class playbook, hard-bug tactics.
 - `references/greenfield-launch-sequence.md`: staged product contract, stack choice, walking skeleton, capability slices, hardening, and clean-start proof for new systems.
 - `references/commands-by-stack.md`: ready-to-use discovery, test, static-analysis, lint, format, and audit commands selected by detected stack and shell.
 - `references/stack-risk-matrix.md`: detected-stack invariants, silent failure modes, boundary risks, and proof signals; load only the relevant rows.
@@ -312,7 +325,7 @@ Load only when needed, and load the most specific one first:
 - `references/project-interface-contract.md`: evidence-backed project onboarding and operations contract for new or materially rewritten READMEs.
 - `references/delivery-proof-pipelines.md`: derive CI gates as a repository-specific proof graph; load only when adding, repairing, or reviewing CI.
 - `references/safety-and-delivery.md`: authorization gates, secrets, risky change classes, verification ladder, baseline/regression handling, and truthful completion.
-- `references/product-ux.md`: substantial UI/UX, responsive layouts, visual hierarchy, controls, states, accessibility, workflow checks.
+- `references/product-ux.md`: substantial UI/UX — premium design standard (type/spacing/color/motion systems), anti-slop checklist, responsive engineering, visual hierarchy, controls, states, accessibility, workflow checks.
 - `references/loop-engineering.md`: complex autonomy, repeated failures, expensive actions, delegation, handoff, stop rules.
 - `references/workstream-orchestration.md`: dependency-aware workflows, safe parallel lanes, workstream contracts, integration gates, durable execution context, and conflict recovery.
 - `references/algorithm-workflow.md`: reusable frame/weight/map/diagnose/contain/change/prove/contextualize/decide algorithm, root-cause closure, coverage matrix, and per-loop documentation impact.
