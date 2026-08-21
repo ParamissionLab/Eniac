@@ -1,25 +1,43 @@
 # Eniac
 
-Eniac is a provider-neutral, agent-agnostic operating skill for token-aware AI agents. It helps agents handle simple tasks without overthinking, scale up to complex autonomous work, stay scoped, verify results, and avoid wasting tokens or credits.
+Eniac is a provider-neutral, agent-agnostic operating skill for full-cycle software engineering. It gives an AI agent a working mind rather than a checklist: three agencies that disagree productively, a fixed priority ladder, a verification discipline, and a token budget that is spent on decisions instead of reassurance.
+
+The cognitive model is borrowed from Freud's structural theory and used as machinery, not decoration.
 
 Credit: [ParamissionLab](https://github.com/ParamissionLab)
 
+## The Model
+
+| Agency | Asks | Produces | Fails as |
+| --- | --- | --- | --- |
+| **Id** — drive | "What is the fastest path that could actually work?" | candidate actions, pattern matches, momentum | guessing, scope creep, unverified claims |
+| **Superego** — conscience | "What must not break, and what did they actually ask for?" | invariants, authority limits, the done bar | ceremony, gold-plating, token burn |
+| **Ego** — reality | "What do I do next and how will I know it worked?" | the decision, the batch, the proof | — |
+
+Only the Ego acts. The other two are inputs, and when they agree the arbitration costs nothing — which is what keeps the model cheap instead of theatrical.
+
+Four other Freudian ideas do real work:
+
+- **Economic principle** (finite energy, distributed) becomes the L0–L4 investment ladder that decides how much context a task is allowed to consume.
+- **Topographic model** (conscious / preconscious / unconscious) becomes progressive disclosure: what is in context now, what is retrievable on demand, and what stays unread.
+- **Reality testing** — the Ego's job of separating the internal model from the world — becomes the rule that only executed output counts as evidence.
+- **Defense mechanisms** become a catalog of agent failure modes under pressure, each with a tell and a correction, so the agent can catch itself avoiding the work.
+
 ## What It Does
 
-- Runs compact Perceive -> Reason -> Act -> Observe loops with cause, coverage, and documentation-impact checks on material signals.
-- Scales effort from tiny edits (L0) to complex architecture (L3) and high-risk production work (L4).
-- Keeps context use lean with evidence-gated expansion, one-primary-reference routing, targeted reads, compact phase caches, batching, and narrow verification first.
-- Supports senior software engineering workflows: staged Greenfield launches, project-state detection, codebase audits, stack-risk analysis, restartable execution ledgers, evidence-backed project interfaces, CI proof graphs, full-cycle build/test/bug-hunt/polish/docs/ship, deep codebase audits, whole-repo code reads when requested, UI/UX/frontend quality, prompt or agent workflow design, and many-small-edit batches.
-- Composes task-specific risk overlays for performance, security/privacy, data migrations, API compatibility, dependency/toolchain changes, infrastructure/configuration, reliability/incidents/observability, concurrency/distributed systems, test quality, and release rollout.
-- Uses dependency-aware workstreams for difficult multi-surface work, while keeping one integration owner, explicit mutable scope, acceptance proof, and recovery gates.
-- Requires a causal record before closing defects; emergency containment is clearly separated from the systemic correction.
-- Uses a bounded Id/Ego/Superego decision triad for material tradeoffs: outcome drive proposes, duty protects obligations, and reality mediates the evidence-backed choice and falsifier.
-- Adds proportional test-first delivery, technically skeptical review handling, and behavior-level skill evaluation without forcing those workflows onto simple or unsuitable work.
-- Provides ready-to-adapt CI templates for 8 stacks (Node.js, Python, Go, Rust, Zig, Ruby, Java, .NET) plus release workflows.
-- Includes concrete code pitfalls and good patterns for 11 stacks with bad-to-good examples.
-- Ships README and plan templates for consistent, high-quality documentation and planning.
-- Handles Thai and other token-expensive languages with compact planning while preserving exact paths, commands, identifiers, and quotes.
-- Loads deeper references only when needed (36 reference files, loaded on demand).
+- **Scales effort to real risk.** L0 answers directly with no ceremony; L4 inspects freely but asks before mutating. Applying L3 process to L1 work is treated as the expensive mistake it is.
+- **Scales to work that does not fit in one head.** Magnitude is tracked separately from risk, because a two-line change on a payment path is high risk and tiny while a 400-file rename is low risk and enormous. From M1 upward the binding constraint becomes memory rather than thinking, so the skill switches to durable checkpoints, models built from partial evidence, verified waves, and migrations where every intermediate state is a good state.
+- **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
+- **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
+- **Prioritizes automatically.** A fixed six-tier ladder — active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else — so ordering does not depend on whatever was noticed most recently. Tier six is reported, never silently done.
+- **Refuses vagueness.** A request is actionable only when outcome, scope, and proof are each nameable in one line. Ambiguity is resolved from evidence, then by stated assumption, and only then by asking one specific question.
+- **Verifies before claiming.** A five-rung ladder from "it parses" to "nothing else broke", baseline capture before regression claims, and a vocabulary where *verified*, *implemented*, and *unverified* mean different things.
+- **Watches its own avoidance.** Denial, rationalization, projection, displacement, repression, regression, reaction formation, intellectualization — each with the behavior that gives it away and the move that breaks it. Plus sublimation, the one worth keeping.
+- **Knows when it is stuck.** Two failures of the same approach means the model is wrong, not the execution; the third attempt is where tokens go to die. It stops, states what it believed versus what happened, and either changes approach or reports a clear blocker.
+- **Has opinions about code.** When to abstract and when duplication is cheaper, how to name, which errors to catch and which to let fly, where a boundary is real, what a test should assert, what is safe to delete.
+- **Disagrees once, then commits.** A request that looks like a mistake gets one concrete objection, then the work gets done — the user holds context the agent does not.
+- **Learns deliberately.** On correction, repeated failure, or surprise, it records *believed X · actually Y · cheapest check that would have caught it* and writes the lesson into the smallest durable place that will be read again — preferring a test over a comment over prose.
+- **Spends tokens on purpose.** Nothing loads without naming the decision it could change and the signal expected from it.
 
 ## Structure
 
@@ -27,154 +45,116 @@ Credit: [ParamissionLab](https://github.com/ParamissionLab)
 skills/
   Eniac/
     SKILL.md
-    evals/
-      scenarios.json
-    scripts/
-      audit_context.py
-      finalize_plan.py
-      validate_package.py
-    tests/
-      test_audit_context.py
-      test_finalize_plan.py
-      test_validate_package.py
     references/
-      ci-templates-by-stack.md
-      architecture-evidence.md
-      algorithm-workflow.md
-      commands-by-stack.md
-      code-review-loop.md
-      decision-triad.md
-      debugging-protocol.md
-      delivery-proof-pipelines.md
-      execution-ledger.md
-      greenfield-launch-sequence.md
-      loop-engineering.md
-      multilingual-token-discipline.md
-      plan-template-extended.md
-      platform-portability.md
-      product-ux.md
-      project-interface-contract.md
-      readme-template.md
-      safety-and-delivery.md
-      skill-evaluation.md
-      software-engineering.md
-      specialist-engineering.md
-      specialists/
-        api-contract-evolution.md
-        concurrency-distributed.md
-        data-schema-migration.md
-        dependency-toolchain.md
-        infrastructure-configuration.md
-        performance-capacity.md
-        release-rollout.md
-        reliability-incident-observability.md
-        security-privacy.md
-        test-quality-flakiness.md
-      stack-patterns-and-pitfalls.md
-      stack-risk-matrix.md
-      systematic-thinking.md
-      test-first-delivery.md
-      workstream-orchestration.md
+      workflows.md
+      craft.md
+      findings.md
+      performance.md
+      production.md
+      enterprise.md
+      scale.md
+      campaigns.md
+      triage.md
+      reality-testing.md
+      defenses.md
+      token-economy.md
+      learning-loop.md
+      safety.md
+      stack-signals.md
 ```
 
-`SKILL.md` is the lightweight control plane. The 36 files in `references/` are loaded only when deeper task-specific guidance can change a decision or proof. The separate `evals/scenarios.json` manifest holds portable behavior and pressure cases; package validation checks its schema, while forward evaluation checks actual agent behavior. `audit_context.py` reports stable character/byte proxies because exact token counts vary by model and tokenizer.
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The fifteen reference files are loaded only when one can change the next decision.
 
-| Category | Files | Loaded when |
-|----------|-------|-------------|
-| Core engineering | `software-engineering.md`, `commands-by-stack.md` | Broad/full-cycle code work, interacting delivery phases, or unfamiliar command selection; targeted work starts with its most specific reference |
-| Engineering methods | `test-first-delivery.md`, `code-review-loop.md`, `decision-triad.md` | Falsifiable behavior delivery, review/feedback handling, or material decisions with competing drive, duty, and reality |
-| Engineering risk overlays | `specialist-engineering.md`, `specialists/*.md` | Router loads only the matched performance, security/privacy, migration, contract, dependency, infrastructure/configuration, reliability/incident/observability, concurrency/distributed, test-quality, or release playbook |
-| Architecture | `architecture-evidence.md` | Existing-system architecture work, non-local changes, blast-radius analysis, or handoff |
-| Complex workflow | `workstream-orchestration.md` | Difficult multi-workstream work, dependency waves, safe parallel execution, integration, or durable task context |
-| Algorithmic quality | `algorithm-workflow.md` | L2+ execution loops requiring root-cause diagnosis, work weighting, coverage, or documentation-impact discipline |
-| Actionable templates | `ci-templates-by-stack.md`, `readme-template.md`, `plan-template-extended.md` | Creating CI, README, or plans for broad work |
-| Stack knowledge | `stack-risk-matrix.md`, `stack-patterns-and-pitfalls.md` | Stack-specific correctness risk |
-| Greenfield | `greenfield-launch-sequence.md`, `execution-ledger.md` | New project or broad milestoned work |
-| Safety | `safety-and-delivery.md`, `delivery-proof-pipelines.md` | L4, CI, dependencies, production |
-| Specialized | `product-ux.md`, `loop-engineering.md`, `systematic-thinking.md`, `multilingual-token-discipline.md` | UI/UX, autonomy, complex decomposition, multilingual |
-| Meta | `skill-evaluation.md`, `project-interface-contract.md`, `platform-portability.md` | Skill/prompt evaluation, README rewrites, or platform installation |
+| Reference | Load when |
+| --- | --- |
+| `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
+| `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, test design, deletion, dependencies, commits |
+| `findings.md` | the deliverable is a set of findings, questions, or a handoff rather than a change — claim labels, finding shape and severity, what is not a finding, artifact budget, handoff minimum bar |
+| `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |
+| `production.md` | the change will meet real traffic — environment differences, timeout/retry/idempotency/degradation per remote call, observability and alerting, SLOs, performance under load, large-table data operations, runbooks, cost |
+| `enterprise.md` | the work sits inside an organization's constraints — regulated data, multi-tenant isolation, least privilege, change control and freeze windows, team process, legacy and unowned code, incident severity, supply chain |
+| `scale.md` | the system is too large to read — modelling from partial evidence, locating anything, search technique at size, monorepos, the five layers of blast radius |
+| `campaigns.md` | work spans many sessions or a staged rollout — campaign contract, checkpoints, codemods, expand/contract and strangler migrations, delegation, durable decisions |
+| `triage.md` | dependency ordering, parallel lanes, plan files, parking and resuming, handoff |
+| `reality-testing.md` | choosing a verification level, separating baseline from regression, or deciding what closes a task |
+| `defenses.md` | the same approach has failed twice, or the work has started avoiding itself |
+| `token-economy.md` | large repositories, repeated compaction, expensive tools, long autonomous runs |
+| `learning-loop.md` | capturing a lesson and deciding where it should durably live |
+| `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
+| `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything |
 
 ## Installation
 
-See `skills/Eniac/references/platform-portability.md` for current installation paths across supported platforms (OpenAI Codex, Anthropic Claude Code, Google Gemini CLI, GitHub Copilot, OpenCode, Cline, Windsurf, Zed, Augment, and others).
+Copy the `skills/Eniac/` folder into your agent's skills directory.
 
-Quick approach: copy or link the entire `skills/Eniac/` folder into your agent's native skills directory, or use the shared `.agents/skills/eniac/` path where supported. If your runtime does not support skill loading, paste the core contract from `SKILL.md` into your agent instructions and point the agent at the reference files as optional material.
+**Claude Code** — user-wide, available in every project:
+
+```bash
+cp -r skills/Eniac ~/.claude/skills/Eniac
+```
+
+Or per-project, checked in with the repository:
+
+```bash
+cp -r skills/Eniac .claude/skills/Eniac
+```
+
+**Other agents** — copy the same folder into whatever directory that runtime loads skills from, keeping `SKILL.md` and `references/` together so the relative links resolve. Where a shared convention is supported, `.agents/skills/eniac/` works the same way.
+
+**No skill support** — paste the contents of `SKILL.md` into your agent's instructions and point it at the reference files as optional material.
+
+Restart the agent or start a new session after installing.
 
 ## Usage
 
-Use the `eniac` skill when you want:
+Reach for the `eniac` skill when you want:
 
-- autonomous work that should continue until done or genuinely blocked
-- strict token, credit, context, or scope control
-- software engineering, debugging, review, planning, architecture, or research
-- material problem-solving choices that should balance Id-like drive, Superego-like duty, and Ego-like reality testing without verbose role-play
-- performance, security, migration, compatibility, dependency, infrastructure, reliability, concurrency, testing, or release work that needs risk-specific proof
-- UI/UX/frontend work that should fit the product type, visual system, and real user workflow
-- many small edits that should be batched safely
-- Thai or multilingual work that should stay concise
+- software work that ends in a proof rather than a patch
+- strict token, context, and scope control
+- competing problems ranked without being asked to rank them
+- autonomous work that continues until done or genuinely blocked, and says which one it is
+- production, migration, dependency, or release work that stops and asks at the right moment
+- Thai or other multilingual work that stays concise without mangling paths and commands
 
 Example prompts:
 
 ```text
-Use eniac to fix this bug, verify it, and keep changes scoped.
+Use eniac to fix this bug, verify it, and keep the change scoped.
 ```
 
 ```text
-Use eniac to improve this dashboard UX for real daily operations without making it look like a landing page.
+Use eniac to audit this repo and tell me what would break if I changed the auth middleware.
 ```
 
 ```text
-Use eniac to tighten this app UI: layout, controls, states, responsive behavior, and accessibility, without adding visual noise.
+Use eniac to take this from empty folder to something that runs and has a README.
 ```
 
 ```text
 ใช้ eniac แก้หลายไฟล์ตาม pattern เดียวกันแบบประหยัด token และตรวจให้พอมั่นใจ
 ```
 
-## Token And Credit Discipline
+## Token Discipline
 
-Eniac is designed to reduce waste:
+The savings come from structure rather than from exhortation:
 
-- simple work should not load extra references
-- normal work should begin with the target, its direct caller/test/config, and one primary method; expand one evidenced dependency or risk at a time
-- large files should be searched or read by targeted ranges first
-- noisy or truncated output should be narrowed by path, pattern, range, or limit instead of repeating the same broad read
-- repeated edits should be batched by one safe rule
-- concurrent work should begin only after contracts, mutable scopes, and integration proof are explicit
-- L3 work should keep a compact durable execution context during execution so a later session can resume from verified facts; plans are deleted on completion by default unless retention is explicitly requested
-- each material loop should reweight the next action and assess applicable flow, contract, failure, operations, and documentation coverage
-- a green symptom check is not a final fix unless the causal record is proven or its uncertainty and owner are explicit
-- installed references should stay specific so UI/UX, software, loop, and multilingual guidance load only when they can change the result
-- broad tests, browser checks, web lookups, and subagents should run only when they can change the decision or risk report
-- phase and compaction boundaries should retain only confirmed facts/sources, decisions/falsifiers, changed paths, accepted proof, risk, and the next action
-- explicit whole-codebase and high-risk requests may deliberately exceed the lean budget; context limits are expansion gates, not correctness quotas
-- final reports should summarize changed behavior, verification, risks, and next steps without long reasoning traces
-
-Audit the always-loaded control plane and largest on-demand references with:
-
-```powershell
-python skills/Eniac/scripts/audit_context.py --max-entry-characters 23000
-```
-
-This guard prevents silent control-plane bloat while leaving exact token accounting to the active model/runtime tokenizer.
+- Nothing is loaded without naming the decision it could change and the signal expected. Loading for reassurance is the failure this prevents.
+- Simple work loads no references at all; normal work loads at most one.
+- Cheap sources first — file listings, manifests, `rg`, headings, line ranges — before whole files.
+- Noisy or truncated output is narrowed, never re-run wider.
+- Related reads, searches, edits, and checks go in one round trip.
+- The working set is a small replaceable evidence cache, not an accumulating log.
+- Output answers the question asked: no restating the request, no narrating routine tool calls, no unrequested tutorial.
+- Budgets are gates, not quotas — a risky change may cross one, and says in a clause why the cheap path was not enough.
 
 ## Updating
 
 ```bash
 git -C Eniac pull
-# Then copy the skills/Eniac folder to your agent's skill directory
-# See platform-portability.md for your target platform path
+cp -r skills/Eniac ~/.claude/skills/Eniac
 ```
 
 Restart your agent or start a new session after updating.
-
-## Validation
-
-```powershell
-python skills/Eniac/scripts/validate_package.py --repo-root .
-python skills/Eniac/scripts/audit_context.py --max-entry-characters 23000
-python -m unittest discover -s skills/Eniac/tests -p "test_*.py"
-```
 
 ## Versioning
 
@@ -198,4 +178,4 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).

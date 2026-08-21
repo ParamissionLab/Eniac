@@ -4,139 +4,41 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning where practical.
 
-## [Unreleased]
+## [1.0.0] - 2026-08-21
+
+Initial release. Eniac is a provider-neutral, agent-agnostic operating skill for full-cycle software engineering, built around Freud's structural model of the mind used as working machinery rather than as decoration.
 
 ### Added
 
-- Added `scripts/audit_context.py`, a dependency-free provider-neutral context audit with stable line, character, UTF-8 byte, direct-route, and largest-reference metrics plus an optional control-plane budget gate.
-- Added five behavior scenarios for targeted context expansion, truncated-output recovery, explicit deep-audit coverage, compaction-safe resume, and long Thai prompt compression.
-- Added `references/decision-triad.md`, a bounded Id/Ego/Superego engineering metaphor for material decisions: outcome drive proposes, duty checks task-owned obligations, and reality mediates an evidence-backed choice with a falsifier.
-- Added load-on-demand `test-first-delivery.md` and `code-review-loop.md` methods for honest Red/Green/Refactor/Integrate proof, proportional exceptions, outcome-first review, skeptical feedback verification, and evidence-based finding closure.
-- Added `references/skill-evaluation.md` plus 17 portable behavior, pressure, recovery, trigger, and counter-trigger scenarios in `evals/scenarios.json`.
-- Extended package validation and regression tests to verify evaluation-manifest JSON, schema version, scenario kinds, unique lower-kebab-case IDs, prompts, expected outcomes, and anti-pattern lists.
-- Added `references/specialist-engineering.md` as a compact risk router plus ten focused `references/specialists/*.md` playbooks for performance/capacity, security/privacy, data/schema migration, API/contract evolution, dependency/toolchain changes, infrastructure/configuration, reliability/incidents/observability, concurrency/distributed work, test quality/flakiness, and release/rollout.
-- Added `scripts/validate_package.py` for deterministic frontmatter, reference-catalog, local-link, documented-path, reference-count, and Python-syntax validation using only the standard library.
-- Added regression tests for safe plan finalization and package validation.
-- Added `references/architecture-evidence.md`: a load-on-demand, evidence-first architecture pass for existing systems. It covers Scan/Focus/Full sizing, claim labels, narrow inspection, caller and blast-radius mapping, evidence-backed findings, change/documentation gates, validation, and handoff.
-- Added the `Architecture-First Gate` to `SKILL.md`, so structural or non-local work is mapped before change while local work stays lean.
-- Added `references/workstream-orchestration.md`: dependency-aware sequential/parallel/pipeline/recovery workflows, workstream contracts, design/dispatch/integration gates, acceptance rules, conflict containment, and durable execution context.
-- Added `references/algorithm-workflow.md`: a reusable Frame/Weight/Map/Diagnose/Contain/Change/Prove/Contextualize/Decide algorithm with causal records, coverage matrix, and per-loop documentation-impact checks.
+- **Three-agency cognitive core** in `SKILL.md`. Id proposes the fastest viable path, Superego names the strongest objection and the authorized scope, Ego decides and is the only agency permitted to act. Arbitration is internal, capped at one line, and skipped entirely when the two sides agree — so the model costs nothing on work that is not contested.
+- **The Ego Loop** as the universal execution cycle: Perceive, Arbitrate, Commit, Execute, Reality-test, Metabolize.
+- **Investment levels L0-L4**, derived from Freud's economic principle, binding ceremony and context loading to real risk. Each dimension scales independently, so a one-line change on a payment path can be L4 authorization with an L1 read.
+- **A fixed six-tier triage ladder** for automatic prioritization: active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else. Tier six is reported rather than silently done, and work in progress is capped at one item.
+- **`Ambiguity Is Resolved, Never Inherited`** — resolve from evidence, then by stated assumption, and only then by one specific question. Hedged answers that cover several readings at once are named as a failure mode.
+- **Reality testing** as the closing discipline: only executed output counts as evidence, with a five-rung verification ladder, baseline capture before any regression claim, and a reporting vocabulary where *verified*, *implemented*, and *unverified* mean different things.
+- **A defense-mechanism catalog** covering denial, rationalization, projection, displacement, repression, regression, reaction formation, intellectualization, omnipotence, and sublimation — each with its behavioral tell and its correction — plus signal anxiety as the escalation trigger.
+- **A learning loop** keyed to correction, repeated failure, and surprise. It produces `believed X / actually Y / cheapest check that would have caught it` and places the lesson in the smallest durable location that will be read again, preferring a test over a comment over prose.
+- **Context management through the topographic model** — conscious, preconscious, unconscious — making progressive disclosure the architecture rather than an aspiration. Nothing loads without naming the decision it could change and the signal expected from it.
+- **Authorization gates** classifying every action as read, local mutation, external effect, destructive, or irreversible, with untrusted tool output treated as data rather than instructions.
+- **A stuck protocol**. Two failures of the same approach indicate a wrong model rather than a wrong execution, so the second failure stops editing and buys an observation, the third changes approach rather than parameters, and a genuine block is reported with what was tried, what was learned, and the one thing that would unblock it.
+- **Code craft judgment** in `craft.md`: abstraction timing and the rule of three, naming, the three-way error decision, boundaries and coupling, test design, safe deletion, comments, dependency weight, and commit hygiene.
+- **A Product UI route** covering product-type fit, designed states, systematized type and spacing, hierarchy, responsive engineering, accessibility as correctness, and an anti-slop checklist.
+- **Handling for unverifiable work**: remove the barrier if possible, otherwise name it, take the strongest check still available, and label the result `Unverified` with the command that would settle it. Presenting an expected output as an observed one is named as the most damaging failure available to an agent.
+- **A first-contact sequence** for unfamiliar repositories — install, build, test with a recorded baseline, run — with an explicit prohibition on loosening project configuration to make a command pass.
+- **Disagree once, then commit**: one concrete objection to a request that looks like a mistake, then the work.
+- **Magnitude levels M0-M3**, tracked independently of risk, because size and danger are different problems. From M1 upward the binding constraint becomes memory rather than thinking, and the skill switches to durable state, partial-evidence models, verified waves, and staged rollout.
+- **`scale.md` for systems too large to read**: modelling from entry points, persistence, seams, and ownership; three questions that locate anything; search technique that narrows by region before pattern; monorepo build-graph and affected-target discipline; the five layers of blast radius, of which static callers are only the first; and an explicit stopping rule for when enough has been read.
+- **`campaigns.md` for long-horizon work**: a campaign contract with kill criteria written before sunk cost exists, checkpoints designed to survive total context loss, codemods and verified waves over hand edits past twenty files, expand/migrate/contract and dual-write/backfill/read-switch and strangler-fig migrations, staged rollout with abort criteria named in advance, a four-condition test for delegable work, five-line durable decision records, and honest abandonment.
+- **An Incident route** that inverts the normal order — assess, mitigate, preserve evidence, communicate state rather than theories, then diagnose — with two corrections required: the cause, and whatever let it reach production. L4 by default.
+- **`production.md` for systems that meet real traffic**: environments as genuinely different systems rather than copies; four questions every remote call must answer — timeout, retry with jittered backoff and a budget, idempotency, and degradation — plus circuit breakers and bulkheads; third-party availability as your availability; observability judged by whether a stranger can diagnose it at 3am, with cardinality named as the cost trap and alerting on symptoms rather than causes; SLOs and error budgets as a way to decide risk by measurement; a fixed optimization order with measurement on production-shaped data; large-table operations where locking rather than duration is the danger, with throttled resumable backfills; six-line runbooks; and cost as a production property.
+- **`enterprise.md` for organizational constraints**: recognizing the data regime and its consequences; a prohibition on inventing compliance claims, with the gap reported instead; multi-tenant isolation as the highest invariant, tested through the denial path; least privilege, with never widening a permission to fix a bug; change management, freeze windows, and separation of duties surfaced as questions rather than assumed permissive; team process and CI gates as contracts not friction; a protocol for legacy and unowned code that cannot be run or tested; incident severity levels and blameless postmortems; and supply chain discipline.
+- **`findings.md` for read-only output discipline**: a claim-label taxonomy of `Fact`, `Inference`, `Assumption`, `Proposed`, and `Unknown`, with an explicit prohibition on hiding uncertainty inside confident prose or writing a proposal in a tense that implies it exists; `None identified` as a legitimate result so an omission cannot read as both "nothing there" and "not checked"; an early-exit answer for work that needs no pass at all; two legitimate baselines for judging code — the framework's documented conventions and the project's own dominant pattern, never personal taste — with a ratio rule separating drift from an open question; a six-field finding shape where impact must be stated for this system and severity inflation is named as the reason reports get ignored; a list of things that are not findings; blocking versus open questions; an artifact budget per depth; and a handoff minimum bar whose most-omitted field is what the next person must not touch.
+- **`performance.md` for measured optimization**: a measure/identify/fix/verify/guard loop, a symptom-to-first-measurement decision tree, a fixed optimization order, and a keep-or-revert table in which a result inside run-to-run variance is a revert rather than a keep — with the sunk-cost rationalization that breaks this rule named directly. Also an attempt ledger so a dead idea stays dead, and a guard step so a win survives the next person who does not know the history.
+- **An Optimize route** for work that is measurably slow, distinct from ordinary implementation.
+- **Fifteen on-demand references**: `workflows.md` (step chains per route plus risk overlays), `craft.md`, `findings.md`, `performance.md`, `production.md`, `enterprise.md`, `scale.md`, `campaigns.md`, `triage.md`, `reality-testing.md`, `defenses.md`, `token-economy.md`, `learning-loop.md`, `safety.md`, and `stack-signals.md`.
+- **Multilingual token discipline**: reason compactly in English, reply in the user's language, and never translate identifiers, paths, commands, error text, or quoted strings.
 
-### Changed
+### Package
 
-- Reduced always-loaded control-plane size and replaced broad L2 reference loading with an evidence gate: the detailed algorithm reference now loads only when cause, priority, coverage, or cross-loop context requires it.
-- Added smallest-context-packet, one-edge expansion, truncated-output narrowing, compact evidence-cache, and one-primary-reference rules while preserving explicit Deep audit and risk-driven expansion.
-- Reduced always-loaded `SKILL.md` plan duplication by moving canonical plan shape and lifecycle detail into `execution-ledger.md`, while retaining concise routing, ownership, and completion invariants in the control plane.
-- Added selective engineering-method gates and integrated test-first/review behavior into the software-engineering task playbook without making TDD or triad narration mandatory for unsuitable or simple work.
-- Removed an old context-tax contradiction: targeted debug, review, test, refactor, and specialist work now starts with its specific reference instead of loading the full software-engineering playbook by default.
-- Framed Id/Ego/Superego as a non-literal decision aid rather than a scientific claim, with explicit dominance-failure controls against reckless scope, perfectionist paralysis, and timid compromise.
-- Reframed `SKILL.md` routing as one primary workflow plus evidence-backed risk overlays, with a universal completion contract tied to the intended entry point, highest-risk invariant, impact-scaled proof, and explicit residual risk.
-- Split read-only/design proof from mutation proof, made full debugging conditional for L1 defects, aligned flaky-test evidence rules, and kept bounded auth/security/persistence work at Focus unless inspected breadth justifies Full.
-- Expanded the software-engineering task playbook with specialist first actions, failure risks, and proof signals while retaining progressive disclosure.
-- Corrected README package structure, reference counts, and validation commands so documented package guarantees match tracked files.
-- Strengthened Eniac's architecture and deep-audit route with explicit pass-promotion criteria, separation of facts from proposals, and traceable impact analysis.
-- Upgraded L3 plan files from disposable checklists to reusable execution context when they carry system facts, decisions, workflow state, proof, and handoff value; task-only L2 plans remain disposable.
-- Strengthened loop, ledger, and extended-plan references with workstream ownership, dependency waves, integration proof, and safe resume rules.
-- Corrected plan cleanup semantics: plans remain stable context while active but default to delete-on-complete at every level, with explicit retention opt-in and a verified deletion gate.
-- Added `scripts/finalize_plan.py` to make plan finalization deterministic, safe, idempotent, and verifiable.
-- Added owner- and workspace-boundary validation plus regression tests for the plan finalizer.
-- Made root-cause tracing mandatory before defect closure; emergency containment remains allowed but is labeled separately from a proven systemic correction.
-- Added work weighting, coverage, causal status, and documentation impact to core delivery, architecture, workflow, ledger, and plan references.
-
-## [1.2.1] - 2026-07-06
-
-### Added
-
-- Added Mode Announcement in `SKILL.md` Route section: agent states its project classification and chosen route in one line before acting, giving the user early correction opportunity.
-- Added Test Coverage Guidance table in `software-engineering.md`: maps delivery shape (library, service, CLI, component, app, script) to appropriate test focus and minimum useful signal.
-- Added Test Isolation rule in `software-engineering.md`: each test must own its state via fresh initialization; cross-test mutation is prohibited.
-- Added Test Naming convention: describe the behavior under test as a readable assertion.
-- Added Inline Documentation section in Docs And Ship: language-native doc-comment format table, module-level comment guidance, and TODO/FIXME for acknowledged limitations.
-- Added Working In Existing Codebases section in Build: inspect local analogs first, scope edits to the task, adopt repository conventions, propose structural changes only when they unblock work or fix a defect.
-- Added `To run:` field to final report so users get exact reproduction commands.
-
-### Changed
-
-- Rewrote Production Code Bar in `software-engineering.md` with original phrasing: intent-revealing identifiers, single-responsibility extraction rule, decision-justifying comments, actionable error messages, trust-boundary validation, no magic literals, and idiomatic naming per language.
-- Rewrote Bug Hunt section in `software-engineering.md` as "Defect Radar" with original checklist structure (12 items organized by risk class), priority-ordered inspection path, and structured defect report format.
-- Rewrote Ship Checklist in `software-engineering.md` with concise verification items, stack-generated directory exclusion guidance, and "ceremony for its own sake is waste" principle.
-- Rewrote `references/systematic-thinking.md` with Deep Reasoning Protocol (6 steps), Dependency & Impact Mapping with ripple analysis and radius classification, Root Cause Analysis, Decision quality checks, Assumption tracking, and Complex Refactoring Thinking with strangler-fig progression.
-- Added Refactor route in `SKILL.md` with explicit boundary lock, wave-based execution, invariant verification between waves, and prohibition on mixing refactoring with behavior changes.
-- Enforced strict plan file naming: `.eniac-plan.md` with numeric-only suffixes (`-2`, `-3`). Descriptive or creative suffixes are forbidden.
-
-## [1.2.0] - 2026-07-06
-
-### Added
-
-- Added `references/execution-ledger.md` for structured, restartable task state with milestone-level proof signals.
-- Added `references/project-interface-contract.md` for evidence-backed README, onboarding, configuration, and operating guidance.
-- Added `references/delivery-proof-pipelines.md` for deriving CI as a repository-specific proof graph instead of copying generic workflows.
-- Added `references/stack-risk-matrix.md` for runtime, framework, data, concurrency, and boundary-specific failure analysis.
-- Added `references/greenfield-launch-sequence.md` with staged product contracts, stack decisions, foundation gates, walking skeletons, capability slices, hardening, and clean-start release proof.
-- Added `references/ci-templates-by-stack.md` with ready-to-adapt GitHub Actions YAML for Node.js, Python, Go, Rust, Zig, Ruby, Java/Gradle, .NET, and release workflows (npm, PyPI). Includes setup checklist.
-- Added `references/stack-patterns-and-pitfalls.md` with concrete bad-to-good code examples for 11 stacks: TypeScript/Node.js, Python, Go, Rust, Zig, Ruby, Java/Kotlin, C#/.NET, React/Next.js, REST API patterns, and database patterns.
-- Added `references/readme-template.md` with a full formatted README skeleton including centered hero, badges, feature bullets, quick start, configuration table, development setup, architecture section, and a quality checklist.
-- Added `references/plan-template-extended.md` with a rich planning template for L2-L3 work: users/use cases, architecture rationale table, task breakdown with complexity tags, risk table with likelihood/impact/mitigation, constraints, open questions, and phase progress log.
-- Added Zig language support across all stack-aware references: CI templates, patterns/pitfalls (5 pitfalls + good patterns), stack-risk-matrix row, commands-by-stack (discovery, test, static analysis, format), and delivery-proof-pipelines ecosystem derivation.
-- Added Refactor route in `SKILL.md` with explicit boundary lock, wave-based execution for large refactors (>10 files), invariant verification after each wave, and strict rule against mixing refactoring with behavior changes.
-
-### Changed
-
-- Made Eniac the explicit default for code-file and software-delivery work, including simple requests.
-- Strengthened software delivery with invariant selection, observable proof signals, and evidence-backed completion claims.
-- Reworked disposable plans into aligned Markdown sections with separate contracts, milestones, proof, and active state fields.
-- Expanded Greenfield routing across the control plane, execution ledger, engineering playbook, and README while keeping the detailed workflow conditionally loaded.
-- Updated `references/software-engineering.md` discovery section: audit format now includes size estimate and tech debt fields; added explicit instruction to share audit with user before mutation for L2+ work; added pointer to extended plan template for broad work.
-- Updated `references/delivery-proof-pipelines.md` with Zig ecosystem derivation row and pointer to `ci-templates-by-stack.md`.
-- Updated `references/stack-risk-matrix.md` with Zig invariants/failure-radar row and pointer to `stack-patterns-and-pitfalls.md`.
-- Updated `references/project-interface-contract.md` with pointer to `readme-template.md` for formatted starting skeleton.
-- Updated `references/commands-by-stack.md` with Zig commands (build, test, fmt, discovery) and `build.zig`/`build.zig.zon` in manifest discovery.
-- Updated `references/loop-engineering.md` with platform-specific execution model table (12 platforms), parallelizable vs sequential work rules, and sub-agent failure recovery protocol.
-- Updated `SKILL.md` Communication section with structured phase announcement format for L2+ full-cycle work.
-- Updated `SKILL.md` References section to list all 17 reference files with descriptions and load conditions.
-- Enforced strict plan file naming: `.eniac-plan.md` with numeric-only suffixes (`.eniac-plan-2.md`, `.eniac-plan-3.md`) when collisions exist. Creative suffixes, descriptions, or task names in filenames are explicitly forbidden.
-- Rewrote `references/systematic-thinking.md` from ~50 lines to ~250 lines: added Deep Reasoning Protocol (6-step framework for problems that resist straightforward decomposition), Dependency & Impact Mapping with ripple analysis and radius classification, Root Cause Analysis (5-whys for repeated failures), Decision quality checks, Assumption tracking with status, Complex Refactoring Thinking (strangler-fig pattern: understand → introduce → migrate → verify → remove), and explicit signs-you-need-to-stop checklist.
-
-## [1.1.1] - 2026-07-05
-
-### Changed
-
-- Re-compressed `SKILL.md` back into a lean control plane while preserving full-cycle developer routing.
-- Tightened token/credit cost guards with explicit Lean/Standard/Deep budget modes and cost checkpoints.
-- Expanded `references/product-ux.md` from product UX guidance into concise Product UI/UX guidance for layout, visual hierarchy, components, states, responsive behavior, accessibility, and verification.
-- Condensed `references/software-engineering.md` into a shorter full-cycle developer playbook with build, test, bug hunt, polish, docs, and ship gates.
-- Updated README and contributing docs for version `1.1.1`.
-- Strengthened Eniac's software engineering guidance with an explicit Deep code audit mode for whole-repo code reads, architecture mapping, and broad existing-code work.
-- Added discovery commands for full repository inventories that can include ignored project files while excluding dependency, cache, build, binary, generated, and secret material.
-- Raised the software engineering contract to behave more like a full-cycle senior engineer: detect project state, audit before mutation, preserve local conventions, build production-quality code, test, bug hunt, polish, document, and ship with verified handoff.
-
-## [1.1.0] - 2026-07-04
-
-### Added
-
-- Added token/credit cost guards to keep simple work lean and avoid unnecessary reference loading.
-- Added task scaling from trivial work to complex milestone-based execution.
-- Added batch guidance for many small edits across files.
-- Added Product UX reference for user-facing UI, dashboards, apps, websites, forms, and workflows.
-- Added Codex installation, update, and usage examples to the README.
-
-### Changed
-
-- Optimized `SKILL.md` into a smaller control plane with task-specific references loaded only when needed.
-- Condensed reference documents into shorter operational checklists.
-- Updated documentation to include `references/product-ux.md`.
-
-## [1.0.0] - 2026-07-03
-
-### Added
-
-- Initial Eniac skill release.
-- Added compact Perceive, Reason, Act, Observe loop contract.
-- Added token discipline guidance for concise, scoped agent work.
-- Added scope lock, system map, engineering loop, loop control, and output contract sections.
-- Added reference documents for loop engineering, systematic thinking, software engineering, and multilingual token discipline.
-- Added project documentation: README, security policy, changelog, code of conduct, and contributing guide.
-
-### Credits
-
-- Created by [ParamissionLab](https://github.com/ParamissionLab).
+- 16 files, 2,594 lines. `SKILL.md` is the only always-loaded file and is self-sufficient for the large majority of work; the fifteen references load only when one can change the next decision.
+- Licensed under the Apache License 2.0.
