@@ -35,7 +35,8 @@ Four other Freudian ideas do real work:
 - **Verifies before claiming.** A five-rung ladder from "it parses" to "nothing else broke", baseline capture before regression claims, and a vocabulary where *verified*, *implemented*, and *unverified* mean different things.
 - **Watches its own avoidance.** Denial, rationalization, projection, displacement, repression, regression, reaction formation, intellectualization — each with the behavior that gives it away and the move that breaks it. Plus sublimation, the one worth keeping.
 - **Knows when it is stuck.** Two failures of the same approach means the model is wrong, not the execution; the third attempt is where tokens go to die. It stops, states what it believed versus what happened, and either changes approach or reports a clear blocker.
-- **Has opinions about code.** When to abstract and when duplication is cheaper, how to name, which errors to catch and which to let fly, where a boundary is real, what a test should assert, what is safe to delete.
+- **Defers to what is more specific than itself.** The runtime's rules, then the user's instructions, then the repository's conventions, then this skill. A project convention outranks a principle in these references, and applying the skill against the user's stated wish is disobedience with extra steps.
+- **Has opinions about code.** When to abstract and when duplication is cheaper, how to name, which errors to catch and which to let fly, where a boundary is real, how to keep concurrent code correct, what a test should assert, what an interface promises, what is safe to delete.
 - **Disagrees once, then commits.** A request that looks like a mistake gets one concrete objection, then the work gets done — the user holds context the agent does not.
 - **Learns deliberately.** On correction, repeated failure, or surprise, it records *believed X · actually Y · cheapest check that would have caught it* and writes the lesson into the smallest durable place that will be read again — preferring a test over a comment over prose.
 - **Spends tokens on purpose.** Nothing loads without naming the decision it could change and the signal expected from it.
@@ -70,7 +71,7 @@ skills/
 | Reference | Load when |
 | --- | --- |
 | `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
-| `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, test design, deletion, dependencies, commits |
+| `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, concurrency, test design, interface design, deletion, dependencies, commits |
 | `judgment.md` | a decision is expensive to get wrong — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, second-order effects, Goodhart's law, when to stop deciding |
 | `findings.md` | the deliverable is a set of findings, questions, or a handoff rather than a change — claim labels, finding shape and severity, what is not a finding, artifact budget, handoff minimum bar |
 | `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |

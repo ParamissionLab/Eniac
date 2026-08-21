@@ -19,7 +19,7 @@ skills/Eniac/
   SKILL.md                     — always-loaded control plane
   references/
     workflows.md               — step chains per route + risk overlays
-    craft.md                   — code judgment: abstraction, naming, errors, tests
+    craft.md                   — code judgment: abstraction, errors, concurrency, tests
     judgment.md                — deciding well when being wrong is expensive
     findings.md                — claim labels, finding shape, questions, handoff
     performance.md             — measure, identify, fix, verify, guard

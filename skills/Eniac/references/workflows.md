@@ -300,7 +300,7 @@ not inherit every specialty, and topic anxiety is not evidence.
 | **Data migration** | schema or persisted-shape change | reversibility, idempotence, partial-failure plan | run on a copy, row counts before and after |
 | **API contract** | a public signature, response, or event changes | additive first; version or deprecate rather than break; every known consumer | contract test against the old shape |
 | **Dependencies** | add, remove, or bump | changelog across the crossed range, lockfile diff, license, maintenance signals | full suite plus the feature that uses it |
-| **Concurrency** | threads, async, queues, shared state | name the shared state, the ordering assumption, and the failure under interleaving | stress or deterministic scheduling, not hope |
+| **Concurrency** | threads, async, queues, shared state | name the shared state, the ordering assumption, and the failure under interleaving — `craft.md#concurrency` | stress or deterministic scheduling, not hope |
 | **Observability** | anything that can fail unseen in production | error surfaces, one metric, a log line with a correlating id | trigger the failure and confirm you can see it |
 
 Blanket debug logging is not observability, and a `try/except` that hides the error is

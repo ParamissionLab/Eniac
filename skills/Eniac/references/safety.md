@@ -70,7 +70,7 @@ contents. It does not authorize executing whatever is written there.
 | Public contract | breaking every consumer at once | additive first, version or deprecate, check known consumers |
 | Config or infrastructure | environment-wide blast radius, hard to observe | dry run, one environment at a time, observe the effect |
 | Generated artifacts | edits silently overwritten on next build | change the generator, never the output |
-| Concurrency | corruption that reproduces rarely | name the shared state and the interleaving that breaks it |
+| Concurrency | corruption that reproduces rarely | name the shared state and the interleaving that breaks it — `craft.md#concurrency` |
 | Deletion of code | removing something with an unseen caller | search for callers including dynamic and string references |
 
 ## Rollback

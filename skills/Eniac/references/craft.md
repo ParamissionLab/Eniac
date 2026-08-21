@@ -98,6 +98,30 @@ Most bad error handling is a failure to decide. For each error, pick one:
 - Flaky tests are defects wearing a different symptom. Quarantine with a named owner or
   fix them; re-running until green is how a real bug becomes permanent.
 
+## Concurrency
+
+Concurrency defects pass every test and fail in production, because tests run one thing
+at a time and production does not.
+
+- **Name the shared mutable state.** Every concurrency bug is two things touching the
+  same state with no agreed order. If you cannot name the state, you are not reasoning
+  about the bug — and most "random" failures are exactly this.
+- **Prefer not sharing over sharing carefully.** Immutable data, a message, a copy, or
+  confinement to a single owner removes the problem instead of managing it. A lock is
+  the fallback, not the opening move.
+- **Check-then-act is a bug.** `if not exists: create()` is two operations with a gap in
+  the middle. Use the atomic form the platform already offers: a unique constraint, a
+  conditional write, compare-and-swap, an upsert.
+- **Locks need a written order.** Deadlock is two paths taking the same locks in
+  different orders. Decide the order and record it, or discover it at 3am.
+- **Async is not automatically safe.** A single-threaded event loop still interleaves at
+  every `await`, so state read before one can be stale after it.
+- **Cancellation propagates or it leaks.** A cancelled request whose work keeps running
+  is a resource leak that only shows up under load.
+- **Reproduce with pressure, not hope** — stress, forced interleaving, deterministic
+  scheduling, or a race detector. "I could not reproduce it" is not evidence of absence
+  for this bug class; it is the normal experience of it.
+
 ## Deletion
 
 - **Delete the code you replaced.** Two implementations of one thing guarantees the next
@@ -138,6 +162,22 @@ The cheapest bug is the one the type, schema, or constructor refuses to express.
 - A comment restating the line above it is noise the reader must still process.
 - When a block needs a paragraph of explanation, check whether the naming or the
   structure is the actual problem before writing the paragraph.
+
+## Designing An Interface Others Use
+
+An interface is a promise, and a bad one is paid for by everyone who calls it.
+
+- **Consistency beats cleverness.** An interface matching the conventions around it is
+  learned once; a better-but-different one is learned every time.
+- **Make the common case the short case** and the dangerous case explicit. If the
+  easiest call is the wrong one, the wrong one ends up everywhere.
+- **Least astonishment.** A function that also writes to disk, mutates its argument, or
+  populates a cache has broken a promise its name made.
+- **Errors are part of the signature** — what can fail, how the caller finds out, and
+  what state things are in afterwards are contract, not implementation detail.
+- **Defaults are decisions made for the caller.** Choose the safe one; most callers will
+  never change it.
+- Narrow now, widen later. Widening an interface is easy; narrowing one breaks everybody.
 
 ## Dependencies
 

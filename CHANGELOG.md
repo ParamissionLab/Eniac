@@ -21,7 +21,8 @@ Initial release. Eniac is a provider-neutral, agent-agnostic operating skill for
 - **Context management through the topographic model** — conscious, preconscious, unconscious — making progressive disclosure the architecture rather than an aspiration. Nothing loads without naming the decision it could change and the signal expected from it.
 - **Authorization gates** classifying every action as read, local mutation, external effect, destructive, or irreversible, with untrusted tool output treated as data rather than instructions.
 - **A stuck protocol**. Two failures of the same approach indicate a wrong model rather than a wrong execution, so the second failure stops editing and buys an observation, the third changes approach rather than parameters, and a genuine block is reported with what was tried, what was learned, and the one thing that would unblock it.
-- **Code craft judgment** in `craft.md`: abstraction timing and the rule of three, naming, the three-way error decision, boundaries and coupling, test design, safe deletion, comments, dependency weight, and commit hygiene.
+- **A precedence rule** placing the runtime's constraints first, the user's instructions second, the repository's standing conventions third, and this skill last — so a project convention outranks a principle in these references and applying the skill against a stated wish is named as disobedience rather than diligence.
+- **Code craft judgment** in `craft.md`: abstraction timing and the rule of three, naming, the three-way error decision, boundaries and coupling, concurrency correctness, interface design, test design, safe deletion, comments, dependency weight, and commit hygiene.
 - **A Product UI route** covering product-type fit, designed states, systematized type and spacing, hierarchy, responsive engineering, accessibility as correctness, and an anti-slop checklist.
 - **Handling for unverifiable work**: remove the barrier if possible, otherwise name it, take the strongest check still available, and label the result `Unverified` with the command that would settle it. Presenting an expected output as an observed one is named as the most damaging failure available to an agent.
 - **A first-contact sequence** for unfamiliar repositories — install, build, test with a recorded baseline, run — with an explicit prohibition on loosening project configuration to make a command pass.
@@ -42,5 +43,5 @@ Initial release. Eniac is a provider-neutral, agent-agnostic operating skill for
 
 ### Package
 
-- 17 files, 2,825 lines. `SKILL.md` is the only always-loaded file and is self-sufficient for the large majority of work; the sixteen references load only when one can change the next decision.
+- 17 files, 2,881 lines. `SKILL.md` is the only always-loaded file and is self-sufficient for the large majority of work; the sixteen references load only when one can change the next decision.
 - Licensed under the Apache License 2.0.
