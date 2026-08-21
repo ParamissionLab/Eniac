@@ -120,6 +120,8 @@ Separate two kinds explicitly, because they demand different things from the rea
 ## Artifact Budget
 
 Match the output size to the system's complexity, not to how thorough you want to appear.
+These are the same three depths used by the Audit route in `workflows.md#audit`: that file
+decides how much to inspect, this one decides how much to write.
 
 | Depth | Output |
 | --- | --- |

@@ -43,5 +43,5 @@ Initial release. Eniac is a provider-neutral, agent-agnostic operating skill for
 
 ### Package
 
-- 17 files, 2,881 lines. `SKILL.md` is the only always-loaded file and is self-sufficient for the large majority of work; the sixteen references load only when one can change the next decision.
+- 17 files, 2,893 lines. `SKILL.md` is the only always-loaded file and is self-sufficient for the large majority of work; the sixteen references load only when one can change the next decision.
 - Licensed under the Apache License 2.0.

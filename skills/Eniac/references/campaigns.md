@@ -108,19 +108,20 @@ tolerate both shapes before producers emit the new one.
 ## Delegation
 
 Fan-out is worth its coordination cost only when the pieces are genuinely independent.
-A task is delegable when all four hold:
+Every condition in `triage.md#parallel-lanes` applies — disjoint mutable scope, stable
+inputs, independent proof, defined integration — plus one that only matters once someone
+else does the work:
 
-1. **Disjoint mutable scope** — no two workers write the same file or table.
-2. **Stable inputs** — nothing a worker depends on is being changed by another worker.
-3. **Independent proof** — each piece can be verified alone.
-4. **A stated contract** — inputs, outputs, done criteria, and explicit non-goals.
+- **A stated contract** — inputs, outputs, done criteria, and explicit non-goals. A
+  worker who has to infer the boundary will pick a different one than you would, and you
+  will find out at integration.
 
 The owner keeps the campaign contract, the shared interfaces, integration, and the final
 proof. A worker never widens its own scope and never changes a shared contract; a
 completed piece is accepted only after integration review, because "it works in isolation"
 is the weakest claim in distributed work.
 
-When any of the four fails, run sequentially. Sequential-and-correct finishes sooner than
+When any of them fails, run sequentially. Sequential-and-correct finishes sooner than
 parallel-and-tangled, and this is not close.
 
 ## Decisions That Outlive The Session

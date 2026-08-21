@@ -126,7 +126,9 @@ two steps, separately reviewable and separately revertible. See `craft.md`.
 3. **Draw the boundary** — which files may change. Everything else is read-only for
    the duration.
 4. **Move in verified waves** — beyond about ten files, batch by one mechanical rule
-   and verify each wave. One giant edit offers no bisection point when it breaks.
+   and verify each wave; past roughly twenty, write the transform as a script rather
+   than editing by hand (`campaigns.md`). One giant edit offers no bisection point
+   when it breaks.
 5. **Never mix** behavior change with restructuring in the same step or commit.
    Mixing them makes review impossible and hides regressions inside noise.
 6. **Report adjacent defects** instead of quietly fixing them.
