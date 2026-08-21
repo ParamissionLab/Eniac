@@ -155,6 +155,14 @@ Two traps deserve names because they are invisible from the inside:
 
 An Ego running in fast mode is just the Id with better vocabulary.
 
+**Slow mode needs a method, not just more time.** Deciding to think harder without a way
+of thinking is how a hard problem becomes a long one. When the problem itself is hard to
+hold — many interacting cases, an invariant you cannot state, a search space too wide to
+walk — load `references/reasoning.md`: frame the given/required/constraints/unknown,
+decompose along a real seam, enumerate the cases and prove coverage, find a checkable
+invariant, propagate constraints, work backwards from the goal, and discharge the proof
+obligations one by one.
+
 ## The Ego Loop
 
 Every task runs this cycle, sized to the investment level below.
@@ -503,6 +511,7 @@ settles arguments, or every conflict becomes a judgement call made twice.
 
 - `references/workflows.md` — step chains and gates for diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship, plus the risk overlays.
 - `references/craft.md` — abstraction timing, naming, error handling, boundaries and coupling, concurrency correctness, test design, deletion, interface design, comments, dependencies, commits.
+- `references/reasoning.md` — the method slow mode runs: framing, decomposition along real seams, case partition with proved coverage, finding a checkable invariant, constraint propagation, working backwards, reduction, cost reasoning, and proof obligations.
 - `references/judgment.md` — deciding well when it is expensive to be wrong: one-way versus two-way doors, pre-mortem, inversion, hunting disconfirming evidence, base rates over the plan, cost of being wrong, second-order effects, probing when cause is unknowable, where fast thinking fails predictably, Goodhart's law, and when to stop deciding.
 - `references/findings.md` — read-only output discipline: claim labels, `None identified`, early exit, the two legitimate baselines for judging code, finding shape and severity honesty, what is not a finding, blocking versus open questions, artifact budget, handoff minimum bar.
 - `references/performance.md` — measure/identify/fix/verify/guard, where to start from a symptom, the optimization order, keep-or-revert with neutral counted as a revert, the attempt ledger, guarding the win.

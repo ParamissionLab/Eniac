@@ -1,0 +1,161 @@
+# Reasoning
+
+Slow mode needs a **method**, not just more time. Deciding to think harder without a way
+of thinking is how a hard problem becomes a long one.
+
+Load this when the problem itself is hard to hold: many interacting cases, an invariant
+you cannot state, a search space too wide to walk, or a defect whose mechanism you cannot
+picture. Do not load it for a task you already know how to do — applying analysis to a
+solved problem is the most respectable way to waste an afternoon.
+
+## Frame It First
+
+Four lines, before any analysis:
+
+```text
+Given:       what is actually true, and where each fact came from
+Required:    what must be true when this is done
+Constraints: what may not change
+Unknown:     the specific thing whose value would settle it
+```
+
+Most stuck problems are frame failures rather than reasoning failures. `Unknown` does the
+most work here: a problem with no nameable unknown is not being solved, it is being
+circled. If you cannot fill that line, that *is* the finding — go get one observation and
+frame it again.
+
+Facts in `Given` carry their source. A frame built on one unmarked assumption produces a
+confident answer to a different problem.
+
+## Decompose
+
+A decomposition is good when three things hold: each part is **independently checkable**,
+the parts **cover the whole**, and they **do not overlap**. Fail any of them and you have
+made two problems instead of one.
+
+Cut along a seam the system already has:
+
+| Cut | Question it answers | Best for |
+| --- | --- | --- |
+| **By data flow** | where does the value enter, change, and land | wrong output, corruption |
+| **By state** | which states can this be in, and what is legal in each | lifecycle, UI, protocols |
+| **By case** | how does behaviour partition over the input | branching logic, validation |
+| **By layer** | which layer owns which responsibility | "where does this belong" |
+| **By time** | before / during / after; startup, steady, shutdown, resume | races, migrations, jobs |
+
+Pick the cut that makes one part *obviously* fine. What remains is the problem, and it is
+now smaller. Repeat. A cut that leaves both halves equally suspicious was the wrong cut —
+try a different axis rather than a smaller piece of the same one.
+
+## Enumerate The Cases, Then Prove Coverage
+
+"It handles the normal case and probably the rest" is where most defects enter. Partition
+the space; do not sample it.
+
+List the classes on each dimension that applies, then check every combination that can
+actually occur:
+
+- **quantity** — zero, one, many, the maximum, past the maximum
+- **validity** — valid, malformed, absent, null, empty, wrong type, wrong encoding
+- **order** — expected, reversed, repeated, concurrent, interleaved, out of order
+- **time** — first run, repeat run, resumed after failure, expiry, clock skew, timezone
+- **authority** — permitted, forbidden, expired, a different tenant
+
+Then state which combinations are **impossible, and why**. An "impossible" with no reason
+attached is the single most common origin of a production surprise — it usually means
+"I did not think about it", which is a different claim entirely.
+
+## Find The Invariant
+
+"Lock the invariant" is only useful advice if you can find one. Two questions produce most
+of them:
+
+1. **What is true of every valid state that the broken state violates?** A balance is
+   never negative. An id appears once. The parts sum to the whole. Every open has a close.
+   Every row has a tenant.
+2. **What does each operation promise to preserve?** If you cannot say, the operation has
+   no contract — and that is itself the finding, usually the important one.
+
+An invariant is worth having only if it is **checkable**: an assertion, a database
+constraint, a type, a test, or a query you can run. An invariant that exists only in prose
+drifts within two releases and then misleads whoever trusts it.
+
+## Propagate Constraints
+
+Experts narrow quickly because each fact eliminates a region, not because they guess
+better. From the symptom, derive what must be true:
+
+> *Fails only for tenant B* → the failing path reads tenant-scoped state → the difference
+> lives in that state or in how it is scoped → therefore not in the request handler, not
+> in the serializer, not in anything shared across tenants.
+
+Three derived constraints routinely reduce a codebase to a file. Write them down as you
+go, and keep them separated from assumptions: **a derivation from a wrong premise narrows
+just as confidently, in the wrong direction**, and it feels identical from the inside.
+
+When a constraint turns out false, do not patch it — re-derive from the point it entered.
+Everything downstream of a broken constraint is unsupported, including the parts that
+still look right.
+
+## Work Backwards
+
+When forward search is too wide, start at the goal:
+
+1. What is the last thing that must be true for this to be correct?
+2. What produces that?
+3. Repeat until you reach something you already have.
+
+This finds the *missing* piece instead of exploring everything that exists. It is the
+strongest move for "why is this value wrong" and for "what would have to change for this
+to be possible at all" — and it is usually far shorter than the forward walk.
+
+## Reduce To A Solved Problem
+
+Recognising the shape saves the derivation: *this is cache invalidation; this is
+scheduling; this is expand/contract; this is a producer outpacing a consumer.*
+
+A reduction is valid only when the mapping is exact. A near-fit imports the standard
+solution's assumptions along with the solution, and those assumptions fail silently
+because nobody stated them. **Say what the mapping ignores** before relying on it — if
+you cannot name the difference, you have not checked that there is none.
+
+## Reason About Cost Before Measuring
+
+Where does time, memory, or money actually go?
+
+- Find the **dominant term**. Everything else is noise until that term changes.
+- Count the operation that scales with the input, not the lines of code.
+- Ask what happens at ten times the input, and at one. Both ends break things, and the
+  small end is the one nobody tries.
+
+This is prediction, not measurement — measurement is `performance.md`. Its job is to tell
+you *where to measure*, so that measurement costs one run instead of five.
+
+## Discharge The Proof Obligations
+
+Every non-trivial change carries obligations. Name them, then discharge each explicitly:
+
+```text
+Obligation                        Discharged by
+the new path produces X           the test that asserts X
+existing callers still work       the surrounding suite, or a contract test
+the invariant still holds         an assertion, constraint, or query
+the failure path is safe          a test that forces the failure
+nothing else reads this shape     the caller search, including dynamic references
+```
+
+An obligation you cannot discharge is a **stated risk**, not an oversight. Writing it down
+converts an unknown defect into a known one, and that conversion is most of the value —
+it is also the difference between an engineer and someone who was lucky.
+
+## When The Reasoning Is Done
+
+Not when it feels resolved. When:
+
+- every case in the partition is handled or excluded with a stated reason,
+- the invariant is named and checkable,
+- every assumption is labelled and would become visible if it were wrong,
+- the remaining unknowns are named rather than absent.
+
+Feeling finished and being finished diverge exactly when the problem is hard — which is
+the only condition under which this file gets loaded.

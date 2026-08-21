@@ -20,6 +20,7 @@ skills/Eniac/
   references/
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, errors, concurrency, tests
+    reasoning.md               — the method slow mode runs: frame, decompose, prove
     judgment.md                — deciding well when being wrong is expensive
     findings.md                — claim labels, finding shape, questions, handoff
     performance.md             — measure, identify, fix, verify, guard

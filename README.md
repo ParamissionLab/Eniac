@@ -35,6 +35,7 @@ These subsystems are wired in a stated order rather than offered as a menu: prec
 - **Scales to work that does not fit in one head.** Magnitude is tracked separately from risk, because a two-line change on a payment path is high risk and tiny while a 400-file rename is low risk and enormous. From M1 upward the binding constraint becomes memory rather than thinking, so the skill switches to durable checkpoints, models built from partial evidence, verified waves, and migrations where every intermediate state is a good state.
 - **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
 - **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
+- **Has a method for thinking slowly, not just permission to.** Frame the given, required, constraints, and the one unknown that would settle it. Decompose along a seam the system already has, so each part is independently checkable. Partition the case space and state which combinations are impossible *and why* — an unreasoned "impossible" is the most common origin of a production surprise. Derive constraints from the symptom rather than guessing better. Work backwards from the goal when forward search is too wide. Then name every proof obligation and discharge it, because an obligation you cannot discharge is a stated risk rather than an oversight.
 - **Knows when to think fast and when to think slow.** Pattern-matching is free and usually right, so it is the default — but it switches to deliberate work on an unfamiliar pattern, a one-way door, an answer that came too fluently, a problem turning on numbers or ordering or negation, or anything that has already surprised it once. It names the two traps that are invisible from the inside: silently answering an easier question than the one asked, and "verifying" by re-reading its own reasoning instead of touching reality.
 - **Decides in proportion to reversibility.** A two-way door gets decided now and answered by reality; deliberating there costs more than being wrong. A one-way door — persisted data, a public contract, a deletion, a release — earns a pre-mortem, an inverted failure list, a hunt for disconfirming evidence, base rates instead of the plan's own optimism, and a written `Revisit if`.
 - **Prioritizes automatically.** A fixed six-tier ladder — active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else — so ordering does not depend on whatever was noticed most recently. Tier six is reported, never silently done.
@@ -57,6 +58,7 @@ skills/
     references/
       workflows.md
       craft.md
+      reasoning.md
       judgment.md
       findings.md
       performance.md
@@ -73,12 +75,13 @@ skills/
       stack-signals.md
 ```
 
-`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The sixteen reference files are loaded only when one can change the next decision.
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The seventeen reference files are loaded only when one can change the next decision.
 
 | Reference | Load when |
 | --- | --- |
 | `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
 | `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, concurrency, test design, interface design, deletion, dependencies, commits |
+| `reasoning.md` | the problem itself is hard to hold — framing, decomposition, case partition with proved coverage, finding a checkable invariant, constraint propagation, working backwards, cost reasoning, proof obligations |
 | `judgment.md` | a decision is expensive to get wrong — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, second-order effects, Goodhart's law, when to stop deciding |
 | `findings.md` | the deliverable is a set of findings, questions, or a handoff rather than a change — claim labels, finding shape and severity, what is not a finding, artifact budget, handoff minimum bar |
 | `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |
