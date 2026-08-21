@@ -1,6 +1,12 @@
 # Software Engineering Reference
 
-Use when creating, reading, modifying, testing, reviewing, documenting, or shipping code. For L2+ work, load `algorithm-workflow.md` to make weighting, causal diagnosis, coverage, and documentation impact part of each material loop.
+Use for broad or full-cycle software delivery, or when several of discovery,
+planning, implementation, testing, bug hunt, documentation, and shipping must
+be coordinated. For a targeted debug, review, test, refactor, or specialist
+task, start with the most specific reference and read only the section here that
+can change the next decision. For L2+ work, load `algorithm-workflow.md` when
+weighting, causal diagnosis, coverage, or documentation impact must persist
+across material loops.
 
 ## Contents
 
@@ -54,15 +60,29 @@ Treat code work as engineering delivery, not text editing:
 
 | Task | First action | Main risk | Proof |
 | --- | --- | --- | --- |
-| Bug fix | reproduce or inspect failing path (load `debugging-protocol.md`) | symptom patch | causal record + failing case passes |
-| Feature | find local analogs | pattern drift | behavior test/manual flow |
-| Refactor | list preserved contracts | behavior drift | tests or equivalence |
+| Bug fix | reproduce or inspect failing path; load `debugging-protocol.md` when non-trivial and `test-first-delivery.md` when a falsifiable test is viable | symptom patch | causal record + Red/Green or documented alternative proof |
+| Feature | find local analogs and define the behavior falsifier | pattern drift | test-first behavior proof or explicit alternative + main flow |
+| Refactor | list preserved contracts and capture missing characterization proof | behavior drift | tests or equivalence before and after structure change |
 | Build failure | capture first meaningful error | chasing noise | build reaches next state |
-| Review | inspect diff and direct callers | missed regression | severity + evidence |
+| Review | inspect diff and direct callers; load `code-review-loop.md` | missed requirement or regression | outcome pass + evidence-shaped findings |
 | Many small edits | define one repeated rule | partial inconsistency | sample diff + broad check |
 | UI/frontend | inspect design system and states | pretty but unusable | affected flow renders/works |
+| Performance/capacity | capture a representative baseline | optimizing a guess | comparable profile/benchmark + correctness |
+| Security/privacy | map assets and trust boundary | checklist theater or hidden exposure | scoped negative-path proof + residual risk |
+| Data/schema migration | map readers, writers, and coexistence | irreversible or partial transition | rehearsal/reconciliation + recovery proof |
+| API/contract evolution | inventory producers and consumers | silent compatibility break | contract/consumer + mixed-version proof |
+| Dependency/toolchain | inspect manifests, lockfiles, and support matrix | unrelated churn or build drift | clean resolution/build + affected tests |
+| Infrastructure/configuration | identify exact target, desired state, and state owner | wrong-environment or unrecoverable change | reviewed plan/diff + health/drift proof |
+| Incident/reliability | establish timestamped impact and health | containment mislabeled as resolution | recovery signal + causal/guardrail proof |
+| Concurrency/distributed | map ownership, ordering, retries, and cancellation | rare corruption, duplicate effect, or deadlock | invariant/race/fault or load proof |
+| Flaky/weak tests | preserve the failing signal and classify nondeterminism | retries hiding a defect | deterministic reproduction or isolation proof |
+| Release/rollout | identify artifact, target, health, and recovery | untraceable or incompatible rollout | staged health + smoke + rollback readiness |
 
 Report broader problems as risks unless they block the requested outcome.
+
+When a specialist row materially applies, read `specialist-engineering.md`, then
+load only the matched overlay file it routes. These are composable risk overlays
+on the primary task mode, not a reason to audit every concern on every change.
 
 ## Project State Detection
 
@@ -133,7 +153,7 @@ Choose the reading depth deliberately:
 | --- | --- | --- |
 | Targeted | exact bug/file/symbol known | requested path, local analogs, direct callers |
 | Surface audit | unfamiliar existing project or multi-file change | inventory, manifests, tests/tooling, relevant modules |
-| Deep code audit | architecture, broad refactor, repeated failure, security-sensitive change, or user asks to read all code/repo | full source inventory, module map, entry points, data/control flow, tests/tooling, risks |
+| Deep code audit | architecture, broad refactor, repeated failure, broad or ownership-unclear security-sensitive change, or user asks to read all code/repo | full source inventory, module map, entry points, data/control flow, tests/tooling, risks |
 
 For a Deep code audit:
 
@@ -256,6 +276,10 @@ Use structured tooling when the rule is exact: formatter, codemod, parser, proje
 
 ## Test
 
+- Load `references/test-first-delivery.md` before implementation when new or
+  changed behavior has a meaningful executable falsifier. Observe the new test
+  fail for the intended reason before relying on it; use the reference's
+  documented alternative when Red cannot be produced safely or within scope.
 - Use the existing framework and project scripts.
 - Run the narrowest useful check first, then broaden if risk justifies it.
 - Capture a comparable baseline first when the suite is cheap, the repository is already failing, or attribution would otherwise be ambiguous.
@@ -327,7 +351,10 @@ For every discovered defect, use the causal-record shape in `algorithm-workflow.
 - [ ] UI state gaps: missing loading, empty, error, disabled, or focus indicators
 - [ ] Dead code introduced by this change; previously reachable code now orphaned
 
-For review-only work, report findings with file/line evidence and concrete user impact.
+For review-only work, load `references/code-review-loop.md`; report findings with
+file/line evidence and concrete user impact. For received feedback, verify each
+suggestion against the actual codebase, contracts, and supported environments
+before accepting it.
 
 ### Defect report shape
 

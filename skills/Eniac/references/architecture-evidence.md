@@ -31,9 +31,13 @@ Intake -> Inspect -> Classify -> Question -> Map -> Assess -> Change -> Validate
 | --- | --- | --- |
 | Scan | bounded, exploratory, or low-risk work | compact architecture note in the audit or handoff |
 | Focus | one module, workflow, subsystem, or clear boundary | only the scoped map, risks, and decisions needed |
-| Full | whole system, future-agent handoff, unclear ownership, 3+ interacting modules, persistence, integration, payment, auth, security, deployment, or major workflow change | a deliberately selected architecture package |
+| Full | whole system, future-agent handoff, unclear ownership, 3+ interacting modules, or broad/unclear cross-system persistence, integration, payment, auth, security, deployment, or major workflow change | a deliberately selected architecture package |
 
-Start at Scan. Promote only with all three: a real trigger, inspected evidence or an explicit user request, and the risk of staying smaller. Do not promote merely because the repository looks large or an unknown exists.
+Start at Scan. A bounded auth, security, or persistence boundary may promote to
+Focus; the topic alone never forces Full. Promote only with all three: a real
+trigger, inspected evidence or an explicit user request, and the risk of staying
+smaller. Do not promote merely because the repository looks large, an unknown
+exists, or a high-risk topic appears in a narrow surface.
 
 If no architecture pass is needed, state why, name any uncertainty that would change that conclusion, and continue with the normal route.
 

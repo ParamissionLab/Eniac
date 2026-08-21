@@ -8,6 +8,15 @@ This project follows semantic versioning where practical.
 
 ### Added
 
+- Added `scripts/audit_context.py`, a dependency-free provider-neutral context audit with stable line, character, UTF-8 byte, direct-route, and largest-reference metrics plus an optional control-plane budget gate.
+- Added five behavior scenarios for targeted context expansion, truncated-output recovery, explicit deep-audit coverage, compaction-safe resume, and long Thai prompt compression.
+- Added `references/decision-triad.md`, a bounded Id/Ego/Superego engineering metaphor for material decisions: outcome drive proposes, duty checks task-owned obligations, and reality mediates an evidence-backed choice with a falsifier.
+- Added load-on-demand `test-first-delivery.md` and `code-review-loop.md` methods for honest Red/Green/Refactor/Integrate proof, proportional exceptions, outcome-first review, skeptical feedback verification, and evidence-based finding closure.
+- Added `references/skill-evaluation.md` plus 17 portable behavior, pressure, recovery, trigger, and counter-trigger scenarios in `evals/scenarios.json`.
+- Extended package validation and regression tests to verify evaluation-manifest JSON, schema version, scenario kinds, unique lower-kebab-case IDs, prompts, expected outcomes, and anti-pattern lists.
+- Added `references/specialist-engineering.md` as a compact risk router plus ten focused `references/specialists/*.md` playbooks for performance/capacity, security/privacy, data/schema migration, API/contract evolution, dependency/toolchain changes, infrastructure/configuration, reliability/incidents/observability, concurrency/distributed work, test quality/flakiness, and release/rollout.
+- Added `scripts/validate_package.py` for deterministic frontmatter, reference-catalog, local-link, documented-path, reference-count, and Python-syntax validation using only the standard library.
+- Added regression tests for safe plan finalization and package validation.
 - Added `references/architecture-evidence.md`: a load-on-demand, evidence-first architecture pass for existing systems. It covers Scan/Focus/Full sizing, claim labels, narrow inspection, caller and blast-radius mapping, evidence-backed findings, change/documentation gates, validation, and handoff.
 - Added the `Architecture-First Gate` to `SKILL.md`, so structural or non-local work is mapped before change while local work stays lean.
 - Added `references/workstream-orchestration.md`: dependency-aware sequential/parallel/pipeline/recovery workflows, workstream contracts, design/dispatch/integration gates, acceptance rules, conflict containment, and durable execution context.
@@ -15,6 +24,16 @@ This project follows semantic versioning where practical.
 
 ### Changed
 
+- Reduced always-loaded control-plane size and replaced broad L2 reference loading with an evidence gate: the detailed algorithm reference now loads only when cause, priority, coverage, or cross-loop context requires it.
+- Added smallest-context-packet, one-edge expansion, truncated-output narrowing, compact evidence-cache, and one-primary-reference rules while preserving explicit Deep audit and risk-driven expansion.
+- Reduced always-loaded `SKILL.md` plan duplication by moving canonical plan shape and lifecycle detail into `execution-ledger.md`, while retaining concise routing, ownership, and completion invariants in the control plane.
+- Added selective engineering-method gates and integrated test-first/review behavior into the software-engineering task playbook without making TDD or triad narration mandatory for unsuitable or simple work.
+- Removed an old context-tax contradiction: targeted debug, review, test, refactor, and specialist work now starts with its specific reference instead of loading the full software-engineering playbook by default.
+- Framed Id/Ego/Superego as a non-literal decision aid rather than a scientific claim, with explicit dominance-failure controls against reckless scope, perfectionist paralysis, and timid compromise.
+- Reframed `SKILL.md` routing as one primary workflow plus evidence-backed risk overlays, with a universal completion contract tied to the intended entry point, highest-risk invariant, impact-scaled proof, and explicit residual risk.
+- Split read-only/design proof from mutation proof, made full debugging conditional for L1 defects, aligned flaky-test evidence rules, and kept bounded auth/security/persistence work at Focus unless inspected breadth justifies Full.
+- Expanded the software-engineering task playbook with specialist first actions, failure risks, and proof signals while retaining progressive disclosure.
+- Corrected README package structure, reference counts, and validation commands so documented package guarantees match tracked files.
 - Strengthened Eniac's architecture and deep-audit route with explicit pass-promotion criteria, separation of facts from proposals, and traceable impact analysis.
 - Upgraded L3 plan files from disposable checklists to reusable execution context when they carry system facts, decisions, workflow state, proof, and handoff value; task-only L2 plans remain disposable.
 - Strengthened loop, ledger, and extended-plan references with workstream ownership, dependency waves, integration proof, and safe resume rules.

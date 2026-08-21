@@ -37,7 +37,11 @@ Environment: <runtime, version, OS, config that may matter>
 
 - Prefer the narrowest reproduction: a single failing test, a curl request, a one-line script — not the full app flow.
 - If reproduction is impossible (production-only, user report, race), trace the failing path from the evidence you have: stack trace, logs, input data. State explicitly that the diagnosis rests on trace evidence, not reproduction.
-- For intermittent bugs, find the condition that makes it deterministic (fixed seed, forced timing, specific data) before proceeding. An intermittent reproduction cannot verify a fix.
+- For intermittent bugs, prefer the condition that makes failure deterministic
+  (fixed seed, forced timing, specific data). When deterministic scheduling is
+  unavailable, use instrumentation plus a bounded repeated/stress run as
+  supporting evidence; it cannot alone prove the root cause or permanent fix, so
+  report the run shape, prior frequency, residual confidence, and next monitor.
 - Write the reproduction as a failing test first when the test harness makes it cheap — it becomes the regression lock in Step 6 for free.
 
 ## Step 2: Localize

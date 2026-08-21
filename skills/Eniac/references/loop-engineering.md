@@ -53,7 +53,32 @@ Expected decision:
 Stop if:
 ```
 
-Proceed only when the expected signal is worth the token/tool cost.
+Proceed only when the expected signal is worth the token/tool cost. A budget is
+an expansion gate, not a quota: risk or correctness may justify more context,
+but habit and curiosity do not.
+
+### Context Expansion Protocol
+
+1. Start from instructions, repository rules, an entry point or manifest, the
+   target surface, and its direct caller/test/config.
+2. Before adding context, name the unresolved decision and the signal the new
+   source can provide. Add one dependency edge, hypothesis branch, or risk
+   overlay at a time.
+3. Read the smallest useful representation: filenames before contents, matches
+   before ranges, ranges before full files, summaries before raw logs.
+4. If a source does not change a fact, decision, verification need, or risk,
+   stop expanding on that axis. Do not reward an empty read with a broader one.
+5. When output truncates or mixes many concerns, narrow the pattern, range,
+   target set, or output cap. Do not rerun the same broad command.
+
+Start with one primary task reference. Add a method or risk overlay only after
+the inspected task exposes its trigger; read the relevant heading/range when the
+whole reference is not required. Never preload references to be “safe.”
+
+At a phase or context boundary, replace working memory with only confirmed facts
+and sources, decisions and falsifiers, changed paths, accepted proof, open risk,
+and the next action. Discard activity narration, full logs, ruled-out detail, and
+superseded hypotheses. This compact evidence cache is the re-entry point.
 
 ## Perceive
 

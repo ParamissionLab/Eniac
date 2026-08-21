@@ -14,6 +14,36 @@ Use for greenfield, broad, or L2-L4 implementation work that needs restartable s
 - Never store secrets, full logs, hidden reasoning, or copied source files.
 - For durable context, retain only reusable system facts, key paths, contracts, decisions, proof signals, and safe resume state. Current files and direct checks outrank the ledger.
 
+## Lifecycle
+
+1. Before the first L2-L4 mutation, choose the exact plan path and unique
+   `Owner`, record both in private task state, and write the current contract and
+   first active milestone.
+2. Default to `.eniac-plan.md` in the workspace root. If that file exists and is
+   not clearly owned by the task, use `.eniac-plan-2.md`, then increment only the
+   numeric suffix. The filename must start with `.eniac-plan` and end with `.md`;
+   do not invent descriptive suffixes.
+3. Keep milestone checkboxes and `Active State` synchronized with observed work.
+   Mark the active item before starting and complete it immediately after its
+   proof. Reweight the next action after material evidence.
+4. When the user adds or changes a request, reconcile `Goal`, `Done when`,
+   `Scope`, `Preserve`, `Exclude`, milestones, and active state before the next
+   mutation. The newest instruction controls conflicts; do not undo completed
+   work unless requested.
+5. Re-read the plan after context loss, interruption, or before a new milestone,
+   then confirm repository state still matches it. A delegate may read relevant
+   context but may not finalize the primary task's plan.
+6. Keep an unproven hypothesis, containment, deferred coverage row, or missing
+   authority visible. Do not convert it into a completion claim.
+
+Before the final response, set `Status: done` only after every required proof
+passes. Unless `Retention` is explicitly `retain-by-explicit-request`, use
+delete-on-complete. When available, invoke `scripts/finalize_plan.py` with the
+exact plan path, explicit `--workspace-root`, and matching `--owner`; pass
+`--retain` only with explicit authorization. Verify the exact path is absent.
+If finalization fails, set `Status: blocked`, preserve the plan, and report its
+path and failure instead of claiming completion.
+
 ## Shape
 
 ```markdown

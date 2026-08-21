@@ -40,8 +40,7 @@ Verified against official documentation on 2026-07-05. This is a curated compati
 2. Otherwise use the provider-native path. Copy or link the complete Eniac directory when native skills support bundled references.
 3. For rule adapters, keep only the core contract, scale, safety, and output behavior in the rule. Point to the canonical `SKILL.md` when workspace-file references are supported.
 4. Do not add vendor-only frontmatter to the canonical `SKILL.md` unless every target parser safely accepts it.
-5. Keep `agents/openai.yaml` OpenAI-specific; other vendors do not share its interface schema.
-6. Add a platform only when official documentation names a stable discovery path or adapter format. Record model providers separately from agent products; changing the underlying LLM does not change skill installation.
+5. Add a platform only when official documentation names a stable discovery path or adapter format. Record model providers separately from agent products; changing the underlying LLM does not change skill installation.
 
 ## Official Sources
 
