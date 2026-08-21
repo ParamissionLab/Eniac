@@ -16,6 +16,8 @@ Credit: [ParamissionLab](https://github.com/ParamissionLab)
 
 Only the Ego acts. The other two are inputs, and when they agree the arbitration costs nothing — which is what keeps the model cheap instead of theatrical.
 
+Alongside it runs a second, independent axis — **fast and slow thinking**. The agencies say whose interest is speaking; fast and slow says how carefully it is being processed. Fast pattern-matching is the correct default and is right most of the time; the discipline is knowing its failure signature and switching modes deliberately. An Ego running in fast mode is just the Id with better vocabulary.
+
 Four other Freudian ideas do real work:
 
 - **Economic principle** (finite energy, distributed) becomes the L0–L4 investment ladder that decides how much context a task is allowed to consume.
@@ -23,12 +25,17 @@ Four other Freudian ideas do real work:
 - **Reality testing** — the Ego's job of separating the internal model from the world — becomes the rule that only executed output counts as evidence.
 - **Defense mechanisms** become a catalog of agent failure modes under pressure, each with a tell and a correction, so the agent can catch itself avoiding the work.
 
+Every task opens the same way — read the request literally, classify the action, set the three dials, do the smallest thing that could settle it — and for most tasks that pass costs one sentence and lands on L0 or L1, where the right behaviour is to answer and stop. When a label is genuinely ambiguous the defaults are asymmetric and stated: take the lower investment level and let evidence promote you, take the higher magnitude, take the route whose proof is hardest, and if nothing fits, run the loop plainly and say what you improvised.
+
+These subsystems are wired in a stated order rather than offered as a menu: precedence settles whose rules apply; route, investment level, and magnitude are three independent dials that size the work; the Ego Loop is the cycle that runs; fast-or-slow, the agencies, and the triage ladder operate inside each pass; reality testing decides whether it may close; authorization can halt any step regardless of everything above; and the defense catalog and learning loop run continuously. When two appear to disagree, the earlier one wins — except authorization, which wins outright.
+
 ## What It Does
 
 - **Scales effort to real risk.** L0 answers directly with no ceremony; L4 inspects freely but asks before mutating. Applying L3 process to L1 work is treated as the expensive mistake it is.
 - **Scales to work that does not fit in one head.** Magnitude is tracked separately from risk, because a two-line change on a payment path is high risk and tiny while a 400-file rename is low risk and enormous. From M1 upward the binding constraint becomes memory rather than thinking, so the skill switches to durable checkpoints, models built from partial evidence, verified waves, and migrations where every intermediate state is a good state.
 - **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
 - **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
+- **Knows when to think fast and when to think slow.** Pattern-matching is free and usually right, so it is the default — but it switches to deliberate work on an unfamiliar pattern, a one-way door, an answer that came too fluently, a problem turning on numbers or ordering or negation, or anything that has already surprised it once. It names the two traps that are invisible from the inside: silently answering an easier question than the one asked, and "verifying" by re-reading its own reasoning instead of touching reality.
 - **Decides in proportion to reversibility.** A two-way door gets decided now and answered by reality; deliberating there costs more than being wrong. A one-way door — persisted data, a public contract, a deletion, a release — earns a pre-mortem, an inverted failure list, a hunt for disconfirming evidence, base rates instead of the plan's own optimism, and a written `Revisit if`.
 - **Prioritizes automatically.** A fixed six-tier ladder — active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else — so ordering does not depend on whatever was noticed most recently. Tier six is reported, never silently done.
 - **Refuses vagueness.** A request is actionable only when outcome, scope, and proof are each nameable in one line. Ambiguity is resolved from evidence, then by stated assumption, and only then by asking one specific question.

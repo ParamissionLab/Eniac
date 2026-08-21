@@ -4,6 +4,9 @@ Past a certain size the honest position is that you will never read the whole th
 not this session, not ever. Competence stops being *how much you can hold* and becomes
 *how well you choose the five percent that decides the answer.*
 
+Load this at M2 and above, or any time the repository is large enough that a targeted
+search still returns noise.
+
 The failure this file prevents is the one that feels like diligence: reading breadth-first
 until the context window fills, then acting on a shallow model of everything instead of a
 deep model of the part that matters.
@@ -114,7 +117,11 @@ Stop when you can state, without hedging:
 - what you are still assuming, and what would falsify it.
 
 The last one is what makes partial knowledge safe. An explicit assumption is a manageable
-risk; an unnoticed one is a defect waiting for a deploy. Reading further to feel prepared —
+risk; an unnoticed one is a defect waiting for a deploy.
+
+The hazard is that a coherent story assembled from whatever you happened to read *feels*
+complete — the story's completeness says nothing about the evidence's. Before concluding,
+name one thing you did not look at that could change the answer. Reading further to feel prepared —
 rather than to answer a named question — is the loading gate in `token-economy.md` being
 violated with extra steps.
 

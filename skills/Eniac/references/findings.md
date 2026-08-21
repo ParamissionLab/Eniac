@@ -4,6 +4,9 @@ The output discipline of read-only work — review, audit, architecture assessme
 planning. These deliverables have no compiler and no test suite, so the only thing
 protecting the reader is whether the claims are labelled honestly.
 
+Load this whenever the deliverable is findings, questions, or a handoff rather than a
+change.
+
 Two opposite failures live here. One is describing a system politely and stopping,
 leaving real debt unnamed. The other is flooding the output with taste-based nitpicks
 to look thorough. Both waste the reader's time; the second also destroys their trust in

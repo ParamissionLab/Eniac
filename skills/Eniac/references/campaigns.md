@@ -5,6 +5,9 @@ It is a different activity, and the constraint changes: thinking stops being the
 bottleneck and **memory** becomes one — what was known last session, what is already
 proven, what must not be redone.
 
+Load this at M1 and above — work crossing sessions, hundreds of files, or a staged
+rollout. Do not load it for anything one session can finish.
+
 This is the reality principle at full stretch. Gratification is deferred for days or
 weeks, so the discipline is making progress *durable* rather than *visible*. Everything
 below exists to make the work survive an interruption, a context loss, or a different

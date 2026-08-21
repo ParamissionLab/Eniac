@@ -1,8 +1,10 @@
 # Workflows
 
-Step chains for each route in SKILL.md. The sections are independent — read only
-the one you need. Every chain ends in a proof, because a route that cannot close
-is not finished.
+Step chains for each route in SKILL.md. Every chain ends in a proof, because a route
+that cannot close is not finished.
+
+Load only the one section matching the route you selected — they are independent, and
+reading the others costs you the budget the route was supposed to save.
 
 ## Contents
 
@@ -16,6 +18,7 @@ is not finished.
 - [Audit](#audit) — understand an unfamiliar system
 - [Batch](#batch) — many small mechanical edits
 - [Product UI](#product-ui) — a user-facing screen, page, or flow
+- Optimize — something is measurably slow; the chain for it lives in `performance.md`
 - [Ship](#ship) — release, deploy, migrate
 - [Overlays](#overlays) — performance, security, data, contracts, deps, concurrency, observability
 
@@ -30,7 +33,9 @@ is not finished.
 3. **Localize.** Halve the search space each step, not the line count: which layer,
    which commit (`git log -S`, `git bisect`), which input, which config. Binary
    search beats reading.
-4. **Hypothesize.** Write two or three competing causes. For each, name the
+4. **Hypothesize.** Write two or three competing causes *before* investigating the
+   first one — the first hypothesis anchors everything after it, and later evidence
+   gets read as an adjustment to it rather than on its own terms. For each, name the
    observation that would rule it *out*. A hypothesis with no falsifier is a belief.
 5. **Discriminate.** Run the cheapest experiment that kills the most hypotheses.
    Instrument at the boundary between suspects, not everywhere.

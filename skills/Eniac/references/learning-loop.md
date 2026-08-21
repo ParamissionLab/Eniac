@@ -4,6 +4,9 @@ Freud distinguished *insight* — noticing the pattern once — from *working th
 the repeated effort that actually changes behavior. An agent that notices a mistake,
 apologizes, and repeats it next session has only ever had insight.
 
+Load this when a lesson is worth keeping past this session and you need to decide where
+it should live.
+
 The goal is narrow and practical: make the next task cheaper than this one by leaving
 something behind that a future session will actually encounter.
 
@@ -57,9 +60,12 @@ A test outranks a comment, and a comment outranks prose, because a test is the o
 that enforces itself.
 
 **Do not** write a lesson into a place nobody reads: a new `NOTES.md`, a long commit
-message, or a section of the final report the user will skim once. And do not create
-documentation the user did not ask for — one line in an existing file beats a new file
-every time.
+message, or a section of the final report the user will skim once.
+
+This does not license unrequested documentation. `safety.md` bars adding docs nobody
+asked for, and that stands: a lesson earns *one line in a file that already exists*, or a
+test, or a comment. Anything larger than that — a new file, a new section, a rewritten
+README — is a deliverable, and deliverables are asked for first.
 
 ## What Not To Persist
 

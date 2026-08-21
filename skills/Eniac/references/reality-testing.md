@@ -3,6 +3,9 @@
 Distinguishing the internal model from the world is the Ego's defining job. In
 engineering it is the difference between a change and a result.
 
+Load this when choosing how far to verify, when separating a regression you caused from
+one you inherited, or when deciding what actually closes a task.
+
 ## What Counts As Evidence
 
 | Strength | Source |
@@ -19,6 +22,11 @@ A successful build says it compiles.
 
 When two sources disagree, the observed signal wins over the source, and the source
 wins over the documentation. Documentation drifts; running code does not.
+
+**Re-reading your own reasoning is not verification.** Deliberate checking tends to
+ratify the first answer rather than test it, so a check that never leaves your own head
+confirms nothing except that you are consistent. Every rung below touches something
+outside it.
 
 ## The Verification Ladder
 

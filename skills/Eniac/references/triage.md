@@ -4,6 +4,9 @@ The ladder in SKILL.md decides *what* is next. This file handles what comes afte
 ordering work that depends on other work, running more than one thread safely,
 surviving an interruption, and handing off.
 
+Load this when the work has parts that depend on each other, might be interrupted, or
+will be picked up by someone else.
+
 ## Ranking Inside A Tier
 
 Within one ladder tier, order by `impact ÷ cost`, then break ties with:
@@ -57,6 +60,11 @@ must hold:
 
 If any one fails, run sequentially. Sequential-and-correct finishes sooner than
 parallel-and-tangled.
+
+This does not repeal `WIP = 1`. That rule governs *your own attention* — one item being
+actively worked, not several half-edited. A lane someone or something else is executing
+is not your work in progress; the moment you are switching between lanes yourself, it is,
+and you are back to sequential.
 
 The owner of the overall task keeps the plan, the shared contracts, integration, and
 the final proof. A lane never widens its own scope or changes a shared contract on

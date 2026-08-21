@@ -4,6 +4,9 @@ Freud catalogued the ways a mind protects itself from an unwelcome truth. They m
 uncomfortably well onto how an agent behaves when a task is not going well, and naming
 one is usually enough to break it.
 
+Load this when the same approach has failed twice, when a report is coming out weaker
+than expected, or when the work has started avoiding itself.
+
 The unwelcome truths in engineering are small and specific: *I do not know why this
 fails. My last three attempts were wrong. What the user asked for is harder than I
 implied. The honest report is disappointing.*
@@ -137,3 +140,8 @@ When a defense is caught mid-task:
 
 Then feed it forward: `references/learning-loop.md` covers turning a caught defense into
 a rule that stops the next one.
+
+Not every fast wrong answer is a defense. Some are ordinary pattern-matching applied
+outside its range, which is a mode problem rather than an avoidance problem — the
+Fast And Slow switch in `SKILL.md` handles those, and `judgment.md` catalogues how they
+go wrong.

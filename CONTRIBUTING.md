@@ -80,6 +80,7 @@ There are no build steps or test scripts in this repository — it is prose that
 - Markdown renders cleanly on GitHub.
 - `skills/Eniac/SKILL.md` still has valid YAML front matter with `name` and `description`.
 - Every `references/*.md` path mentioned anywhere resolves to a file that exists.
+- Every reference file states its own load condition in its opening lines.
 - Every `workflows.md#anchor` link matches a real heading.
 - The README layout, the README reference table, the layout in this file, and the `## References` list in `SKILL.md` all agree with the actual contents of `references/`.
 - New guidance does not contradict the existing scope, authority, or token-discipline rules.

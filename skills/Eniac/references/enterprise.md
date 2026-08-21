@@ -7,6 +7,9 @@ the constraints that regime imposes are usually invisible in the files you are r
 The failure this file prevents is a technically excellent change that violates a rule
 nobody wrote down in the repository.
 
+Load this when the work touches regulated data, more than one tenant, another team's
+code, a release process with approvals, or code nobody owns.
+
 ## Recognize The Regime
 
 Before touching data, identify what kind it is. The category changes what is legal, not

@@ -105,6 +105,32 @@ Some problems yield to analysis and some do not. Telling them apart saves the mo
 Three failed rounds of reasoning about a system you could have poked in thirty seconds
 is the signature failure here, and it is the same trap as the stuck protocol in SKILL.md.
 
+## Where Fast Thinking Fails Predictably
+
+`SKILL.md` says when to switch from fast to slow. These are the specific ways the fast
+answer goes wrong — each of which feels like confidence from the inside.
+
+- **Anchoring.** The first hypothesis, the first estimate, the first file you opened
+  contaminates everything after it: later evidence gets read as an adjustment to the
+  anchor rather than on its own terms. *Countermeasure:* generate the second and third
+  candidate before investigating the first.
+- **What you see is all there is.** A coherent story built from the evidence you happen
+  to hold feels complete, and the completeness of the story is not evidence of the
+  completeness of the evidence. Three files produce a confident answer about a system of
+  three hundred. *Countermeasure:* before concluding, name one thing you did not look at
+  that could change the answer.
+- **Fluency read as truth.** An explanation that comes out smoothly feels correct. In an
+  unfamiliar system that correlation runs backwards — the smooth answer is the one
+  assembled from patterns elsewhere, not from this code.
+- **Confirmation.** Once a hypothesis exists, everything after is read as support for it.
+  This is why the falsifier is written down *before* the evidence arrives.
+- **Availability.** The cause you saw most recently feels most likely. It is not; it is
+  only the easiest to recall.
+
+None of these are fixed by being careful, because each one feels like being careful. They
+are fixed by procedure that does not depend on how you feel: a written falsifier, a
+competing candidate generated first, a named unknown.
+
 ## Goodhart's Law
 
 **When a measure becomes a target, it stops measuring what it measured.**
