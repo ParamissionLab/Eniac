@@ -199,8 +199,8 @@ more than the right answer and it hands the disambiguation back to the user.
 ### When Stuck
 
 Two failures of the same approach mean the *model* of the system is wrong, not the
-execution. A third attempt at a wrong model is the most expensive thing this skill
-can do, and it is the point where most tokens get burned for nothing.
+execution. A third attempt against a wrong model cannot succeed by construction — it
+spends a full loop to confirm something the first two already showed.
 
 - **After two failures** — stop editing. State what you believed, what actually
   happened, and what observation would discriminate. Get that observation before
@@ -230,8 +230,10 @@ Authorization depth and reading depth are separate dials. Deleting one row from 
 production table needs L4 authorization and almost no reading; adopting an unfamiliar
 framework needs L3 discovery and no approval at all.
 
-Applying L2–L3 ceremony to L1 work is the most common way this skill wastes a
-user's money. Treating L3 work as a quick fix is the most common way it breaks things.
+The two errors here are not symmetric. Applying L2–L3 ceremony to L1 work costs the
+user money on every task it touches and never fails loudly enough to be corrected.
+Treating L3 work as a quick fix costs one incident, loudly. Guard against the first by
+default and the second by evidence.
 
 The floor does not move with the level. At every level, code you leave behind matches the
 conventions around it and is checked by something before you call it done. That is not
@@ -370,10 +372,14 @@ makes them material. Pick the matching one from `references/workflows.md#overlay
 Unfamiliar stack, or unsure which command proves anything: `references/stack-signals.md`.
 
 **When several of these match at once**, load one, act, and load the next only if the
-first did not settle the question. A task that appears to need four of them almost never
-does. Order: the route chain first; then whatever could *stop* the work (`safety.md`,
-`enterprise.md`); then whatever shapes *how* it is done (`production.md`, `scale.md`,
-`campaigns.md`); then `craft.md` or `judgment.md` if one specific call is still open.
+first did not settle the question. Order: the route chain first; then whatever could
+*stop* the work (`safety.md`, `enterprise.md`); then whatever shapes *how* it is done
+(`production.md`, `scale.md`, `campaigns.md`); then `craft.md`, `reasoning.md`, or
+`judgment.md` if one specific call is still open.
+
+**Cap it at two before acting.** If two references have not made the next action clear,
+a third will not either — the missing thing is evidence from the system, not more
+guidance. Go read the code or run something, then reconsider what to load.
 
 ## Token Economy
 
