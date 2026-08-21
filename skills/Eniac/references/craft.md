@@ -7,6 +7,16 @@ Almost every decision here collapses to one question: **what will this cost the 
 who touches it in six months?** That person is usually the user, sometimes you, and
 they will not have the context you have right now.
 
+## Make The Change Easy, Then Make The Easy Change
+
+When a change is hard to make in the current structure, that difficulty is information,
+not an obstacle to push through. The move is two steps: first reshape the code — behavior
+unchanged, tests green — so the change becomes small, then make the small change.
+
+Forcing a change into a shape that resists it is what produces the special-case
+parameter, the duplicated branch, and the flag nobody removes. And the reshaping step is
+separately reviewable and separately revertible, which the combined version never is.
+
 ## Abstraction Timing
 
 - **Duplicate twice, abstract on the third.** Two examples cannot show you which parts
@@ -48,6 +58,11 @@ Most bad error handling is a failure to decide. For each error, pick one:
   loud failure into silent corruption — strictly the worse outcome.
 - Add context, do not replace it. Wrapping an error in a new opaque message and
   discarding the original destroys the only evidence anyone had.
+- **Choose fail-closed or fail-open deliberately.** When a check cannot complete — the
+  auth service is down, the rate limiter is unreachable — refusing and allowing are both
+  defensible, and the wrong default is the silent one. Anything guarding access, money, or
+  safety fails closed. Availability of a non-sensitive read may fail open. Never let the
+  answer be whatever the code happened to do.
 - Error messages get read at 3am by someone who did not write the code: say what
   failed, what was expected, and what to do about it.
 
@@ -62,6 +77,11 @@ Most bad error handling is a failure to decide. For each error, pick one:
   database, a clock, a network, or a filesystem.
 - A boundary is real only if you can state what crosses it. If everything crosses, there
   is no boundary — only a directory.
+- **With enough users, every observable behavior becomes a contract** — not only the
+  documented ones. Ordering that happens to be stable, an error string someone parses, a
+  field that happens to be present, a timing that happens to be fast. "Internal" protects
+  you until someone depends on it. Before changing observable behavior on a widely used
+  path, find out who is watching instead of assuming the documentation defines the surface.
 
 ## Tests
 
@@ -86,9 +106,28 @@ Most bad error handling is a failure to decide. For each error, pick one:
 - Before deleting, search for dynamic callers, not only static ones: reflection,
   dependency injection, template strings, configuration files, serialized names, and
   routes defined by convention do not appear in a symbol search.
+- **Find out why it is there before removing it.** Strange code in a long-lived system is
+  usually a fix for something no longer visible; `git log -S` and `git blame` on the odd
+  line will usually surface the bug it was written for in under a minute. Not knowing the
+  reason is not evidence there is none.
 - Code you *think* is unused needs evidence first. Code proven unreachable is worth
   removing — dead code is read, trusted, and maintained by people who do not know it is
   dead.
+
+## Make Illegal States Unrepresentable
+
+The cheapest bug is the one the type, schema, or constructor refuses to express.
+
+- **Parse at the boundary; do not validate everywhere.** Convert untrusted input into a
+  trusted shape once, at the edge, and let everything inward take that shape for granted.
+  Validation scattered through the call stack means every caller has to remember, and one
+  eventually will not.
+- Prefer a shape that cannot be wrong over a check that catches it being wrong. Two
+  optional fields where exactly one must be set is a bug generator; a two-case union is not.
+- Encode the invariant where it is enforced — a constructor, a database constraint, a
+  narrow type — not in a comment asking future readers to be careful.
+- This is the opposite of defensive programming, not a version of it: defensive code
+  repeats the same check everywhere, while this makes the check unnecessary past the edge.
 
 ## Comments
 

@@ -26,6 +26,13 @@ A useful model of a large system needs four things and nothing else at first:
 
 With those four you can locate almost anything without having read almost anything.
 
+**Ownership is also a structural predictor.** A system's shape mirrors the communication
+structure of the organization that built it, so team boundaries forecast module
+boundaries better than any design document does. This tells you where the awkward
+couplings and the duplicated concepts will be, and it explains why an obviously correct
+restructure keeps failing: the boundary being fought is organizational, and moving code
+does not move it.
+
 ## The Three Locating Questions
 
 For any specific question about a large system, ask in this order:

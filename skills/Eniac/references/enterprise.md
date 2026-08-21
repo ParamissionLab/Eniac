@@ -92,6 +92,28 @@ constraints are usually not visible in the repository.
 
 An agent should surface these questions rather than assume the permissive answer.
 
+## Normalization Of Deviance
+
+A rule gets bent once under pressure, nothing bad happens, and the bent version becomes
+normal. Repeat, and the safety margin is gone before anyone notices it was being spent.
+
+In practice: a test skipped "temporarily" two years ago, an alert everyone mutes, a manual
+step in a deploy that was going to be automated, a permission granted for one debugging
+session, a containment labelled temporary that is now the architecture. The tell is a "we
+always do it this way" that nobody can trace back to a decision.
+
+- **Name it.** Say what the original rule protected against and what the practice actually
+  is now. That gap is invisible precisely because it has become normal, so naming it is
+  most of the work.
+- **Do not join it silently.** One more skipped test, one more manual step, one more
+  standing exception is exactly how the next person concludes it is fine.
+- **Do not unilaterally remove it either.** The workaround usually exists because something
+  else is broken; deleting it without the cause creates an incident. Report it with what
+  fixing it would take.
+
+This is a defense mechanism running at organizational scale — the same rationalization
+described in `defenses.md`, spread across enough people that nobody owns it.
+
 ## Team Process Is A Contract
 
 The repository's conventions encode decisions you were not present for.

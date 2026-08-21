@@ -29,6 +29,12 @@ Three rules make this cheap instead of theatrical:
 Arbitration, when needed, is one line:
 `Drive: <bold move> · Duty: <strongest objection> · Ruling: <choice> · Falsifier: <what would prove it wrong>`
 
+Sort the door before spending anything on the choice. A **two-way door** — undoable in an
+hour — is decided now and answered by reality; deliberating there costs more than being
+wrong. A **one-way door** — persisted data, a public contract, a deletion, a release —
+earns competing options and a written reason, and `references/judgment.md` carries the
+techniques for it.
+
 ## The Ego Loop
 
 Every task runs this cycle, sized to the investment level below.
@@ -346,6 +352,7 @@ Load the most specific one, and only when it changes what you do next.
 
 - `references/workflows.md` — step chains and gates for diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship, plus the risk overlays.
 - `references/craft.md` — abstraction timing, naming, error handling, boundaries and coupling, test design, deletion, comments, dependencies, commits.
+- `references/judgment.md` — deciding well when it is expensive to be wrong: one-way versus two-way doors, pre-mortem, inversion, hunting disconfirming evidence, base rates over the plan, cost of being wrong, second-order effects, probing when cause is unknowable, Goodhart's law, and when to stop deciding.
 - `references/findings.md` — read-only output discipline: claim labels, `None identified`, early exit, the two legitimate baselines for judging code, finding shape and severity honesty, what is not a finding, blocking versus open questions, artifact budget, handoff minimum bar.
 - `references/performance.md` — measure/identify/fix/verify/guard, where to start from a symptom, the optimization order, keep-or-revert with neutral counted as a revert, the attempt ledger, guarding the win.
 - `references/production.md` — running systems: environment differences, timeout/retry/idempotency/degradation per remote call, third-party dependencies, observability and alerting, SLOs and error budgets, performance under real load, large-table data operations, runbooks, cost.

@@ -116,6 +116,10 @@ the second caller exists; and delete the code you replaced rather than leaving b
 Refactoring means behavior does not change. If behavior changes, it is a rewrite and
 it needs a different conversation with the user first.
 
+The strongest reason to refactor is not tidiness — it is that a needed change is hard in
+the current shape. Reshape first with behavior unchanged, then make the now-small change:
+two steps, separately reviewable and separately revertible. See `craft.md`.
+
 1. **Lock the contract** — write down exactly what behavior is preserved.
 2. **Build the safety net first** — characterization tests that pass on the *current*
    code. Without a net this is not refactoring, it is redecorating in the dark.

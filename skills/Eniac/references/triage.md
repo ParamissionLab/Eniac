@@ -20,6 +20,11 @@ Within one ladder tier, order by `impact ÷ cost`, then break ties with:
 Do not score to three decimal places. This is an ordering heuristic; if two items
 score the same, pick one and move.
 
+**Improving what is not the constraint changes nothing.** A faster step feeding a queue
+that is already backed up produces a longer queue, not a faster result — and the same holds
+for a process, a pipeline, or a team. Before optimizing anything, identify what is actually
+limiting the outcome, and be willing to find that it is not the part you were looking at.
+
 ## Dependency Ordering
 
 Before starting multi-part work, write the edges, not the list:
@@ -128,6 +133,10 @@ Estimates are for ordering, not for promising. Two heuristics carry most of the 
   priority decision.
 - **Uncertainty is cost** — an item with an unknown cause is not "small". Timebox the
   investigation, then re-estimate with what you learned.
+- **Use the outside view.** How long did the last three similar things in this repository
+  actually take? A step-by-step estimate counts only the steps you can see, and the
+  overrun always comes from the ones you cannot. History is free and predicts better than
+  the breakdown does.
 
 ## Handoff
 

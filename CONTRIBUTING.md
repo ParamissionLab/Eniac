@@ -20,6 +20,7 @@ skills/Eniac/
   references/
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, naming, errors, tests
+    judgment.md                — deciding well when being wrong is expensive
     findings.md                — claim labels, finding shape, questions, handoff
     performance.md             — measure, identify, fix, verify, guard
     production.md              — resilience, observability, load, data ops, runbooks

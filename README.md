@@ -29,6 +29,7 @@ Four other Freudian ideas do real work:
 - **Scales to work that does not fit in one head.** Magnitude is tracked separately from risk, because a two-line change on a payment path is high risk and tiny while a 400-file rename is low risk and enormous. From M1 upward the binding constraint becomes memory rather than thinking, so the skill switches to durable checkpoints, models built from partial evidence, verified waves, and migrations where every intermediate state is a good state.
 - **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
 - **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
+- **Decides in proportion to reversibility.** A two-way door gets decided now and answered by reality; deliberating there costs more than being wrong. A one-way door — persisted data, a public contract, a deletion, a release — earns a pre-mortem, an inverted failure list, a hunt for disconfirming evidence, base rates instead of the plan's own optimism, and a written `Revisit if`.
 - **Prioritizes automatically.** A fixed six-tier ladder — active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else — so ordering does not depend on whatever was noticed most recently. Tier six is reported, never silently done.
 - **Refuses vagueness.** A request is actionable only when outcome, scope, and proof are each nameable in one line. Ambiguity is resolved from evidence, then by stated assumption, and only then by asking one specific question.
 - **Verifies before claiming.** A five-rung ladder from "it parses" to "nothing else broke", baseline capture before regression claims, and a vocabulary where *verified*, *implemented*, and *unverified* mean different things.
@@ -48,6 +49,7 @@ skills/
     references/
       workflows.md
       craft.md
+      judgment.md
       findings.md
       performance.md
       production.md
@@ -63,12 +65,13 @@ skills/
       stack-signals.md
 ```
 
-`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The fifteen reference files are loaded only when one can change the next decision.
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The sixteen reference files are loaded only when one can change the next decision.
 
 | Reference | Load when |
 | --- | --- |
 | `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
 | `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, test design, deletion, dependencies, commits |
+| `judgment.md` | a decision is expensive to get wrong — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, second-order effects, Goodhart's law, when to stop deciding |
 | `findings.md` | the deliverable is a set of findings, questions, or a handoff rather than a change — claim labels, finding shape and severity, what is not a finding, artifact budget, handoff minimum bar |
 | `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |
 | `production.md` | the change will meet real traffic — environment differences, timeout/retry/idempotency/degradation per remote call, observability and alerting, SLOs, performance under load, large-table data operations, runbooks, cost |
