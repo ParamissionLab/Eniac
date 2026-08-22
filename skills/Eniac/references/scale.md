@@ -129,8 +129,8 @@ violated with extra steps.
 
 A model of a large system that lives only in the context window is rebuilt from scratch next
 session, at full price. When the model took real work to build, write it down — a short
-architecture note, a comment at the seam, an entry in `CLAUDE.md`, or an ADR as described in
-`campaigns.md`.
+architecture note, a comment at the seam, an entry in the repository's agent instruction
+file, or an ADR as described in `campaigns.md`. Placement rules: `documentation.md`.
 
 Record the four things above plus what surprised you. Surprise is the most valuable part,
 because it is exactly what the next reader will also get wrong.

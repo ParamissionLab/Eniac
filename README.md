@@ -47,6 +47,9 @@ These subsystems are wired in a stated order rather than offered as a menu: prec
 - **Has opinions about code.** When to abstract and when duplication is cheaper, how to name, which errors to catch and which to let fly, where a boundary is real, how to keep concurrent code correct, what a test should assert, what an interface promises, what is safe to delete.
 - **Disagrees once, then commits.** A request that looks like a mistake gets one concrete objection, then the work gets done — the user holds context the agent does not.
 - **Learns deliberately.** On correction, repeated failure, or surprise, it records *believed X · actually Y · cheapest check that would have caught it* and writes the lesson into the smallest durable place that will be read again — preferring a test over a comment over prose.
+- **Treats documentation as a deliverable with an owner.** Each durable fact lives in exactly one file and everything else links to it, because two copies drift and once they disagree both have negative value. Uncertainty is marked `UNKNOWN` with the check that settles it rather than smoothed into confident prose, every command written into a doc has been run, and an audit usually ends with *fewer* files.
+- **Designs interfaces rather than defaulting them.** When how a surface looks is part of the deliverable, the palette, type, layout, and one signature element are settled before any CSS exists, then each part is tested against a specific question: would this same answer have come out for any other brief in this category? If yes it is a default rather than a choice. Interface copy is treated as design material, and the handful of looks generated design converges on are named so they can be avoided on purpose.
+- **Runs on any agent runtime.** The skill names capabilities — read, search, edit, execute — never a vendor's tool or instruction file, and it says what a missing capability costs instead of routing around it silently. Levels, routes, gates, and triage are decisions rather than features, so they behave identically everywhere; what varies is proof, and on a weaker runtime the honest report gets longer rather than shorter. Adapters ship for skill directories, `AGENTS.md`, Cursor rules, and single-instruction-field assistants.
 - **Spends tokens on purpose.** Nothing loads without naming the decision it could change and the signal expected from it.
 
 ## Structure
@@ -63,6 +66,8 @@ skills/
       reasoning.md
       judgment.md
       findings.md
+      documentation.md
+      interface-design.md
       performance.md
       production.md
       enterprise.md
@@ -76,9 +81,19 @@ skills/
       safety.md
       stack-signals.md
       architecture.md
+    adapters/
+      _source/core.md            — the one source every rule adapter is generated from
+      eniac-compact.md           — hand-written full distillation, one file
+      agents-md/ cursor/ copilot/ windsurf/ cline/ zed/
+      gemini/ continue/ aider/ junie/ generic/ codex/
+scripts/
+  check_skill.py                 — structural checks
+  build_adapters.py              — regenerate the rule adapters
+templates/
+  house-rules.template.md        — your own rules, at precedence level 3
 ```
 
-`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The twenty reference files are loaded only when one can change the next decision.
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The twenty-two reference files are loaded only when one can change the next decision. `adapters/` is not loaded by the skill at all — it exists so the same mind installs into runtimes that have no skill system; see [INSTALL.md](INSTALL.md).
 
 | Reference | Load when |
 | --- | --- |
@@ -89,7 +104,9 @@ skills/
 | `reasoning.md` | the problem itself is hard to hold — framing, decomposition, case partition with proved coverage, finding a checkable invariant, constraint propagation, working backwards, cost reasoning, proof obligations |
 | `judgment.md` | a decision is expensive to get wrong — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, second-order effects, Goodhart's law, when to stop deciding |
 | `findings.md` | the deliverable is a set of findings, questions, or a handoff rather than a change — claim labels, finding shape and severity, what is not a finding, artifact budget, handoff minimum bar |
-| `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |
+| `documentation.md` | documentation is the deliverable — one owner per fact, where a fact belongs, status labels that make a handoff safe, auditing an existing set down to fewer files, and what never to write |
+| `interface-design.md` | how the thing *looks* is part of the deliverable — the palette/type/layout/signature plan settled before any CSS, escaping the handful of looks every generated design converges on, spending boldness in one place, interface copy as design material |
+| `performance.md` | something is measurably slow — measure/identify/fix/verify/guard, the default thresholds to anchor against when the project states none, where to start from a symptom, keep-or-revert with neutral counted as a revert, the attempt ledger |
 | `production.md` | the change will meet real traffic — environment differences, timeout/retry/idempotency/degradation per remote call, observability and alerting, SLOs, performance under load, large-table data operations, runbooks, cost |
 | `enterprise.md` | the work sits inside an organization's constraints — regulated data, multi-tenant isolation, least privilege, change control and freeze windows, team process, legacy and unowned code, incident severity, supply chain |
 | `scale.md` | the system is too large to read — modelling from partial evidence, locating anything, search technique at size, monorepos, the five layers of blast radius |
@@ -100,30 +117,27 @@ skills/
 | `token-economy.md` | large repositories, repeated compaction, expensive tools, long autonomous runs |
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
+| `autonomy.md` | the run is unattended — a schedule, a CI job, a queue worker, a fleet — so "ask first" has nobody to ask: the authorization envelope decided in advance, gates that fail closed into a recorded request rather than a guess, the machine-readable verdict every run emits, budget reservation, idempotence and resumability, and the failure modes that only appear at fleet scale |
 | `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything |
 | `architecture.md` | judging an existing system rather than only describing it — the five assessment dimensions, tracing a flow before calling it a conflict, using a codebase graph as evidence without letting it pre-judge, the named artifacts, diagram discipline |
 
 ## Installation
 
-Copy the `skills/Eniac/` folder into your agent's skills directory.
+Eniac is plain Markdown with no build step and no dependency, so it installs into anything that reads instructions.
 
-**Claude Code** — user-wide, available in every project:
-
-```bash
-cp -r skills/Eniac ~/.claude/skills/Eniac
-```
-
-Or per-project, checked in with the repository:
+**A runtime with a skills directory** — copy the folder in and restart:
 
 ```bash
-cp -r skills/Eniac .claude/skills/Eniac
+cp -r skills/Eniac ~/.claude/skills/Eniac    # Claude Code, user-wide
+cp -r skills/Eniac ~/.codex/skills/Eniac     # Codex, user-wide
+cp -r skills/Eniac .claude/skills/Eniac      # per-project, checked in
 ```
 
-**Other agents** — copy the same folder into whatever directory that runtime loads skills from, keeping `SKILL.md` and `references/` together so the relative links resolve. Where a shared convention is supported, `.agents/skills/eniac/` works the same way.
+**A runtime that reads standing instruction files** — Codex, Cursor, Copilot, Windsurf, Cline, Roo Code, Zed, Gemini CLI, Continue, Aider, Junie, Antigravity, Jules, Amp — copy the matching adapter from `skills/Eniac/adapters/`. All eleven are generated from one source, so the rules are identical across runtimes and cannot drift apart.
 
-**No skill support** — paste the contents of `SKILL.md` into your agent's instructions and point it at the reference files as optional material.
+**A runtime with one instruction field** — custom GPTs, assistant configurations, chat system prompts — paste `skills/Eniac/adapters/eniac-compact.md`. It is self-contained: a distillation of every rule, without the depth the references carry.
 
-Restart the agent or start a new session after installing.
+Per-runtime paths, merge guidance, and how to tell whether it actually loaded: **[INSTALL.md](INSTALL.md)**. Rolling it out to a team or a fleet — pinning a version, adding your own rules without forking, distribution, unattended runs: **[ADOPTION.md](ADOPTION.md)**.
 
 ## Usage
 
@@ -170,11 +184,11 @@ The savings come from structure rather than from exhortation:
 ## Updating
 
 ```bash
-git -C Eniac pull
+git pull
 cp -r skills/Eniac ~/.claude/skills/Eniac
 ```
 
-Restart your agent or start a new session after updating.
+Replace the destination with wherever you installed it, then restart your agent or start a new session.
 
 ## Versioning
 

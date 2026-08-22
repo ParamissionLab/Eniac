@@ -1,0 +1,4 @@
+interface:
+  display_name: "Eniac"
+  short_description: "Senior engineering mind — scaled effort, strict scope, proof before claiming"
+  default_prompt: "Use $eniac for this software work: scale the effort to the real risk, stay inside the scope I asked for, and verify before claiming anything is done."

@@ -19,6 +19,7 @@ reading the others costs you the budget the route was supposed to save.
 - [Batch](#batch) — many small mechanical edits
 - [Product UI](#product-ui) — a user-facing screen, page, or flow
 - Optimize — something is measurably slow; the chain for it lives in `performance.md`
+- Document — docs are the deliverable; the chain for it lives in `documentation.md`
 - [Ship](#ship) — release, deploy, migrate
 - [Overlays](#overlays) — performance, security, data, contracts, deps, concurrency, observability
 
@@ -179,7 +180,8 @@ two phases that come first, and the map of which route closes which phase.
 - **Harden** — failure paths, input handling, plus performance or security only where
   evidence says they matter.
 - **Document** — only what changes a reader's action: how to run it, how to extend it,
-  and what surprised you.
+  and what surprised you. Where each of those facts belongs, and how to avoid growing a
+  second copy of one that already exists: `documentation.md`.
 - **Ship** — see [Ship](#ship).
 
 ---
@@ -287,6 +289,13 @@ sufficient — to the person using it, the interface *is* the product.
 gratuitous gradients and glows, emoji standing in for icons, everything centered, a hero
 section on an internal tool, animation that delays the task, three typefaces, and
 decorative colour that encodes nothing. Restraint reads as competence.
+
+This chain makes an interface correct. When the *appearance itself* is part of the
+deliverable — a marketing or landing page, a redesign, a brief that says design, look,
+feel, or brand — correctness is the floor rather than the goal, and
+`interface-design.md` carries the rest: settling the palette, type, layout, and signature
+element before any CSS exists, avoiding the handful of looks every generated design
+converges on, and writing interface copy as design material rather than filler.
 
 ---
 

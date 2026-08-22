@@ -25,7 +25,9 @@ skills/Eniac/
     reasoning.md               — the method slow mode runs: frame, decompose, prove
     judgment.md                — deciding well when being wrong is expensive
     findings.md                — claim labels, finding shape, questions, handoff
-    performance.md             — measure, identify, fix, verify, guard
+    documentation.md           — one owner per fact, placement, status labels, doc audit
+    interface-design.md        — design plan before code, escaping default looks, UI copy
+    performance.md             — measure, identify, fix, verify, guard, anchor thresholds
     production.md              — resilience, observability, load, data ops, runbooks
     enterprise.md              — regulated data, tenancy, change control, legacy
     scale.md                   — systems too large to read
@@ -36,8 +38,22 @@ skills/Eniac/
     token-economy.md           — context budgeting and progressive loading
     learning-loop.md           — insight capture and durable placement
     safety.md                  — authorization, secrets, rollback, release
+    autonomy.md                — unattended runs, envelopes, verdicts, fleets
     stack-signals.md           — stack detection, real proof commands, pitfalls
     architecture.md            — assessment dimensions, flow tracing, diagrams
+  adapters/                    — not loaded by the skill; per-runtime install surfaces
+    _source/core.md            — SOURCE OF TRUTH for every generated rule adapter
+    eniac-compact.md           — hand-written; the whole mind in one self-contained file
+    codex/openai.yaml          — hand-written; Codex interface metadata only
+    agents-md/ cursor/ copilot/ windsurf/ cline/ zed/ gemini/
+    continue/ aider/ junie/ generic/    — GENERATED, do not edit by hand
+scripts/
+  check_skill.py               — structural checks; standard library only
+  build_adapters.py            — regenerates the rule adapters from _source/core.md
+templates/
+  house-rules.template.md      — an organization's own rules, at precedence level 3
+INSTALL.md                     — per-runtime installation
+ADOPTION.md                    — team and fleet rollout, versioning, customization
 ```
 
 Edit `SKILL.md` only for core behavior — the agencies, the loop, investment levels, the triage ladder, routing, and reference discovery. Everything task-specific belongs in a reference file.
@@ -49,7 +65,9 @@ Edit `SKILL.md` only for core behavior — the agencies, the loop, investment le
 - Keep changes narrow and tied to a specific failure the current text allows.
 - Do not add reference content that would be loaded for simple tasks unless it prevents a concrete, describable mistake.
 - Explain *why* a rule exists. Rules the model understands survive paraphrase and novel situations; bare imperatives do not. Prefer a reason over an emphatic `MUST`.
-- Preserve provider-neutral and stack-neutral language, except where a section is explicitly about a named platform or ecosystem.
+- Preserve provider-neutral and stack-neutral language, except where a section is explicitly about a named platform or ecosystem. Naming one vendor's instruction file, tool, or model where a capability was meant makes the skill wrong on every other runtime — write the capability and give the vendor names as examples.
+- **Adapters are generated, not written.** Editing a file under `adapters/agents-md/`, `cursor/`, `copilot/`, `windsurf/`, `cline/`, `zed/`, `gemini/`, `continue/`, `aider/`, `junie/`, or `generic/` forks that runtime from every other one. Edit `adapters/_source/core.md` and run `python scripts/build_adapters.py`; CI rejects the mismatch otherwise. Supporting a new runtime is one entry in that script's `TARGETS` table, not a new hand-written file.
+- **`eniac-compact.md` is the one deliberate restatement.** It is a distillation rather than a reformat, so it cannot be generated — which means it is the file that drifts. When a load-bearing rule in `SKILL.md` changes, that file needs the same edit in the same commit.
 - Keep the Freudian model doing real work. Each borrowed concept should map onto a mechanism that changes behavior — an agency that produces something, a principle that gates something. Decorative psychoanalytic vocabulary costs tokens and earns nothing.
 - Never introduce three-voice narration as visible output. Arbitration is internal and costs at most one line.
 - Preserve the distinction between reporting and doing. Guidance that lets an agent silently widen scope is a regression regardless of how useful the extra work is.
@@ -79,16 +97,21 @@ If the trigger cannot be stated, the file will not be loaded at the right time a
 
 ## Verifying A Change
 
-There are no build steps or test scripts in this repository — it is prose that steers behavior. Verification is correspondingly manual:
+This repository is prose that steers behavior, so most of its quality is judgment. What is *not* judgment drifts silently, and that part is checked by a script — standard library only, no arguments:
+
+```bash
+python scripts/check_skill.py
+python scripts/build_adapters.py --check
+```
+
+It verifies the front matter, that every reference path and `file.md#anchor` resolves, that no reference is orphaned or unregistered across `SKILL.md` / README / this file, that each reference states its own load condition, that Markdown tables are well-formed, that no file assumes one vendor's instruction file where a capability was meant, and that `adapters/eniac-compact.md` still carries the load-bearing rules it restates. Run it before opening a pull request; CI runs the same command.
+
+The judgment half stays manual, and it is the half that matters:
 
 - Markdown renders cleanly on GitHub.
-- `skills/Eniac/SKILL.md` still has valid YAML front matter with `name` and `description`.
-- Every `references/*.md` path mentioned anywhere resolves to a file that exists.
-- Every reference file states its own load condition in its opening lines.
-- Every `workflows.md#anchor` link matches a real heading.
-- The README layout, the README reference table, the layout in this file, and the `## References` list in `SKILL.md` all agree with the actual contents of `references/`.
 - New guidance does not contradict the existing scope, authority, or token-discipline rules.
 - A trivial task still loads no reference files.
+- The rule explains *why*, so it survives paraphrase into a situation nobody wrote down.
 
 Behavioral changes are best supported with a before/after example: a prompt where the current text produces the wrong behavior and the proposed text produces the right one.
 

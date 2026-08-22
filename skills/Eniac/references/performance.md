@@ -28,6 +28,31 @@ make code "faster" with no evidence anything is slow.
 - **Record the exact command and conditions.** You will need to reproduce them precisely
   at the VERIFY step, and a baseline you cannot reproduce is not a baseline.
 
+## Targets Worth Anchoring To
+
+A measurement means nothing without a threshold, and "it feels slow" is not one. When the
+project has a stated budget or SLA, that wins outright. When it has none, these are the
+industry defaults — good enough to argue with, and far better than deciding after the fact
+that whatever you measured was acceptable.
+
+User-facing web, measured on real users rather than a developer machine:
+
+| Metric | Good | Needs work | Poor |
+| --- | --- | --- | --- |
+| Largest Contentful Paint — when the main content is visible | ≤ 2.5s | ≤ 4.0s | > 4.0s |
+| Interaction to Next Paint — how long an action takes to show anything | ≤ 200ms | ≤ 500ms | > 500ms |
+| Cumulative Layout Shift — how much the page moves under the reader | ≤ 0.1 | ≤ 0.25 | > 0.25 |
+
+Common starting budgets when nothing else is specified: initial JavaScript under ~200KB
+compressed, CSS under ~50KB, above-the-fold images under ~200KB each, server response
+under ~200ms at p95, and interactive within ~3.5s on a mid-tier device over mobile data.
+
+Three things about these numbers matter more than the numbers themselves. **Percentiles,
+not averages** — a mean hides the tail, and the tail is where users leave. **Real
+conditions, not yours** — your machine, your network, and your seeded database are all
+faster than production. **Only measure against a budget something enforces**; a documented
+threshold with no CI check or alert behind it is a wish, and it will be exceeded quietly.
+
 ## Start Measuring From The Symptom
 
 The symptom narrows what to measure first. Measuring everything is how a day disappears.

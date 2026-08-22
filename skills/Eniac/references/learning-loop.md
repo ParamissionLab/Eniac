@@ -51,13 +51,15 @@ smallest place that a future reader or session will actually hit:
 | --- | --- |
 | A behavior that must not regress | a test that fails on the old behavior |
 | A trap in one specific place | a short comment at that exact place |
-| A repository-wide convention or gotcha | `CLAUDE.md`, or the contributing doc |
+| A repository-wide convention or gotcha | the repo's agent instruction file (`AGENTS.md`, `CLAUDE.md`, whichever it uses), or the contributing doc |
 | How to run, build, or debug this project | the README, in the section someone reads first |
 | A durable user preference or working style | memory |
 | Something true only for this task | the plan file, deleted when the task closes |
 
 A test outranks a comment, and a comment outranks prose, because a test is the only one
-that enforces itself.
+that enforces itself. When the lesson genuinely belongs in a document, `documentation.md`
+decides which file owns it — the failure to avoid is a third file repeating a fact two
+others already carry.
 
 **Do not** write a lesson into a place nobody reads: a new `NOTES.md`, a long commit
 message, or a section of the final report the user will skim once.
@@ -93,8 +95,9 @@ unverified edge is an agent whose "verified" means nothing.
 
 Some patterns recur across sessions — a preferred stack, a review standard, a way of
 being asked for things. When the same correction arrives twice from the same user, that
-is no longer a task fact; it is a durable preference, and it belongs in memory or in
-`CLAUDE.md` rather than being absorbed again next time.
+is no longer a task fact; it is a durable preference, and it belongs in whatever memory
+this runtime offers, or in the repository's agent instruction file, rather than being
+absorbed again next time.
 
 The measure of this loop is not how much was noticed. It is whether the same mistake
 costs anything the second time.
