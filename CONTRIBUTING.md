@@ -22,12 +22,15 @@ skills/Eniac/
     lifecycle.md               — specify, design, traceability, phase gates
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, errors, concurrency, tests
+    loops.md                   — loop design, shortening, convergence, stops, outer loop
     reasoning.md               — the method slow mode runs: frame, decompose, prove
     judgment.md                — deciding well when being wrong is expensive
     findings.md                — claim labels, finding shape, questions, handoff
     documentation.md           — one owner per fact, placement, status labels, doc audit
     interface-design.md        — design plan before code, escaping default looks, UI copy
     performance.md             — measure, identify, fix, verify, guard, anchor thresholds
+    security.md                — trust boundaries, authz paths, injection, secrets
+    llm-systems.md             — building on models: injection, evals, cost, versions
     production.md              — resilience, observability, load, data ops, runbooks
     enterprise.md              — regulated data, tenancy, change control, legacy
     scale.md                   — systems too large to read
@@ -48,8 +51,13 @@ skills/Eniac/
     agents-md/ cursor/ copilot/ windsurf/ cline/ zed/ gemini/
     continue/ aider/ junie/ generic/    — GENERATED, do not edit by hand
 scripts/
-  check_skill.py               — structural checks; standard library only
+  check_skill.py               — structural checks, budget, compact coverage
   build_adapters.py            — regenerates the rule adapters from _source/core.md
+  run_evals.py                 — runtime-neutral behavioural eval harness
+evals/
+  cases.json                   — behavioural cases with discriminating assertions
+  trigger.json                 — should-fire / should-not-fire queries for the description
+  README.md                    — how to run them and how to write one
 templates/
   house-rules.template.md      — an organization's own rules, at precedence level 3
 INSTALL.md                     — per-runtime installation
@@ -76,12 +84,20 @@ Edit `SKILL.md` only for core behavior — the agencies, the loop, investment le
 
 ## Adding A Reference File
 
-Before adding one, answer two questions in the pull request:
+The default answer is no. Twenty-six files is already a lot to keep coherent, and the usual right move is a new section inside the file that already owns the territory. Before adding one, answer three questions in the pull request:
 
-1. Which decision does this change that the existing files do not?
-2. What triggers loading it, and how would the agent know that trigger has fired?
+1. **Which decision does this change that the existing files do not?**
+2. **What triggers loading it, and how would the agent know that trigger has fired?** If the trigger cannot be stated, the file will not be loaded at the right time and the content belongs inside an existing reference instead.
+3. **What does it own, and what does it hand off?** If the answer overlaps an existing file, the boundary has to move — one of the two defers, explicitly and in writing.
 
-If the trigger cannot be stated, the file will not be loaded at the right time and the content belongs inside an existing reference instead. Every new reference must also be registered in the `## References` list in `SKILL.md`, in the README table, and in the layout above.
+Then wire it in, all four of which the checker enforces:
+
+- An `> **Owns** — … / > **Defers** — …` block near the top, before `## Contents`. This is the package applying its own one-owner-per-fact rule to itself: it tells a reader deciding whether to keep reading exactly where the boundary is, and it makes a future overlap a build failure rather than a slow drift. The checker rejects a missing block, a hand-off to a file that does not exist, a file that defers to itself, and two files claiming the same owned phrase.
+- A place in **exactly one group** of the reference map in `SKILL.md`. Groups say what *kind* of question a file answers; a file in two groups means the grouping has stopped meaning anything.
+- A row in the README reference table and a line in the layout above.
+- A load condition stated in the file's own opening lines.
+
+Neighbouring files usually need an edit too. If the new file takes over territory another one covered in passing, that other file gets the topic removed and a hand-off added — otherwise the package ends up with the duplication it tells its users to avoid.
 
 ## Adding A Stack
 
@@ -102,9 +118,14 @@ This repository is prose that steers behavior, so most of its quality is judgmen
 ```bash
 python scripts/check_skill.py
 python scripts/build_adapters.py --check
+python scripts/run_evals.py --self-test
 ```
 
-It verifies the front matter, that every reference path and `file.md#anchor` resolves, that no reference is orphaned or unregistered across `SKILL.md` / README / this file, that each reference states its own load condition, that Markdown tables are well-formed, that no file assumes one vendor's instruction file where a capability was meant, and that `adapters/eniac-compact.md` still carries the load-bearing rules it restates. Run it before opening a pull request; CI runs the same command.
+Between them these verify the front matter; that every reference path and `file.md#anchor` resolves; that no reference is orphaned or unregistered across `SKILL.md` / README / this file; that each reference states its own load condition; that Markdown tables are well-formed; that no file assumes one vendor's instruction file where a capability was meant; that `SKILL.md` is inside its size budget; that every `SKILL.md` section is either carried by `adapters/eniac-compact.md` or recorded as deliberately absent; that the generated adapters match their source; and that every eval case rejects a deliberately bad answer. Run all three before opening a pull request; CI runs the same three.
+
+**The size budget makes growth deliberate; it is not a target to shrink toward.** `SKILL.md` is loaded on every invocation, so its length is a real cost — but the opposite failure is worse and less visible. A control plane too thin to settle the next action pushes that work into a reference, and a reference is 150–200 lines loaded at full price on exactly the tasks that were supposed to be cheap. Twenty lines saved in `SKILL.md` can cost two hundred in a reference load, and nobody attributes it.
+
+So: raise `SKILL_MAX_LINES` when the content earns it, in a commit that says why. Do not compress a rule until it stops explaining itself — a rule the model does not understand survives neither paraphrase nor a situation nobody wrote down, which is the whole reason this skill explains *why* instead of issuing bare imperatives.
 
 The judgment half stays manual, and it is the half that matters:
 
@@ -113,7 +134,16 @@ The judgment half stays manual, and it is the half that matters:
 - A trivial task still loads no reference files.
 - The rule explains *why*, so it survives paraphrase into a situation nobody wrote down.
 
-Behavioral changes are best supported with a before/after example: a prompt where the current text produces the wrong behavior and the proposed text produces the right one.
+Behavioural changes are best supported by the eval suite in `evals/`. If a change is meant to alter what an agent does, add or update a case in `evals/cases.json` so the claim is checkable by someone else, and run it against your runtime both with and without the skill:
+
+```bash
+python scripts/run_evals.py --agent-cmd '<your agent>' --label with-skill
+python scripts/run_evals.py --agent-cmd '<your agent>' --label baseline
+```
+
+A case both runs pass is telling you the model already did that, and the guidance is not earning its tokens. Full instructions and the rules for writing a case that discriminates are in `evals/README.md`.
+
+**Verifying an adapter path** is a small, high-value contribution. Every runtime path in `scripts/build_adapters.py` is currently marked unverified, because a wrong filename or front-matter key fails silently — nothing errors, the file is simply never loaded. If you install one and confirm it loads, set that target's `verified` field, re-run the generator, and send the change.
 
 ## Pull Requests
 

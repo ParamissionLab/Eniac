@@ -6,6 +6,9 @@ engineering it is the difference between a change and a result.
 Load this when choosing how far to verify, when separating a regression you caused from
 one you inherited, or when deciding what actually closes a task.
 
+> **Owns** — what counts as evidence — the verification ladder, baseline before regression, proof by change type, truthful reporting vocabulary, what to do when you cannot run it, common false proofs, closing criteria.
+> **Defers** — what a test should assert → `craft.md#tests`; proving a performance change → `performance.md`; proving nondeterministic output → `llm-systems.md#testing-something-nondeterministic`; which command proves anything in this stack → `stack-signals.md`.
+
 ## What Counts As Evidence
 
 | Strength | Source |

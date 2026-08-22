@@ -18,19 +18,31 @@ Every file below is produced from `_source/core.md` by `scripts/build_adapters.p
 rules cannot drift between runtimes. **Edit the source, not these files**, then re-run the
 script. Adding a runtime is one entry in that script's `TARGETS` table.
 
-| File | For | Install |
-| --- | --- | --- |
-| `agents-md/AGENTS.example.md` | Codex, Gemini CLI, Windsurf, Antigravity, Jules, Amp, and anything else on the AGENTS.md convention | merge into the project's AGENTS.md |
-| `cursor/eniac.mdc` | Cursor | copy to .cursor/rules/eniac.mdc |
-| `copilot/copilot-instructions.md` | GitHub Copilot (chat, agent mode, and coding agent) | copy to .github/copilot-instructions.md |
-| `windsurf/eniac.md` | Windsurf | copy to .windsurf/rules/eniac.md |
-| `cline/.clinerules` | Cline and Roo Code | copy to .clinerules in the project root |
-| `zed/rules.md` | Zed | copy to .rules in the project root |
-| `gemini/GEMINI.md` | Gemini CLI and Gemini Code Assist | copy to GEMINI.md in the project root |
-| `continue/eniac.md` | Continue | copy to .continue/rules/eniac.md |
-| `aider/CONVENTIONS.md` | Aider | add with `aider --read CONVENTIONS.md` |
-| `junie/guidelines.md` | JetBrains Junie | copy to .junie/guidelines.md |
-| `generic/system-prompt.md` | any assistant with a single instruction field, and any API integration | paste as the system prompt, or prepend to it |
+| File | For | Install | Path confirmed |
+| --- | --- | --- | --- |
+| `agents-md/AGENTS.example.md` | Codex, Gemini CLI, Windsurf, Antigravity, Jules, Amp, and anything else on the AGENTS.md convention | merge into the project's AGENTS.md | not confirmed by an install |
+| `cursor/eniac.mdc` | Cursor | copy to .cursor/rules/eniac.mdc | not confirmed by an install |
+| `copilot/copilot-instructions.md` | GitHub Copilot (chat, agent mode, and coding agent) | copy to .github/copilot-instructions.md | not confirmed by an install |
+| `windsurf/eniac.md` | Windsurf | copy to .windsurf/rules/eniac.md | not confirmed by an install |
+| `cline/.clinerules` | Cline and Roo Code | copy to .clinerules in the project root | not confirmed by an install |
+| `zed/rules.md` | Zed | copy to .rules in the project root | not confirmed by an install |
+| `gemini/GEMINI.md` | Gemini CLI and Gemini Code Assist | copy to GEMINI.md in the project root | not confirmed by an install |
+| `continue/eniac.md` | Continue | copy to .continue/rules/eniac.md | not confirmed by an install |
+| `aider/CONVENTIONS.md` | Aider | add with `aider --read CONVENTIONS.md` | not confirmed by an install |
+| `junie/guidelines.md` | JetBrains Junie | copy to .junie/guidelines.md | not confirmed by an install |
+| `generic/system-prompt.md` | any assistant with a single instruction field, and any API integration | paste as the system prompt, or prepend to it | not confirmed by an install |
+
+**11 of 11 paths are unconfirmed.** The rules in every adapter are
+generated and therefore correct; what is not independently verified is each runtime's
+*filename and front-matter contract*, which comes from that runtime's documentation rather
+than from an install performed here. This distinction matters because the failure is
+silent: a wrong key or path produces no error, the file is simply never loaded, and the
+agent behaves exactly as though the adapter were absent.
+
+If you install one and confirm it loads — the quickest signal is in `../../../INSTALL.md`
+under "Verifying the install" — set `verified` for that entry in
+`scripts/build_adapters.py` to a short `YYYY-MM-DD, who, what you saw`, re-run the
+generator, and send the change. That is one line and it retires an assumption for everyone.
 
 ## Which one to use
 

@@ -15,6 +15,9 @@ Load this when performance is the work — a stated budget or SLA, a measured co
 suspected regression, or a feature meeting large data or high traffic. Do not load it to
 make code "faster" with no evidence anything is slow.
 
+> **Owns** — the optimize chain — measure, identify, fix, verify, guard; the anchor thresholds when a project states none; where to start from a symptom; keep-or-revert with neutral counted as a revert; the attempt ledger.
+> **Defers** — behaviour under real traffic → `production.md`; the cost of a model call → `llm-systems.md`; the latency of your own working loop → `loops.md`.
+
 ## Measure First
 
 - **Baseline before touching anything.** Without it there is no way to tell improvement

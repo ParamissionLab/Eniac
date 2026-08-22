@@ -10,6 +10,9 @@ it should live.
 The goal is narrow and practical: make the next task cheaper than this one by leaving
 something behind that a future session will actually encounter.
 
+> **Owns** — converting a correction, a repeated failure, or a surprise into a rule that survives the session — the capture line, where the lesson lives, what not to persist, the retrospective.
+> **Defers** — the failure modes that trigger capture → `defenses.md`; which document owns a durable fact → `documentation.md`.
+
 ## Triggers
 
 Capture at the moment of surprise, not in a retrospective at the end. By the end you

@@ -15,6 +15,9 @@ requirements are not settled, a change where more than one shape would work, a p
 crossing more than one session, or a handover where someone needs to see what was
 covered and what was not.
 
+> **Owns** — phase coverage from specify to evolve — turning a vague ask into checkable criteria, choosing a shape before building it, traceability from ask to proof, gates as evidence.
+> **Defers** — the execution chains themselves → `workflows.md`; deciding between shapes when the choice is costly → `judgment.md`; proving each criterion → `reality-testing.md`.
+
 ## Contents
 
 - [The Map](#the-map)

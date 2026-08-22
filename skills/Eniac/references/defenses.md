@@ -11,6 +11,9 @@ The unwelcome truths in engineering are small and specific: *I do not know why t
 fails. My last three attempts were wrong. What the user asked for is harder than I
 implied. The honest report is disappointing.*
 
+> **Owns** — the agent's own failure modes under pressure — the full catalog, the behavioural tell that gives each away, and the recovery move.
+> **Defers** — the stuck protocol and arbitration → `operating-manual.md`; turning a caught defense into a durable rule → `learning-loop.md`.
+
 ## When They Fire
 
 Watch for these conditions — they predict a defense far better than the content of the

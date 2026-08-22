@@ -42,6 +42,41 @@ VENDOR_FILE_ALLOWED = {
     "ADOPTION.md",
 }
 
+# The control plane is loaded on every invocation, so its size is a cost paid by every
+# task including trivial ones. A budget nobody enforces is a wish (references/performance.md),
+# so this one fails the build.
+#
+# It is NOT a target to shrink toward. A control plane too thin to settle the next action
+# pushes the work into a reference, and a reference is 150-200 lines loaded at full price
+# on exactly the tasks that were supposed to be cheap - so twenty lines cut here can cost
+# two hundred there. The budget exists to make growth deliberate, not to make the file
+# small. Raise it when the content earns it, in a commit that says why.
+SKILL_MAX_LINES = 560
+SKILL_MAX_CHARS = 40_000
+
+# `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
+# one file that drifts. Every H2 in SKILL.md maps to the compact section carrying it, or to
+# None when it is intentionally absent. Adding a section to SKILL.md therefore fails this
+# check until someone decides whether the standalone version needs it too.
+COMPACT_COVERAGE: dict[str, str | None] = {
+    "Precedence": "Precedence",
+    "First Move": "First move, on every task",
+    "The Ego Loop": "The loop",
+    "Investment Levels": "Investment levels",
+    "Magnitude": "Size",
+    "Triage \u2014 Automatic Prioritization": "Triage \u2014 when more than one thing wants doing",
+    "Routes": "Routes",
+    "Reality Testing": "Reality testing",
+    "Runtime Portability": "Runtime portability",
+    "Authority And Safety": "Authority and safety",
+    "Self-Awareness": "Self-awareness",
+    "Token Economy": "Token discipline",
+    "Language": "Communication",
+    "Learning": "Learning",
+    "Communication": "Communication",
+    "References": None,
+}
+
 problems: list[str] = []
 
 
@@ -127,6 +162,61 @@ def check_registration() -> None:
         others = body.replace(read(REFS / name), "")
         if name not in others:
             fail(f"references/{name}: nothing points at it, so it will never load")
+
+
+def check_ownership() -> None:
+    """Every reference declares what it owns and what it hands off.
+
+    The package tells its readers to keep one owner per fact (references/documentation.md).
+    A set of 25+ files that does not do the same to itself accumulates the exact failure it
+    warns about: two files half-covering `secrets`, three half-covering `delegation`, and a
+    reader who cannot tell which is authoritative. These blocks make the boundary explicit
+    at the top of each file, where an agent deciding whether to keep reading will see it.
+    """
+    owns_by_topic: dict[str, str] = {}
+    for p in sorted(REFS.glob("*.md")):
+        head = "\n".join(read(p).split("\n")[:40])
+        owns = re.search(r"^> \*\*Owns\*\* — (.+)$", head, re.M)
+        defers = re.search(r"^> \*\*Defers\*\* — (.+)$", head, re.M)
+        if not owns:
+            fail(f"references/{p.name}: no `> **Owns** —` line, so nothing says what this "
+                 f"file is authoritative for")
+        if not defers:
+            fail(f"references/{p.name}: no `> **Defers** —` line; a reference with no "
+                 f"declared hand-offs is one that will duplicate a neighbour")
+            continue
+
+        for target in re.findall(r"→ `([a-zA-Z][a-zA-Z\-]*\.md)(?:#[a-z0-9\-]+)?`", defers.group(1)):
+            if target == p.name:
+                fail(f"references/{p.name}: defers to itself")
+            elif target != "SKILL.md" and not (REFS / target).exists():
+                fail(f"references/{p.name}: defers to `{target}`, which does not exist")
+
+        if owns:
+            for topic in owns.group(1).rstrip(".").split(";"):
+                key = re.sub(r"[^a-z ]", "", topic.strip().lower()).strip()
+                if len(key) < 12:
+                    continue
+                if key in owns_by_topic and owns_by_topic[key] != p.name:
+                    fail(f"references/{p.name} and references/{owns_by_topic[key]} both "
+                         f"claim to own \"{topic.strip()}\" - one of them must defer")
+                owns_by_topic[key] = p.name
+
+
+def check_reference_map() -> None:
+    """Every reference sits in exactly one group of SKILL.md's map, so none is floating."""
+    section = read(SKILL).split("## References", 1)
+    if len(section) < 2:
+        fail("SKILL.md: no `## References` section")
+        return
+    body = section[1]
+    for p in sorted(REFS.glob("*.md")):
+        hits = body.count(f"`references/{p.name}`")
+        if hits == 0:
+            fail(f"SKILL.md: `{p.name}` is not placed in the reference map")
+        elif hits > 1:
+            fail(f"SKILL.md: `{p.name}` appears {hits} times in the map - it belongs to "
+                 f"exactly one group, or the grouping is not telling the reader anything")
 
 
 def check_load_condition() -> None:
@@ -221,6 +311,60 @@ def check_adapters() -> None:
                 fail(f"adapters/eniac-compact.md: missing {why} (`{phrase}`)")
 
 
+def check_budget() -> None:
+    """The control plane is paid for on every task, so its size is enforced, not hoped."""
+    text = read(SKILL)
+    lines, chars = len(text.split("\n")), len(text)
+    if lines > SKILL_MAX_LINES:
+        fail(f"SKILL.md: {lines} lines exceeds the {SKILL_MAX_LINES}-line budget - "
+             f"remove something before adding, or raise the budget deliberately")
+    if chars > SKILL_MAX_CHARS:
+        fail(f"SKILL.md: {chars} chars exceeds the {SKILL_MAX_CHARS}-char budget")
+
+
+def check_compact_coverage() -> None:
+    """Every section of the control plane is either in the standalone file or listed as absent."""
+    compact = ADAPTERS / "eniac-compact.md"
+    if not compact.exists():
+        return
+    skill_h2 = [m[3:].strip() for m in read(SKILL).split("\n") if m.startswith("## ")]
+    compact_h2 = {m[3:].strip() for m in read(compact).split("\n") if m.startswith("## ")}
+
+    for h in skill_h2:
+        if h not in COMPACT_COVERAGE:
+            fail(f"SKILL.md: section `{h}` is not in COMPACT_COVERAGE - decide whether "
+                 f"adapters/eniac-compact.md needs it, then record the decision there")
+        elif COMPACT_COVERAGE[h] and COMPACT_COVERAGE[h] not in compact_h2:
+            fail(f"adapters/eniac-compact.md: no section `{COMPACT_COVERAGE[h]}` to carry "
+                 f"SKILL.md's `{h}`")
+    for h in COMPACT_COVERAGE:
+        if h not in skill_h2:
+            fail(f"check_skill.py: COMPACT_COVERAGE lists `{h}`, which SKILL.md no longer has")
+
+
+def check_evals() -> None:
+    """A skill verified only structurally is a skill whose central claim is untested."""
+    import json
+
+    evals = ROOT / "evals"
+    for name in ("cases.json", "trigger.json", "README.md"):
+        if not (evals / name).exists():
+            fail(f"evals/{name}: missing")
+    cases = evals / "cases.json"
+    if cases.exists():
+        try:
+            data = json.loads(read(cases))
+        except json.JSONDecodeError as exc:
+            fail(f"evals/cases.json: not valid JSON ({exc})")
+            return
+        if len(data.get("cases", [])) < 5:
+            fail("evals/cases.json: fewer than five behavioural cases is not a suite")
+        version = re.search(r'version:\s*"([^"]+)"', read(SKILL))
+        if version and data.get("version") != version.group(1):
+            fail(f"evals/cases.json: version {data.get('version')!r} does not match "
+                 f"SKILL.md {version.group(1)!r} - the suite is describing a different skill")
+
+
 def main() -> int:
     if not SKILL.exists():
         print(f"cannot find {SKILL}", file=sys.stderr)
@@ -232,6 +376,11 @@ def main() -> int:
     check_tables()
     check_vendor_neutrality()
     check_adapters()
+    check_budget()
+    check_compact_coverage()
+    check_evals()
+    check_ownership()
+    check_reference_map()
 
     if problems:
         for p in problems:
@@ -239,7 +388,10 @@ def main() -> int:
         print(f"\n{len(problems)} problem(s).")
         return 1
     refs = len(list(REFS.glob("*.md")))
-    print(f"ok - SKILL.md + {refs} references, links, registration, and adapters agree.")
+    skill_lines = len(read(SKILL).split("\n"))
+    print(f"ok - SKILL.md ({skill_lines}/{SKILL_MAX_LINES} lines) + {refs} references; "
+          f"links, registration, ownership, the map, adapters, compact coverage, and evals "
+          f"all agree.")
     return 0
 
 

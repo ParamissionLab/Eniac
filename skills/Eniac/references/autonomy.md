@@ -10,6 +10,9 @@ watching within the run's lifetime. Also load it when *you* are the operator of 
 agents rather than the one doing the work. Do not load it for ordinary interactive
 work — there, asking is cheap and this file is a distraction.
 
+> **Owns** — running with nobody to ask — establishing the mode, gates that fail closed into a recorded request, the authorization envelope, the verdict a run emits, budget reservation, idempotence and resumability, fleet operation.
+> **Defers** — which action classes need authorization at all → `safety.md`; how often a recurring run should fire → `loops.md#recurring-and-self-paced-runs`; delegation contracts inside long work → `campaigns.md#delegation`.
+
 ## Contents
 
 - [Establish The Mode First](#establish-the-mode-first)

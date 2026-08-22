@@ -7,6 +7,9 @@ one watching at 3am.
 
 Load this when work touches a running system, or when a change will meet real traffic.
 
+> **Owns** — systems meeting real traffic — environment differences, the four resilience questions per remote call, third-party dependencies, observability that works, SLOs and error budgets, load, data operations at scale, runbooks, infrastructure cost.
+> **Defers** — finding and fixing a specific bottleneck → `performance.md`; the incident step chain → `workflows.md#incident`; organizational and regulatory constraints → `enterprise.md`.
+
 ## Environments Are Not Copies Of Each Other
 
 "It works in staging" is evidence about staging. Staging almost always differs in data

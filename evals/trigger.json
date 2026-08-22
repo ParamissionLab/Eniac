@@ -1,0 +1,87 @@
+{
+  "skill": "eniac",
+  "version": "1.1.0",
+  "notes": "Does the description make the skill fire when it should and stay quiet when it should not. The should_trigger=false entries are deliberately near-misses: queries sharing vocabulary with the skill that genuinely need something else. Obviously irrelevant negatives test nothing.",
+  "queries": [
+    {
+      "query": "the checkout endpoint started 500ing about an hour ago, nothing deployed since yesterday. here's the stack trace from sentry: KeyError: 'tax_rate' in pricing.py line 214. no idea where to start",
+      "should_trigger": true
+    },
+    {
+      "query": "can you add pagination to GET /api/orders? it's returning all 40k rows right now and the frontend chokes. we use fastapi + sqlalchemy, there's an existing paginate helper in utils/query.py i think",
+      "should_trigger": true
+    },
+    {
+      "query": "clean this up",
+      "should_trigger": true
+    },
+    {
+      "query": "i need to rename User.email_address to User.email across the whole monorepo. 14 services, some in python some in go, plus the protobuf definitions. how do i not break prod doing this",
+      "should_trigger": true
+    },
+    {
+      "query": "review this PR before i merge it, it touches the auth middleware and i'm nervous https://github.com/acme/api/pull/882",
+      "should_trigger": true
+    },
+    {
+      "query": "our docs/ folder has 31 markdown files and at least four of them describe the deployment process differently. sort it out",
+      "should_trigger": true
+    },
+    {
+      "query": "we're setting up a nightly agent that opens PRs to bump dependencies. what should it be allowed to do on its own and what should it stop and ask about",
+      "should_trigger": true
+    },
+    {
+      "query": "every change to the rules engine means a 12 minute rebuild before i can test it. i've burned the whole afternoon on one bug",
+      "should_trigger": true
+    },
+    {
+      "query": "build me a landing page for a small-batch coffee roaster in Chiang Mai. i want it to not look like every other AI-generated site",
+      "should_trigger": true
+    },
+    {
+      "query": "what's the difference between a left join and a left outer join in postgres",
+      "should_trigger": false
+    },
+    {
+      "query": "write me a regex that matches thai national id numbers, 13 digits with the checksum rule",
+      "should_trigger": false
+    },
+    {
+      "query": "i'm doing a CTF and there's a stripped x86-64 binary that checks a serial. can you help me figure out the algorithm from the disassembly",
+      "should_trigger": false
+    },
+    {
+      "query": "explain what a monad is, i've read four blog posts and none of them clicked",
+      "should_trigger": false
+    },
+    {
+      "query": "i have a router firmware .bin from a tp-link and i want to pull the filesystem out of it and look at the web interface binaries",
+      "should_trigger": false
+    },
+    {
+      "query": "help me write the engineering section of our SOC 2 readiness doc, specifically the change management narrative for the auditor",
+      "should_trigger": false
+    },
+    {
+      "query": "can you turn this csv of last quarter's sales into a chart i can drop into a deck",
+      "should_trigger": false
+    },
+    {
+      "query": "what should i name my startup, it's a scheduling tool for physiotherapy clinics",
+      "should_trigger": false
+    },
+    {
+      "query": "translate this error message into thai for our support team: 'Your session has expired. Please sign in again.'",
+      "should_trigger": false
+    },
+    {
+      "query": "i'm writing a skill for claude code and i want to test whether the description triggers correctly",
+      "should_trigger": false
+    },
+    {
+      "query": "is it worth learning rust in 2026 or should i stick with go for backend work",
+      "should_trigger": false
+    }
+  ]
+}

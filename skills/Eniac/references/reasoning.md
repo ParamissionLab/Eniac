@@ -8,6 +8,9 @@ you cannot state, a search space too wide to walk, or a defect whose mechanism y
 picture. Do not load it for a task you already know how to do — applying analysis to a
 solved problem is the most respectable way to waste an afternoon.
 
+> **Owns** — the method slow mode runs — framing, decomposition, case enumeration with proved coverage, checking against a written rule, finding an invariant, constraint propagation, working backwards, reduction, cost reasoning, discharging proof obligations.
+> **Defers** — deciding when the answer is a judgment call rather than a derivation → `judgment.md`; when to enter slow mode at all → `operating-manual.md#fast-and-slow`.
+
 ## Frame It First
 
 Four lines, before any analysis:

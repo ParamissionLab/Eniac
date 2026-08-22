@@ -32,14 +32,20 @@ BANNER = (
 )
 
 # path relative to adapters/, the file the runtime actually reads, and the wrapper.
-#   header:  text placed above the rules (front matter, title, banner)
-#   comment: how this format carries the "generated" banner, or None to omit it
+#   header:   text placed above the rules (front matter, title, banner)
+#   verified: None until someone installs the adapter in that runtime and confirms it
+#             loads, then a short "YYYY-MM-DD, who, what they saw". A wrong front-matter
+#             key or path does not error anywhere - the adapter is simply never loaded and
+#             the agent behaves as though it were not installed. That silence is why this
+#             field exists: an unverified path is a stated assumption, not a fact, and the
+#             generated README prints it as one.
 TARGETS: list[dict] = [
     {
         "out": "agents-md/AGENTS.example.md",
         "runtime": "Codex, Gemini CLI, Windsurf, Antigravity, Jules, Amp, and anything "
                    "else on the AGENTS.md convention",
         "install": "merge into the project's AGENTS.md",
+        "verified": None,
         "header": "# AGENTS.md — Eniac section\n\n"
                   "Merge this section into the project's `AGENTS.md`, or use it as the "
                   "file if none exists.\n\n## Engineering behaviour — Eniac\n",
@@ -48,6 +54,7 @@ TARGETS: list[dict] = [
         "out": "cursor/eniac.mdc",
         "runtime": "Cursor",
         "install": "copy to .cursor/rules/eniac.mdc",
+        "verified": None,
         "header": "---\n"
                   "description: Eniac — scale effort to real risk, stay in scope, prove "
                   "before claiming.\n"
@@ -58,54 +65,63 @@ TARGETS: list[dict] = [
         "out": "copilot/copilot-instructions.md",
         "runtime": "GitHub Copilot (chat, agent mode, and coding agent)",
         "install": "copy to .github/copilot-instructions.md",
+        "verified": None,
         "header": "# Copilot instructions — Eniac\n",
     },
     {
         "out": "windsurf/eniac.md",
         "runtime": "Windsurf",
         "install": "copy to .windsurf/rules/eniac.md",
+        "verified": None,
         "header": "---\ntrigger: always_on\n---\n\n# Eniac\n",
     },
     {
         "out": "cline/.clinerules",
         "runtime": "Cline and Roo Code",
         "install": "copy to .clinerules in the project root",
+        "verified": None,
         "header": "# Eniac\n",
     },
     {
         "out": "zed/rules.md",
         "runtime": "Zed",
         "install": "copy to .rules in the project root",
+        "verified": None,
         "header": "# Eniac\n",
     },
     {
         "out": "gemini/GEMINI.md",
         "runtime": "Gemini CLI and Gemini Code Assist",
         "install": "copy to GEMINI.md in the project root",
+        "verified": None,
         "header": "# GEMINI.md — Eniac\n",
     },
     {
         "out": "continue/eniac.md",
         "runtime": "Continue",
         "install": "copy to .continue/rules/eniac.md",
+        "verified": None,
         "header": "---\nname: Eniac\nalwaysApply: true\n---\n\n# Eniac\n",
     },
     {
         "out": "aider/CONVENTIONS.md",
         "runtime": "Aider",
         "install": "add with `aider --read CONVENTIONS.md`",
+        "verified": None,
         "header": "# Conventions — Eniac\n",
     },
     {
         "out": "junie/guidelines.md",
         "runtime": "JetBrains Junie",
         "install": "copy to .junie/guidelines.md",
+        "verified": None,
         "header": "# Project guidelines — Eniac\n",
     },
     {
         "out": "generic/system-prompt.md",
         "runtime": "any assistant with a single instruction field, and any API integration",
         "install": "paste as the system prompt, or prepend to it",
+        "verified": None,
         "header": "# Eniac\n",
     },
 ]
@@ -158,8 +174,11 @@ def build(check_only: bool = False) -> int:
 def write_index(rules: str) -> None:
     """The adapters README is a listing, so it is generated from the same table."""
     rows = "\n".join(
-        f"| `{t['out']}` | {t['runtime']} | {t['install']} |" for t in TARGETS
+        f"| `{t['out']}` | {t['runtime']} | {t['install']} | "
+        f"{t.get('verified') or 'not confirmed by an install'} |"
+        for t in TARGETS
     )
+    unverified = sum(1 for t in TARGETS if not t.get("verified"))
     text = f"""# Adapters
 
 {BANNER}
@@ -180,9 +199,21 @@ Every file below is produced from `_source/core.md` by `scripts/build_adapters.p
 rules cannot drift between runtimes. **Edit the source, not these files**, then re-run the
 script. Adding a runtime is one entry in that script's `TARGETS` table.
 
-| File | For | Install |
-| --- | --- | --- |
+| File | For | Install | Path confirmed |
+| --- | --- | --- | --- |
 {rows}
+
+**{unverified} of {len(TARGETS)} paths are unconfirmed.** The rules in every adapter are
+generated and therefore correct; what is not independently verified is each runtime's
+*filename and front-matter contract*, which comes from that runtime's documentation rather
+than from an install performed here. This distinction matters because the failure is
+silent: a wrong key or path produces no error, the file is simply never loaded, and the
+agent behaves exactly as though the adapter were absent.
+
+If you install one and confirm it loads — the quickest signal is in `../../../INSTALL.md`
+under "Verifying the install" — set `verified` for that entry in
+`scripts/build_adapters.py` to a short `YYYY-MM-DD, who, what you saw`, re-run the
+generator, and send the change. That is one line and it retires an assumption for everyone.
 
 ## Which one to use
 

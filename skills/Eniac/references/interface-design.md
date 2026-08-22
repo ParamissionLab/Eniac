@@ -11,6 +11,9 @@ the words *design*, *look*, *feel*, *brand*, or *modern*. Do not load it to add 
 an existing admin table; there the surrounding conventions already decided everything, and
 matching them is the whole job.
 
+> **Owns** — how a surface looks and reads — the palette/type/layout/signature plan before any code, escaping the default generated look, spending boldness once, motion, interface copy, the quality floor, implementation traps.
+> **Defers** — the correctness chain for a user-facing surface → `workflows.md#product-ui`; front-end speed and Core Web Vitals → `performance.md`.
+
 ## Contents
 
 - [Fit The Bar To The Product](#fit-the-bar-to-the-product)

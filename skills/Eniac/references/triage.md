@@ -7,6 +7,9 @@ surviving an interruption, and handing off.
 Load this when the work has parts that depend on each other, might be interrupted, or
 will be picked up by someone else.
 
+> **Owns** — ordering work — ranking inside a tier, dependency order, parallel lanes, plan files, parking and resuming, interrupts and re-triage, estimation, handoff.
+> **Defers** — the six-tier ladder itself → `SKILL.md#triage--automatic-prioritization`; carrying work across sessions → `campaigns.md`; handing work to an unattended agent → `autonomy.md`.
+
 ## Ranking Inside A Tier
 
 Within one ladder tier, order by `impact ÷ cost`, then break ties with:

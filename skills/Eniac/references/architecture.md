@@ -14,6 +14,9 @@ diagram, an accurate module list, and no mention of the duplicated source of tru
 was visible in the evidence the whole time. Describing is half the work. A senior read
 also says what will hurt the next change.
 
+> **Owns** — judging a system rather than describing it — the five assessment dimensions, tracing a flow before calling it a conflict, using a codebase graph as evidence without letting it pre-judge, the named artifacts, diagram discipline.
+> **Defers** — the audit step chain → `workflows.md#audit`; writing the assessment up → `findings.md`; navigating a system too large to read → `scale.md`.
+
 ## Contents
 
 - [Reuse Before Re-Mapping](#reuse-before-re-mapping)

@@ -124,6 +124,19 @@ The skill is working when the agent's behaviour changes in ways you can see:
 If none of that changes, the skill is probably not being loaded. Check the path, restart
 the session, and — on runtimes with a skill list — confirm `eniac` appears in it.
 
+This matters more for the adapter route than for the skill route, because an adapter fails
+**silently**: a wrong filename or front-matter key produces no error, the file is simply
+never read, and the agent behaves exactly as though nothing were installed. Every adapter
+path in this repository is currently marked unconfirmed for that reason. If you check one
+and it loads, recording it is one line — `skills/Eniac/adapters/README.md` says where.
+
+For a sharper signal than reading behaviour by eye, the eval suite has cases for exactly
+these claims:
+
+```bash
+python scripts/run_evals.py --agent-cmd '<your agent>' --label with-skill
+```
+
 ## Updating
 
 ```bash

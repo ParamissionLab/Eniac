@@ -11,6 +11,9 @@ The failure this file prevents is the one that feels like diligence: reading bre
 until the context window fills, then acting on a shallow model of everything instead of a
 deep model of the part that matters.
 
+> **Owns** — systems too large to read — modelling from partial evidence, the three locating questions, search technique at size, monorepos, reading a service you do not own, blast radius at size, knowing when you have read enough.
+> **Defers** — judging the quality of what you mapped → `architecture.md`; work that spans sessions → `campaigns.md`; the cost of what you load → `token-economy.md`.
+
 ## Model From Partial Evidence
 
 A useful model of a large system needs four things and nothing else at first:

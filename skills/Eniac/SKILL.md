@@ -90,6 +90,30 @@ de-escalate the moment the work turns out smaller than it looked. The dials are 
 estimate, not a commitment, and carrying an inflated one to the end costs the user for a
 guess you already know was wrong.
 
+**Engineer the loop before running it.** Almost all non-trivial work is iteration, so the
+loop itself is the thing being designed, and three properties decide what the work costs:
+
+- **Latency.** How long one turn of Perceive → Reality-test takes. This dominates
+  everything else, because it multiplies by every iteration you have not had yet. When a
+  loop is slow, *shortening it beats running it* — a narrower test, a smaller fixture, a
+  reproduction script, a faster check. Ten minutes spent making the loop thirty seconds
+  instead of ten minutes is repaid by the third iteration, and paid forward to whoever
+  works here next.
+- **Signal.** What each turn actually tells you. A turn that cannot change the next
+  decision is not an iteration, it is a retry — and retry-until-green is a defense
+  mechanism (`references/defenses.md`), not a method.
+- **Stop.** Named before the first turn, not discovered at the tenth. A loop with no
+  stop condition does not converge, it leaks.
+
+**Say which of the three stops ended it:** *converged* — the done criteria are met;
+*exhausted* — the budget, time, or patience ran out, and here is the state; *diverged* —
+the last turns stopped producing new information, so the loop is wrong rather than
+unfinished. Collapsing these into "done" is how a loop that learned nothing gets reported
+as a loop that succeeded.
+
+Loop design, shortening technique, convergence signals, the outer evaluate-and-improve
+loop, and recurring or self-paced runs: `references/loops.md`.
+
 Arbitration, when the two sides genuinely disagree, costs one internal line:
 `Drive: <bold move> · Duty: <strongest objection> · Ruling: <choice> · Falsifier: <what would prove it wrong>`
 Never narrate a three-voice dialogue to the user.
@@ -227,16 +251,22 @@ case space that has to be covered rather than sampled — load `references/reaso
 That kind of question is answered by enumeration, and reading the code carefully is not
 enumeration. It reliably feels sufficient and reliably is not.
 
-Two conditions change the job itself rather than its difficulty. When the change will
-meet **real traffic** — remote calls, real data volumes, partial failure, on-call — load
-`references/production.md`. When the work sits inside an **organization's constraints** —
-regulated data, multi-tenancy, change control, required reviewers, code nobody owns —
-load `references/enterprise.md`. Both are invisible in the files in front of you, which
-is exactly why they get missed.
+Four conditions change the job itself rather than its difficulty, and all four are
+invisible in the files in front of you — which is exactly why they get missed:
 
-Risk overlays — performance, security, data migration, API contracts, dependencies,
-concurrency, observability — load only when inspected evidence, not topic anxiety,
-makes them material. Pick the matching one from `references/workflows.md#overlays`.
+| When | Load | Because |
+| --- | --- | --- |
+| the change meets **real traffic** — remote calls, real data volumes, partial failure, on-call | `references/production.md` | the failure modes are not in the code, they are in the environment |
+| the work sits inside an **organization's constraints** — regulated data, multi-tenancy, change control, required reviewers, code nobody owns | `references/enterprise.md` | the binding limits are contractual and social, not technical |
+| the change crosses a **trust boundary** — auth, outside input, secrets, uploads, serialization, query or template construction, anything one tenant could aim at another | `references/security.md` | correct code that trusts the wrong thing is still a breach |
+| the system **calls a model** — generation, extraction, retrieval, tool-using agents | `references/llm-systems.md` | one component returns a different answer each time and fails with a well-formed success |
+
+`security.md` governs the software you are building. `safety.md` governs what *you* are
+allowed to do. They are separate, and needing one says nothing about the other.
+
+Risk overlays — performance, data migration, API contracts, dependencies, concurrency,
+observability — load only when inspected evidence, not topic anxiety, makes them
+material. Pick the matching one from `references/workflows.md#overlays`.
 
 Unfamiliar stack, or unsure which command proves anything: `references/stack-signals.md`.
 
@@ -429,32 +459,64 @@ the full reporting discipline: `references/operating-manual.md#communication`.
 
 ## References
 
-Load the most specific one, and only when it changes what you do next.
+Twenty-six files, in seven groups. The grouping is the point: it says what *kind* of
+question each file answers, so the choice is one step rather than a scan of a flat list.
 
-This file governs. A reference that appears to contradict it is either being misread or
-is wrong, and the control plane wins — a system this size needs one place that settles
-arguments, or every conflict becomes a judgement call made twice.
+Three rules govern the whole set. **Load the most specific one, and only when it changes
+what you do next.** **This file governs** — a reference that appears to contradict it is
+being misread or is wrong, because a system this size needs one place that settles
+arguments. And **each file opens by declaring what it owns and what it hands off**, so when
+two look plausible the boundary is already written down rather than guessed at; if you find
+the same fact argued in two places, that is a defect in this package, not a choice for you
+to make.
 
-- `references/operating-manual.md` — the detail behind this file: agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
-- `references/lifecycle.md` — the phase map from specify to evolve, plus the two activities nothing else owns: turning a vague ask into checkable criteria, and choosing a shape before building it.
-- `references/workflows.md` — step chains and gates per route, plus the risk overlays.
-- `references/craft.md` — the code judgment calls: abstraction timing, naming, error handling, boundaries, concurrency, tests, deletion, interfaces, dependencies, commits.
-- `references/reasoning.md` — the method slow mode runs when the problem is hard to hold.
-- `references/judgment.md` — deciding well when being wrong is expensive; where fast thinking fails predictably.
-- `references/architecture.md` — judging an existing system: the five assessment dimensions, tracing flows, graph tools as evidence, the named artifacts, diagram discipline.
-- `references/findings.md` — read-only output discipline: claim labels, finding shape, severity honesty, handoff bar.
-- `references/documentation.md` — docs as a deliverable: one owner per fact, placement flow, status labels, auditing a set down to fewer files, what never to write.
-- `references/interface-design.md` — when how it looks is the deliverable: the plan before the code, escaping the default generated look, the signature element, interface copy.
-- `references/performance.md` — measure → identify → fix → verify → guard, the anchor thresholds, and the attempt ledger.
-- `references/production.md` — running systems: resilience per remote call, observability, SLOs, real load, data at scale, runbooks, cost.
-- `references/enterprise.md` — organizational constraints: regulated data, tenant isolation, least privilege, change control, legacy code, postmortems, supply chain.
-- `references/scale.md` — M2+ systems too large to read: modelling from partial evidence, locating anything, blast radius.
-- `references/campaigns.md` — M1+ long-horizon work: contract, checkpoints, verified waves, migration patterns, rollout, abandonment.
-- `references/triage.md` — dependency ordering, parallel lanes, plan files, WIP and parking, handoff.
-- `references/reality-testing.md` — verification ladder, proof types, baseline versus regression, closing criteria.
-- `references/defenses.md` — full defense-mechanism catalog with worked examples and recovery moves.
-- `references/token-economy.md` — context budgeting, progressive loading, compaction survival, output shaping.
-- `references/learning-loop.md` — insight capture, converting reflex into rule, durable memory placement.
-- `references/safety.md` — authorization gates, secrets, destructive operations, rollback, release proof.
-- `references/autonomy.md` — running with nobody to ask: the authorization envelope, gates that fail closed, the verdict a run must emit, budgets, idempotence and resumability, operating a fleet.
+**Running this file** — the machinery behind the control plane, needed when a task gets
+hard rather than when it gets big.
+
+- `references/operating-manual.md` — agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
+- `references/defenses.md` — the avoidance patterns, their behavioural tells, and the recovery move.
+- `references/token-economy.md` — the loading gate, cheap before expensive, the evidence cache, compaction, output shaping.
+- `references/learning-loop.md` — converting a correction or surprise into a rule that survives the session.
+
+**Thinking it through** — reached when the problem resists, the decision is expensive, or
+the work has become a loop.
+
+- `references/reasoning.md` — the method slow mode runs: framing, decomposition, case coverage, invariants, proof obligations.
+- `references/judgment.md` — deciding when being wrong is expensive; where fast thinking fails predictably.
+- `references/loops.md` — iterative work: designing the loop, shortening it, reading convergence, the three stops, the outer loop.
+
+**Doing the work** — the route chains and the phases around them.
+
+- `references/lifecycle.md` — the phase map, plus the two activities nothing else owns: turning a vague ask into criteria, and choosing a shape before building.
+- `references/workflows.md` — the step chain per route, plus the overlay triage table.
+- `references/craft.md` — the code judgment calls: abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
+- `references/performance.md` — the Optimize chain: measure, identify, fix, verify, guard; the anchor thresholds; keep-or-revert; the attempt ledger.
 - `references/stack-signals.md` — detect the stack, the commands that prove something, per-ecosystem silent failures.
+
+**Conditions that change the job** — invisible in the files in front of you, which is
+exactly why they get missed.
+
+- `references/production.md` — real traffic: resilience per remote call, observability, SLOs, load, data at scale, runbooks, cost.
+- `references/enterprise.md` — the organization: regulated data, tenant isolation, least privilege, change control, legacy code, postmortems, supply chain.
+- `references/security.md` — an attacker: trust boundaries, per-path authorization, injection in its many costumes, default deny, proportional threat modelling.
+- `references/llm-systems.md` — a model in the system: pinned versions, prompt injection as authorization, output as untrusted input, evals, cost and latency.
+
+**Size and time** — when the work outgrows one context or one session.
+
+- `references/scale.md` — systems too large to read: modelling from partial evidence, locating anything, blast radius.
+- `references/campaigns.md` — long-horizon work: the contract, checkpoints, verified waves, migrations, rollout, abandonment.
+- `references/triage.md` — dependency ordering, parallel lanes, plan files, parking, estimation, handoff.
+
+**Proof and permission** — what closes a task, and what may be done at all.
+
+- `references/reality-testing.md` — the verification ladder, proof by change type, baseline versus regression, closing criteria.
+- `references/safety.md` — your own authorization: action classes, scope discipline, destructive operations, rollback, release gates.
+- `references/autonomy.md` — the same gates with nobody to ask: the envelope, failing closed, the verdict, budgets, fleets.
+
+**Deliverables that are not code** — where the output is a document, a judgement, or a
+screen.
+
+- `references/findings.md` — claim labels, finding shape, severity honesty, the handoff bar.
+- `references/architecture.md` — judging a system: the assessment dimensions, tracing flows, graphs as evidence, diagram discipline.
+- `references/documentation.md` — docs as a deliverable: one owner per fact, placement, status labels, auditing a set down to fewer files.
+- `references/interface-design.md` — when how it looks is the deliverable: the plan before the code, escaping the default look, interface copy.

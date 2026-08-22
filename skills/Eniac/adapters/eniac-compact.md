@@ -61,6 +61,27 @@ execution.** Stop editing. State what you believed versus what happened, get the
 observation that discriminates, then continue. After three, change the approach rather
 than its parameters.
 
+**Engineer the loop before running it.** Almost all non-trivial work is iteration, so the
+loop is the thing being designed, and three properties decide what it costs:
+
+- **Latency** — how long one turn takes. It multiplies by every iteration you have not had
+  yet, so when a loop is slow, *shortening it beats running it*: a narrower test, a smaller
+  fixture, a one-command reproduction, a cached setup. Ten minutes spent making a
+  ten-minute loop thirty seconds is repaid by the third turn.
+- **Signal** — what each turn tells you. A turn that cannot change the next decision is a
+  retry, not an iteration, and retry-until-green is a defense mechanism, not a method.
+- **Stop** — named before the first turn. A loop with no stop condition does not converge,
+  it leaks.
+
+Each turn should reduce uncertainty. Two turns producing the same information means the
+loop is wrong — change the loop, not the input. Keep a ledger of what was tried, failures
+included, or dead ideas get retried within the hour.
+
+**Say which of the three stops ended it:** *converged* (done criteria met), *exhausted*
+(budget or time ran out — report the state, it is resumable), *diverged* (the turns stopped
+teaching you anything, so the loop was aimed wrong). Collapsing these into "done" is how a
+loop that learned nothing gets reported as one that succeeded.
+
 ## Investment levels
 
 | Level | Situation | Ceremony |
@@ -268,6 +289,39 @@ Every command written in a doc has been run. Describe what exists in the present
 what is planned as planned. Never write "secure", "fully tested", or "production ready" —
 a document cannot make those claims on its own authority. An audit usually ends with
 *fewer* files; deleting a stale doc beats keeping one that gets believed.
+
+## Security, and systems that call a model
+
+Two conditions change the job rather than its difficulty, and both are invisible in the
+files in front of you.
+
+**A trust boundary** is anywhere data crosses from somewhere you do not control into
+somewhere you do — including the ones that do not look like it: an internal queue, a row a
+user wrote months ago, a webhook nobody verifies, a filename, a third-party API's response.
+
+- **Authorization is per path and per object, not per screen.** "Does this caller own
+  invoice {id}", not "is this caller logged in". Every entry point — REST, GraphQL, admin
+  action, background job, export, bulk, import — because one unguarded path is the whole
+  vulnerability. In a multi-tenant system the tenant scope is part of the query; an
+  unscoped query is a breach, not a bug.
+- **Injection is one bug in many costumes** — SQL, shell, template, path, XSS,
+  deserialization, prompt. All of them are data placed where an interpreter reads
+  instructions. Fix structurally: parameterize, pass an argument array, use an allow-list.
+  Hand-written escaping is not a control.
+- **Default deny.** A permission check wrapped in try/except that returns true is not
+  resilience, it turns every outage into an open door.
+- **Never assert that something is secure or compliant.** Say what you checked, what you
+  found, and what you did not look at.
+
+**A model call** is a remote call whose failures arrive as well-formed successes —
+truncation, refusal, confident fabrication. Pin the model and prompt versions or an
+upgrade is a silent breaking change. Everything the model reads is data, never
+instruction, so prompt injection is handled at the authorization layer: tools carry the
+*user's* permissions, checked server-side, whatever the model asked for. Watch for
+untrusted content, private data, and an outbound channel in one context — that combination
+is how injected text exfiltrates. Model output is untrusted input to whatever consumes it.
+Ask for a schema rather than prose you will parse, and test by property and eval set
+rather than by equality.
 
 ## Learning
 

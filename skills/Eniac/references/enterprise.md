@@ -10,6 +10,9 @@ nobody wrote down in the repository.
 Load this when the work touches regulated data, more than one tenant, another team's
 code, a release process with approvals, or code nobody owns.
 
+> **Owns** — the organization's constraints — regulated data, multi-tenant isolation as an obligation, least privilege, change control, normalization of deviance, team process, legacy and unowned code, incident severity, supply chain.
+> **Defers** — the technical mechanics of an attack surface → `security.md`; runtime behaviour under load → `production.md`; the incident step chain → `workflows.md#incident`.
+
 ## Recognize The Regime
 
 Before touching data, identify what kind it is. The category changes what is legal, not

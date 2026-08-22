@@ -6,6 +6,9 @@ that cannot close is not finished.
 Load only the one section matching the route you selected — they are independent, and
 reading the others costs you the budget the route was supposed to save.
 
+> **Owns** — the step chain per route — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — and the overlay triage table.
+> **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; and each overlay's depth to the file its row names.
+
 ## Contents
 
 - [Diagnose](#diagnose) — something is broken, cause unknown
@@ -324,7 +327,8 @@ not inherit every specialty, and topic anxiety is not evidence.
 | Overlay | Triggered by | Check | Proof |
 | --- | --- | --- | --- |
 | **Performance** | a measured complaint, a profile, an SLA | measure before optimizing; find the actual hot path — `performance.md` | before/after number beating run-to-run variance |
-| **Security** | auth, input from outside, secrets, uploads, serialization | trust boundaries, authz on every path not just the UI, injection surfaces, dependency CVEs | a check that exercises the abuse case |
+| **Security** | auth, input from outside, secrets, uploads, serialization | trust boundaries, authz on every path not just the UI, injection surfaces, dependency CVEs — `security.md` | a check that exercises the abuse case |
+| **Model calls** | generation, extraction, retrieval, a tool-using agent | pinned model and prompt versions, untrusted content kept out of the instruction position, output validated before use — `llm-systems.md` | an eval set that runs on every prompt or model change |
 | **Data migration** | schema or persisted-shape change | reversibility, idempotence, partial-failure plan | run on a copy, row counts before and after |
 | **API contract** | a public signature, response, or event changes | additive first; version or deprecate rather than break; every known consumer | contract test against the old shape |
 | **Dependencies** | add, remove, or bump | changelog across the crossed range, lockfile diff, license, maintenance signals | full suite plus the feature that uses it |
@@ -335,7 +339,9 @@ Blanket debug logging is not observability, and a `try/except` that hides the er
 the opposite of it.
 
 These rows are triage, not depth. When an overlay is genuinely the work rather than a
-side condition, go to the file that carries it: `production.md` for performance under
-real load, observability and alerting, resilience per remote call, and large-table data
-operations; `enterprise.md` for regulated data, tenant isolation, least privilege, and
-supply chain; `campaigns.md` for the migration and rollout sequences themselves.
+side condition, go to the file that carries it: `security.md` for trust boundaries,
+authorization paths, and injection; `llm-systems.md` for anything built on a model;
+`production.md` for performance under real load, observability and alerting, resilience per
+remote call, and large-table data operations; `enterprise.md` for regulated data, tenant
+isolation, least privilege, and supply chain; `campaigns.md` for the migration and rollout
+sequences themselves.

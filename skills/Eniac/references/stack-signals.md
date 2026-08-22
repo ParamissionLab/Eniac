@@ -8,6 +8,9 @@ Load only the section for the stack in front of you.
 considers a real check. Running the project's own command beats running the ecosystem
 default, because it is the one the maintainers keep green.
 
+> **Owns** — recognizing an unfamiliar stack and knowing which command actually proves something in it, plus the silent failure modes per ecosystem.
+> **Defers** — what the proof needs to establish → `reality-testing.md`; first orientation in an unfamiliar repository → `workflows.md#audit`.
+
 ## First Contact With A Repository
 
 Before reasoning about code you have never executed, find out whether it runs. Each

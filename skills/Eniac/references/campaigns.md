@@ -13,6 +13,9 @@ weeks, so the discipline is making progress *durable* rather than *visible*. Eve
 below exists to make the work survive an interruption, a context loss, or a different
 person picking it up.
 
+> **Owns** — work that outlives one session — the campaign contract, checkpoints designed to survive context loss, codemods and verified waves, migration patterns, staged rollout, durable decision records, honest abandonment.
+> **Defers** — the mechanics of one release → `workflows.md#ship`; unattended fan-out and envelopes → `autonomy.md`; modelling a system too large to read → `scale.md`.
+
 ## The Campaign Contract
 
 Write this once, at the start, in a file. Everything else derives from it.

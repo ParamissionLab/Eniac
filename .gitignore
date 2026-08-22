@@ -7,3 +7,6 @@ Eniac.skill
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Eval run outputs — regenerate, do not commit
+evals/results/

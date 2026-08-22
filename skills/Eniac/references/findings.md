@@ -12,6 +12,9 @@ leaving real debt unnamed. The other is flooding the output with taste-based nit
 to look thorough. Both waste the reader's time; the second also destroys their trust in
 the first real finding.
 
+> **Owns** — read-only deliverables — claim labels, `None identified`, the two legitimate baselines, finding shape and severity, what is not a finding, questions, artifact budget, the handoff bar.
+> **Defers** — how to conduct the review → `workflows.md#review`; what to look *for* in a structure → `architecture.md`; the closing report on work you did yourself → `operating-manual.md#communication`.
+
 ## Label Every Claim
 
 A reader must be able to tell what they can build on. Blurring these categories is what

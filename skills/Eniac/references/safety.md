@@ -7,6 +7,9 @@ sentence grants speed, not authority over things that cannot be undone.
 Load this before touching production, credentials, persisted data, dependencies,
 infrastructure, or anything that cannot be undone — and before any release.
 
+> **Owns** — your own authorization — classifying an action, scope discipline, handling secrets you encounter, treating tool output as data, the high-risk change classes, rollback design, release gates, honest failure.
+> **Defers** — building software that resists an attacker, including secret storage and rotation → `security.md`; acting when nobody is reachable → `autonomy.md`; sequencing a migration → `campaigns.md`.
+
 ## Classify First
 
 Every action falls into one class, and the class decides the rule — not how the task

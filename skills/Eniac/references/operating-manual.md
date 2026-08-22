@@ -11,6 +11,9 @@ work has started going wrong and you need the diagnostic detail. An L0 or L1 tas
 never reach this file — if it did, the classification was wrong, and that misclassification
 costs more than anything this file can teach.
 
+> **Owns** — the control plane's own machinery — how the subsystems compose, the three agencies arbitrating, the fast/slow switch and its two invisible traps, resolving an ambiguous request, the stuck protocol, the full reporting discipline.
+> **Defers** — the defense-mechanism catalog → `defenses.md`; expensive decisions → `judgment.md`; the method slow mode actually runs → `reasoning.md`.
+
 ## Contents
 
 - [How The Machine Fits Together](#how-the-machine-fits-together)

@@ -8,6 +8,9 @@ Load this file only for genuinely large work — big repositories, repeated comp
 expensive tools, or long autonomous runs. For an ordinary task the rules in SKILL.md
 are enough, and reading this instead of the code would be its own irony.
 
+> **Owns** — the cost of context — the loading gate, cheap sources before expensive, batching round trips, the evidence cache, surviving compaction, output shaping, expensive operations, multilingual cost, budgets as gates.
+> **Defers** — which reference a task should load → `SKILL.md#routes`; the runtime token cost of a product's own model calls → `llm-systems.md#cost-and-latency-are-design-constraints`.
+
 ## The Loading Gate
 
 Before pulling anything into context — a file, a reference, a command's output, a web

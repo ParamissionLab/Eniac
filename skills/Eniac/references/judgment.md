@@ -8,6 +8,9 @@ committing to a plan of real size, or when the same decision keeps getting revis
 Do not load it for a reversible choice with cheap proof: there, deciding quickly and
 letting reality answer is strictly better than reasoning longer.
 
+> **Owns** — deciding when being wrong is expensive — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, cost of error, second-order effects, Goodhart's law, recording a decision with its falsifier, when to stop deciding.
+> **Defers** — choosing a shape to build → `lifecycle.md#design-before-building`; working a problem that is hard to hold → `reasoning.md`; when to switch out of fast thinking → `operating-manual.md#fast-and-slow`.
+
 ## Sort The Door First
 
 Reversibility, not importance, sets how much thinking a decision deserves.

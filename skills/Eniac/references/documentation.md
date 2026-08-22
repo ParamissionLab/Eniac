@@ -15,6 +15,9 @@ for. A README a stranger can follow at handover is part of Greenfield's contract
 `docs/` tree grown beside a bug fix is unrequested work that spends the user's review
 attention. When in doubt, report the gap in `Next:` instead of filling it.
 
+> **Owns** — documentation as a deliverable — one owner per fact, the placement flow, status labels for safe handoff, auditing a set down to fewer files, agent instruction files, what never to write.
+> **Defers** — where a *lesson* durably lives → `learning-loop.md`; findings, questions, and handoff documents → `findings.md`; whether documentation was requested at all → `safety.md#scope-discipline`.
+
 ## Contents
 
 - [Before Writing Anything](#before-writing-anything)
