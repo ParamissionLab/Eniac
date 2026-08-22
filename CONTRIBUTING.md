@@ -18,6 +18,7 @@ Eniac should remain:
 skills/Eniac/
   SKILL.md                     — always-loaded control plane
   references/
+    operating-manual.md        — arbitration, fast/slow, ambiguity, stuck, reporting
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, errors, concurrency, tests
     reasoning.md               — the method slow mode runs: frame, decompose, prove
@@ -35,6 +36,7 @@ skills/Eniac/
     learning-loop.md           — insight capture and durable placement
     safety.md                  — authorization, secrets, rollback, release
     stack-signals.md           — stack detection, real proof commands, pitfalls
+    architecture.md            — assessment dimensions, flow tracing, diagrams
 ```
 
 Edit `SKILL.md` only for core behavior — the agencies, the loop, investment levels, the triage ladder, routing, and reference discovery. Everything task-specific belongs in a reference file.

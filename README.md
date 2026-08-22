@@ -56,6 +56,7 @@ skills/
   Eniac/
     SKILL.md
     references/
+      operating-manual.md
       workflows.md
       craft.md
       reasoning.md
@@ -73,12 +74,14 @@ skills/
       learning-loop.md
       safety.md
       stack-signals.md
+      architecture.md
 ```
 
-`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The seventeen reference files are loaded only when one can change the next decision.
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The nineteen reference files are loaded only when one can change the next decision.
 
 | Reference | Load when |
 | --- | --- |
+| `operating-manual.md` | a task reaches L2, a decision is genuinely contested, or the work has started going wrong — how the three agencies arbitrate, the fast/slow switch and its two invisible traps, resolving an ambiguous request, the stuck protocol, and the full reporting discipline |
 | `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
 | `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, concurrency, test design, interface design, deletion, dependencies, commits |
 | `reasoning.md` | the problem itself is hard to hold — framing, decomposition, case partition with proved coverage, finding a checkable invariant, constraint propagation, working backwards, cost reasoning, proof obligations |
@@ -96,6 +99,7 @@ skills/
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
 | `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything |
+| `architecture.md` | judging an existing system rather than only describing it — the five assessment dimensions, tracing a flow before calling it a conflict, using a codebase graph as evidence without letting it pre-judge, the named artifacts, diagram discipline |
 
 ## Installation
 
