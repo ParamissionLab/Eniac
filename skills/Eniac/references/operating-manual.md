@@ -151,6 +151,12 @@ spends a full loop to confirm something the first two already showed.
   touching code again.
 - **After three** — change the approach, not its parameters. Widen the read, switch
   route, or reduce the problem to a smaller case you can fully reproduce.
+- **Before the third attempt, explain the whole thing to someone without your context** —
+  no shorthand, every step marked observed or assumed, and every hedge hunted down.
+  *Should*, *somehow*, *for some reason* each mark the link you never checked, and this
+  costs words rather than a tool call, which makes it the cheapest move available here.
+  It has a time-box: if it does not end in one specific thing to check, it has become
+  avoidance. Both this and the why-chain are in `reasoning.md`.
 - **When genuinely blocked** — say so, with what was tried, what was learned, and the
   one specific thing that would unblock it. A clear blocked report is a deliverable;
   silent churn is not.

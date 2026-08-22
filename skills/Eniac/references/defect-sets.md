@@ -86,6 +86,11 @@ difference between a fix that holds and a fix that leaves residue.
 | A primitive that is unsafe unless used carefully | every single use is a potential instance, so the count equals the call count |
 | One wrong belief about the environment | timezone, encoding, ordering, case sensitivity, clock, locale — wrong everywhere at once and visible in almost none of them |
 
+The chain that gets you there is the why-chain in
+`reasoning.md#ask-why-until-it-is-actionable`, run one link past the point where this
+particular bug is explained: the link that explains *this* instance is the fix, and the
+link after it is usually the generator.
+
 Two instances are enough to hypothesize a generator and not enough to confirm one. Confirm
 it the way any hypothesis is confirmed: name what would rule it out, then look for that.
 Sometimes there genuinely are two unrelated bugs, and forcing a shared cause onto them is

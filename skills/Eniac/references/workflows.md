@@ -43,8 +43,10 @@ reading the others costs you the budget the route was supposed to save.
    observation that would rule it *out*. A hypothesis with no falsifier is a belief.
 5. **Discriminate.** Run the cheapest experiment that kills the most hypotheses.
    Instrument at the boundary between suspects, not everywhere.
-6. **Fix at the cause, minimally.** Before writing a guard, answer where the bad value
-   came from — a purely additive change at the point of failure is a symptom fix until
+6. **Fix at the cause, minimally.** Ask *why* of each answer until you reach something
+   you can change that would have prevented the links above it, keeping every "because"
+   an observation rather than a belief (`reasoning.md#ask-why-until-it-is-actionable`).
+   Before writing a guard, answer where the bad value came from — a purely additive change at the point of failure is a symptom fix until
    argued otherwise (`defenses.md#symptom-substitution`). If only a symptom fix is
    possible right now, say so explicitly, name the real cause with an owner, and make
    the mitigation visibly temporary in the code rather than a silent guard the next

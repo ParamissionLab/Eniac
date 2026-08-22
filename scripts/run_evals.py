@@ -197,6 +197,68 @@ def report_markdown(label: str, results: list[dict], meta: dict) -> str:
 
 # --- entry point ------------------------------------------------------------------
 
+def dead_assertion(case_id: str, a: dict) -> list[str]:
+    """Catch an assertion that cannot fail, in either direction.
+
+    The case-level tests below grade whole answers, so they only see the assertion set
+    as a group. An individual assertion can be inert inside a set that still passes its
+    junk test, and nothing announces it - the case simply gets quietly weaker. Both
+    directions are silent in the same way and both are checked here:
+
+      * A negative that matches nothing passes every answer forever.
+      * A positive that matches everything passes every answer forever.
+
+    A real one got shipped: `^(?:(?!word).)*$` looks like "contains none of these" and is
+    dead against any multi-line output, because `.` does not cross a newline and agent
+    output always has one. It was caught by reading, not by this harness. Hence
+    `tripped_by`: a negative assertion carries an example of the output it exists to
+    reject, the example is checked against the pattern here, and deadness stops being
+    expressible rather than merely discouraged.
+    """
+    out, kind, val = [], a["kind"], a.get("value")
+
+    if kind in ("matches", "not_matches") and isinstance(val, str):
+        try:
+            body = re.sub(r"^\(\?[aiLmsux]+\)", "", val)
+            flags = re.match(r"^\(\?([aiLmsux]+)\)", val)
+            if (body.startswith("^") and body.endswith("$")
+                    and "s" not in (flags.group(1) if flags else "")):
+                out.append(f"{case_id}: {val[:40]!r}... anchors the whole string with "
+                           f"^...$ but `.` does not cross a newline and no (?s) flag is "
+                           f"set. Agent output is multi-line, so this can never match")
+        except re.error:
+            return out
+
+    if kind == "matches" and isinstance(val, str):
+        try:
+            if re.search(val, ""):
+                out.append(f"{case_id}: positive pattern {val[:40]!r}... matches the "
+                           f"empty string, so it passes every possible answer")
+        except re.error:
+            pass
+    if kind == "contains" and val == "":
+        out.append(f"{case_id}: `contains` an empty string passes everything")
+
+    if kind in ("not_matches", "not_contains"):
+        w = a.get("tripped_by")
+        if not w:
+            out.append(f"{case_id}: `{kind}` has no `tripped_by`. A negative assertion "
+                       f"that matches nothing passes every answer, and nothing else here "
+                       f"can see that - give it one example of the output it rejects")
+        elif kind == "not_matches":
+            try:
+                if not re.search(val, w):
+                    out.append(f"{case_id}: `tripped_by` {w[:40]!r} does not match its "
+                               f"own pattern, so this assertion is dead and every answer "
+                               f"passes it")
+            except re.error:
+                pass
+        elif val not in w:
+            out.append(f"{case_id}: `tripped_by` {w[:40]!r} does not contain "
+                       f"{val!r}, so this assertion is dead")
+    return out
+
+
 def self_test() -> int:
     """Prove the harness works before trusting a result from it."""
     problems = []
@@ -219,6 +281,7 @@ def self_test() -> int:
             if not a.get("reason"):
                 problems.append(f"{case['id']}: assertion has no `reason`, so a failure "
                                 f"would not say what went wrong")
+            problems += dead_assertion(case["id"], a)
 
     # An assertion set that nothing can fail is not an assertion set. Every case must
     # reject at least one plausible bad answer, so we grade each case against a
@@ -239,6 +302,25 @@ def self_test() -> int:
             problems.append(f"{case['id']}: every assertion is negative, so an empty "
                             f"output would pass. Add one matches/contains/min_chars that "
                             f"a real answer must satisfy")
+        model = case.get("passes_like")
+        if not model:
+            problems.append(f"{case['id']}: no `passes_like`. A case nobody has written a "
+                            f"passing answer for may be over-strict or self-contradictory, "
+                            f"and neither is visible until a real run wastes a suite on it")
+        else:
+            try:
+                verdict = grade(case, model)
+                if not verdict["passed"]:
+                    why = "; ".join(f"{c['kind']} {str(c['value'])[:50]!r}"
+                                    for c in verdict["checks"] if not c["passed"])
+                    problems.append(f"{case['id']}: its own model answer is rejected by "
+                                    f"{why}. Either the assertion is stricter than the "
+                                    f"behaviour it means to test, or the model answer is "
+                                    f"not actually a good one - read both before loosening "
+                                    f"anything")
+            except ValueError as exc:
+                problems.append(f"{case['id']}: grading `passes_like` raised {exc}")
+
         try:
             if grade(case, junk)["passed"]:
                 problems.append(f"{case['id']}: passes a deliberately bad answer - "
@@ -260,8 +342,9 @@ def self_test() -> int:
     weights = sum(c.get("weight", 1) for c in data["cases"])
     gates = sum(1 for c in data["cases"] if c.get("gate"))
     print(f"ok - {len(data['cases'])} cases ({gates} gate, {weights} weighted points); "
-          f"assertions compile, each has a positive check, and all reject both a "
-          f"known-bad answer and a non-answer")
+          f"assertions compile, none can pass unconditionally, every negative carries "
+          f"an example it demonstrably rejects, every case accepts its own model answer "
+          f"and rejects a known-bad answer and a non-answer")
     return 0
 
 

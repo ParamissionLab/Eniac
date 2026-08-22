@@ -140,7 +140,9 @@ Three questions separate it from a real fix, cheapest first:
 argue with — especially when the cause sits in code you do not own, the reproduction is
 slow, or the deadline is now.
 
-**Correction:** ask question 1 before writing the guard, not after. Then decide
+**Correction:** ask question 1 before writing the guard, not after — and when one answer
+is not enough to reach something changeable, keep asking *why* of each answer until you do
+(`reasoning.md#ask-why-until-it-is-actionable`). Then decide
 deliberately. Mitigating on purpose is legitimate and sometimes required — during an
 incident, when the cause is in a dependency, when the cause fix is `M2` work and this is
 not the moment. What is never legitimate is doing it silently. A mitigation carries

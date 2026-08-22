@@ -283,6 +283,13 @@ both misses members and creates new ones. Find what generates them, enumerate th
 rather than sampling it, and fix in the order the relationships dictate rather than the
 order you happened to find them.
 
+The same file carries the two cheapest moves available, both costing words rather than
+tool calls: **ask why of each answer** until you reach something you can change that would
+have prevented every link above it, and **explain the thing to someone without your
+context** — no shorthand, each step marked observed or assumed, every hedge hunted. Both
+work by forcing a chain to be sequential, and both fail the same way: a link you cannot
+show is a link you have not got.
+
 Five conditions change the job itself rather than its difficulty, and all five are
 invisible in the files in front of you — which is exactly why they get missed:
 
@@ -507,8 +514,7 @@ the full reporting discipline: `references/operating-manual.md#communication`.
 ## References
 
 Grouped by what *kind* of question each file answers, so the choice is one step rather
-than a scan of a flat list. The count is deliberately not written here — it changes, and
-a number in prose that nothing checks is the exact defect `documentation.md` warns about.
+than a scan of a flat list.
 
 Three rules govern the whole set. **Load the most specific one, and only when it changes
 what you do next.** **This file governs** — a reference that appears to contradict it is

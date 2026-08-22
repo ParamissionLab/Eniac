@@ -103,6 +103,58 @@ explicitly claims to prevent. Each needs:
   deliberately terrible output and rejects the case if it passes. An assertion that always
   passes is worse than no assertion: it makes the suite look green while measuring nothing.
 
+- **`tripped_by` on every `not_matches` and `not_contains`** — one short example of the
+  output the assertion exists to reject. The self-test checks the example against the
+  pattern, so a negative assertion that matches nothing cannot be written.
+
+- **`passes_like` on every case** — one realistic good answer, which the self-test grades
+  and requires to pass. It is the other half of `tripped_by`: that one proves an assertion
+  can fail, this one proves the case can be passed.
+
+### Why `tripped_by` is required
+
+The case-level tests grade whole answers, so they only ever see the assertion set as a
+group. A single inert assertion inside a set that still fails the junk test is invisible:
+the case just gets quietly weaker, and the suite keeps printing green.
+
+Both directions of deadness are silent in exactly the same way. A negative that matches
+nothing passes every answer forever; a positive that matches everything does too. So the
+self-test now rejects a positive pattern that matches the empty string, rejects a
+whole-string `^...$` pattern with no `(?s)` flag — `.` does not cross a newline and agent
+output always has one — and requires every negative to carry an example it demonstrably
+rejects.
+
+That last rule exists because a dead assertion was shipped here: `^(?:(?!word).)*$`, which
+reads as "contains none of these" and can never match multi-line output. It was caught by
+reading the regex, not by the harness. `tripped_by` makes it unwriteable rather than merely
+discouraged, and it doubles as documentation — the example *is* the failure the case is
+about.
+
+### Why `passes_like` is required
+
+`tripped_by` closes assertions that can never fail. `passes_like` closes the opposite
+failure, which is quieter than it sounds: an assertion stricter than the behaviour it means
+to test, so that a genuinely good answer is marked wrong.
+
+That one does not announce itself either. It looks exactly like a finding — the case goes
+red, and the natural reading is *the skill did not do this*, which sends you to rewrite
+guidance that was working. Worse is the self-contradictory case, where two assertions
+cannot both hold and no answer can ever pass; it will sit in the suite going red forever
+while looking like a persistent gap.
+
+Grading one hand-written good answer catches all of it: a positive narrowed to jargon the
+answer never uses, a negative broad enough to catch correct output, a `max_chars` set below
+what the answer needs, and any pair of assertions that contradict.
+
+**Write the model answer first, then check it against the assertions.** Writing it *to* the
+assertions inverts the test and proves almost nothing — a minimal string assembled to
+satisfy each pattern in turn is not evidence that any real answer would. If the honest good
+answer fails, read both before loosening anything: sometimes the assertion is wrong, and
+sometimes the answer is not as good as it looked.
+
+What this does **not** prove is that a real agent would produce something passing. It proves
+the case is satisfiable and not over-strict, which is the failure that was invisible before.
+
 Prefer `not_matches` on the specific bad behaviour over `matches` on the good one. There
 are many right answers and comparatively few characteristic wrong ones, so the negative
 form is both more robust and less likely to reward an agent for reciting the skill's own

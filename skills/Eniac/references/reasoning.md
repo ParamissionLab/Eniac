@@ -8,7 +8,7 @@ you cannot state, a search space too wide to walk, or a defect whose mechanism y
 picture. Do not load it for a task you already know how to do — applying analysis to a
 solved problem is the most respectable way to waste an afternoon.
 
-> **Owns** — the method slow mode runs — framing, decomposition, case enumeration with proved coverage, checking against a written rule, finding an invariant, constraint propagation, working backwards, reduction, cost reasoning, discharging proof obligations.
+> **Owns** — the method slow mode runs — framing, decomposition, case enumeration with proved coverage, checking against a written rule, finding an invariant, constraint propagation, working backwards, the why-chain from an observed failure, explaining to a listener without your context, reduction, cost reasoning, discharging proof obligations.
 > **Defers** — deciding when the answer is a judgment call rather than a derivation → `judgment.md`; when to enter slow mode at all → `operating-manual.md#fast-and-slow`.
 
 ## Frame It First
@@ -154,6 +154,78 @@ When forward search is too wide, start at the goal:
 This finds the *missing* piece instead of exploring everything that exists. It is the
 strongest move for "why is this value wrong" and for "what would have to change for this
 to be possible at all" — and it is usually far shorter than the forward walk.
+
+## Ask Why Until It Is Actionable
+
+The Toyota technique, and the direct correction to the habit in
+`defenses.md#symptom-substitution`. Start at the observed failure and ask *why* of each
+answer, until you reach something you can change whose change would have prevented every
+link above it.
+
+```text
+The request 500s
+  why -> the handler threw on a null user
+  why -> the session lookup returned null for a token it considered expired
+  why -> the expiry check compares against local time, the token stamps UTC
+  why -> parse_ts() defaults to local when no timezone is passed
+  why -> the helper was written for log parsing, where local was correct, and
+         nothing marks it unsafe anywhere else
+```
+
+Fixing link one is a guard. Fixing link three fixes this bug. Fixing link five closes the
+class, and the chain is what made the difference visible.
+
+Four rules separate the technique from theatre. Without them it produces a confident wrong
+story, which is worse than no story because it feels finished:
+
+- **Every "because" is an observation, not a belief.** This is the whole difference. A
+  chain of five plausible assertions is fiction with an arrow drawn through it. When a link
+  cannot be shown, mark it and go get it — one verified link beats four assumed ones,
+  because the assumed chain will send you to fix something that was never wrong.
+- **Five is a shape, not a count.** Stop at the first thing you can actually change that
+  would have prevented the links above it. Sometimes that is two. Pushing past it reaches
+  "the team was under-resourced" — true, unactionable, and a comfortable place to stop
+  doing engineering.
+- **When a why has two answers, it branches.** Real failures usually have several
+  contributing causes, and a single chain gives false confidence that you found *the* root.
+  Follow both branches, or say plainly which you dropped and why.
+- **"Because someone forgot" is not a cause.** It is where the asking stopped. Ask why the
+  system permitted it, why nothing caught it, and why it was possible to get wrong — human
+  error is the point where the chain reaches the design, and it is routinely mistaken for
+  the end of it.
+
+This is not `Work Backwards` above. That one starts from the goal and asks what must be
+true; this one starts from an observed failure and asks what produced it. Use the why-chain
+when something *did* happen, and work backwards when something *should* and does not.
+
+## Explain It To Someone Without Your Context
+
+Rubber ducking. The value is not the duck — it is that explanation is **sequential and
+cannot skip**. Reading lets you glide over a step with *"and then it validates the input"*;
+saying it in order, to someone who cannot fill in your gaps, does not.
+
+The naive version fails for an agent, and it is worth being precise about why: fluent
+narration is free here. Generating a plausible walkthrough costs nothing and proves
+nothing, so the constraint that does the work for a human — a listener who will notice
+incoherence — has to be rebuilt deliberately. Three rules rebuild it:
+
+- **No shorthand, and no pronoun without an antecedent.** Name the thing every time. "It
+  fails" conceals which of four things fails, and that concealment is usually the bug.
+- **Mark every step observed or assumed.** The `Fact` / `Assumption` discipline turned
+  inward. The gap appears at the first step you cannot label.
+- **Hunt your own hedges.** *Should*, *presumably*, *somehow*, *for some reason*, *must
+  be*, *I think it* — each marks a link you did not check, and surfacing them is the entire
+  yield of the technique. When one appears, stop explaining and go check that one thing.
+
+**A person is a better duck than a duck.** The compact read at L2+ and the arbitration line
+are both this technique with a real audience, and an explanation written for someone who
+will notice a gap is held to a higher standard than one written for yourself. When a
+reader is available, use them.
+
+**Time-box it.** Explaining the problem instead of touching it is intellectualization
+(`defenses.md`), and this technique is the most respectable disguise that defense has. A
+duck session that does not end in one specific thing to check has failed — say so, and go
+run something.
 
 ## Reduce To A Solved Problem
 

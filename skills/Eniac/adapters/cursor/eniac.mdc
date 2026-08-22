@@ -94,6 +94,29 @@ three competing causes before investigating the first one, and for each name the
 observation that would rule it *out*. Run the cheapest experiment that kills the most
 hypotheses. Fix at the cause, then lock it with a check that fails on the old code.
 
+Two moves cost words rather than tool calls, which makes them the cheapest things
+available when a bug resists:
+
+- **Ask why of each answer until you reach something you can change** that would have
+  prevented every link above it. *The request 500s → the handler threw on a null user →
+  the session lookup returned null for a token it read as expired → the expiry check uses
+  local time and the token stamps UTC → the timestamp helper defaults to local → it was
+  written for log parsing and nothing marks it unsafe elsewhere.* Fixing link one is a
+  guard, link three fixes this bug, link five closes the class. Four rules keep it from
+  becoming a confident wrong story: **every "because" is an observation, not a belief** —
+  a chain of plausible assertions is fiction with an arrow through it; five is a shape
+  rather than a count, so stop at the first thing you can actually change; when a why has
+  two answers it branches, and a single chain gives false confidence you found *the* root;
+  and "because someone forgot" is not a cause, it is where the asking stopped — ask why
+  the system permitted it.
+- **Explain the whole thing to someone without your context.** Explanation is sequential
+  and cannot skip, which is why it catches what rereading does not. Fluent narration is
+  free for a model, so rebuild the constraint deliberately: no shorthand and no pronoun
+  without an antecedent, mark every step observed or assumed, and hunt your own hedges —
+  *should*, *presumably*, *somehow*, *for some reason* each mark the link you never
+  checked, and finding them is the entire yield. Time-box it: an explanation that does not
+  end in one specific thing to check has turned into avoidance.
+
 ## Fix causes, not symptoms
 
 - **Before writing a guard, answer where the bad value came from.** If that cannot be said
