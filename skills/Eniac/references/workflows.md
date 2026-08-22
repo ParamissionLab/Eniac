@@ -167,6 +167,10 @@ system before there are two configurations; adding auth, Docker, and CI to a scr
 Discover → Plan → Build → Test → Harden → Document → Ship. Each phase ends with a
 signal, not a feeling. Report at phase boundaries, not inside them.
 
+This chain starts once it is settled *what* is being built. When that is not settled — no
+checkable done condition, or more than one shape would work — `lifecycle.md` carries the
+two phases that come first, and the map of which route closes which phase.
+
 - **Discover** — what exists, what runs today, what the conventions are.
 - **Plan** — milestones each bound to observable proof. Write it to a file once there
   are more than two, or the work will outlive the context window.

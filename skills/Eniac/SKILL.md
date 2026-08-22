@@ -189,6 +189,8 @@ Pick the cheapest route that fits, then load at most what it names.
 | a question, an explanation | **Answer** | no reference — read the code, not a playbook |
 | something is broken, cause unknown | **Diagnose** | `references/workflows.md#diagnose` |
 | production is broken *right now* | **Incident** | `references/workflows.md#incident` — mitigate before diagnosing |
+| the ask is vague, or has no checkable done condition | **Specify** | `references/lifecycle.md#specify` |
+| more than one shape would work, and the choice is costly to undo | **Design** | `references/lifecycle.md#design-before-building` |
 | build the requested thing | **Implement** | `references/workflows.md#implement` |
 | restructure without changing behavior | **Refactor** | `references/workflows.md#refactor` |
 | new project, empty repo, "build me a…" | **Greenfield** | `references/workflows.md#greenfield` |
@@ -378,6 +380,7 @@ is wrong, and the control plane wins — an eighteen-file system needs one place
 settles arguments, or every conflict becomes a judgement call made twice.
 
 - `references/operating-manual.md` — the detail behind this file: agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
+- `references/lifecycle.md` — the phase map from specify to evolve, plus the two activities nothing else owns: turning a vague ask into checkable criteria, and choosing a shape before building it.
 - `references/workflows.md` — step chains and gates per route, plus the risk overlays.
 - `references/craft.md` — the code judgment calls: abstraction timing, naming, error handling, boundaries, concurrency, tests, deletion, interfaces, dependencies, commits.
 - `references/reasoning.md` — the method slow mode runs when the problem is hard to hold.

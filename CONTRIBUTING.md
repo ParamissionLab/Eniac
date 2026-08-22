@@ -19,6 +19,7 @@ skills/Eniac/
   SKILL.md                     — always-loaded control plane
   references/
     operating-manual.md        — arbitration, fast/slow, ambiguity, stuck, reporting
+    lifecycle.md               — specify, design, traceability, phase gates
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, errors, concurrency, tests
     reasoning.md               — the method slow mode runs: frame, decompose, prove
