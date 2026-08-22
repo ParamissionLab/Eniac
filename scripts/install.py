@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import filecmp
 import io
+import os
 import shutil
 import sys
 import tarfile
@@ -90,12 +91,115 @@ ADAPTER_RUNTIMES: dict[str, dict[str, str]] = {
                 "src": "generic/system-prompt.md", "dest": "eniac-system-prompt.md"},
 }
 
-VERIFY = (
-    "Now confirm it loaded. Start a new session and ask:\n"
-    '  "What operating skill or rules are you currently following?"\n'
-    "A loaded skill names itself. A generic answer means the file is not being read,\n"
-    "and nothing will have errored to tell you. INSTALL.md, *Verifying the install*."
-)
+# The one question that works identically on every runtime, and the only cheap way to
+# tell an install that took from one that failed silently. INSTALL.md explains why.
+QUESTION = "What operating skill or rules are you currently following?"
+
+
+# --------------------------------------------------------------------- presentation
+#
+# Colour carries meaning here rather than decoration: green is something changed, yellow
+# is something removed or unconfirmed, red is a refusal, dim is context. Which means it
+# has to degrade rather than corrupt - a script reading this output, a log file, a
+# terminal that cannot encode `✓`, and a console with no escape-sequence support all get
+# the same report in plain ASCII. Every fallback below is a failure this repository has
+# actually seen, including an em dash arriving as `?` in a Windows console earlier today.
+
+ANSI = {"bold": "1", "dim": "2", "red": "31", "green": "32", "yellow": "33", "cyan": "36"}
+FANCY = {"ok": "✓", "same": "·", "add": "+", "gone": "−", "warn": "!", "no": "✗",
+         "to": "→"}
+PLAIN = {"ok": "+", "same": ".", "add": "+", "gone": "-", "warn": "!", "no": "x",
+         "to": "->"}
+
+
+def _enable_windows_vt() -> bool:
+    """Windows 10+ consoles understand escape sequences, once asked."""
+    try:
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.GetStdHandle(-11)
+        mode = ctypes.c_uint32()
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except Exception:
+        return False
+
+
+def _supports_color(stream) -> bool:
+    if os.environ.get("NO_COLOR"):
+        return False
+    if os.environ.get("FORCE_COLOR"):
+        return True
+    if not hasattr(stream, "isatty") or not stream.isatty():
+        return False
+    if os.name == "nt":
+        return _enable_windows_vt()
+    return os.environ.get("TERM", "") not in ("", "dumb")
+
+
+def _supports_glyphs(stream) -> bool:
+    try:
+        "".join(FANCY.values()).encode(getattr(stream, "encoding", None) or "ascii")
+        return True
+    except (UnicodeEncodeError, LookupError):
+        return False
+
+
+COLOR = _supports_color(sys.stdout)
+COLOR_ERR = _supports_color(sys.stderr)
+MARKS = FANCY if _supports_glyphs(sys.stdout) else PLAIN
+
+
+def paint(text: str, *styles: str, err: bool = False) -> str:
+    if not styles or not (COLOR_ERR if err else COLOR):
+        return text
+    return f"\033[{';'.join(ANSI[s] for s in styles)}m{text}\033[0m"
+
+
+def show_path(path: Path) -> str:
+    """Home-relative where possible - the difference between a readable line and a wrap."""
+    try:
+        return "~/" + str(path.relative_to(Path.home())).replace("\\", "/")
+    except ValueError:
+        return str(path)
+
+
+def title(text: str) -> None:
+    print(f"\n  {paint(text, 'bold')}")
+
+
+def item(mark: str, text: str, *styles: str, trail: str = "") -> None:
+    """One status line, with the destination trailing it - or under it when it is long.
+
+    A deep path wrapped mid-word turns a report into a wall, and paths are exactly the
+    part a reader scans for.
+    """
+    print(f"    {paint(MARKS[mark], *styles)} {text}"
+          + ("" if not trail or len(text) + len(trail) > 74
+             else f"  {paint(MARKS['to'] + ' ' + trail, 'dim')}"))
+    if trail and len(text) + len(trail) > 74:
+        print(f"      {paint(MARKS['to'] + ' ' + trail, 'dim')}")
+
+
+def detail(text: str) -> None:
+    print(f"      {paint(text, 'dim')}")
+
+
+def refuse(headline: str, *lines: str) -> int:
+    """A refusal is the one message that must survive a redirected stdout, so: stderr.
+
+    Flushing first is not decoration: stdout is block-buffered once it is not a terminal,
+    so without this the refusal overtakes the heading it belongs under and the report
+    reads as though a different runtime failed.
+    """
+    sys.stdout.flush()
+    print(f"    {paint(MARKS['no'], 'red', err=True)} {paint(headline, 'red', err=True)}",
+          file=sys.stderr)
+    for line in lines:
+        print(f"      {line}", file=sys.stderr)
+    return 1
 
 
 # --------------------------------------------------------------------------- source
@@ -108,7 +212,10 @@ def fetch_repo(repo: str, ref: str, keep: list) -> Path:
     slow disk.
     """
     url = f"https://codeload.github.com/{repo}/tar.gz/{ref}"
-    print(f"downloading {repo}@{ref}")
+    # The default ref is noise - it says nothing the reader did not already assume. A
+    # pinned one is the opposite: it is the whole reason someone passed --ref, so it shows.
+    what = repo if ref == DEFAULT_REF else f"{repo}@{ref}"
+    print(f"  {paint('downloading', 'cyan')} {paint(what, 'bold')}")
     try:
         with urllib.request.urlopen(url, timeout=60) as response:
             payload = response.read()
@@ -227,7 +334,7 @@ def back_up(dest: Path, dry_run: bool) -> Path:
     if not dry_run:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(dest, target)
-    print(f"  backed up the existing install -> {target}")
+    item("ok", "backed up the existing install", "cyan", trail=show_path(target))
     return target
 
 
@@ -238,19 +345,16 @@ def install_skill(source: Path, dest: Path, *, force: bool, prune: bool, dry_run
     """Copy the skill folder into `dest`. Returns 0 on success, 1 on a refusal."""
     files = source_files(source)
     if not files:
-        print(f"nothing to install: {source} is missing or empty", file=sys.stderr)
-        return 1
+        return refuse(f"nothing to install: {show_path(source)} is missing or empty")
 
     if dest.exists():
         if not dest.is_dir():
-            print(f"{dest} exists and is not a directory - nothing was touched",
-                  file=sys.stderr)
-            return 1
+            return refuse(f"{show_path(dest)} exists and is not a directory",
+                          "Nothing was touched.")
         if not looks_like_eniac(dest) and not force:
-            print(f"{dest} exists but is not an install of this skill.\n"
-                  f"  Nothing was overwritten. Move it aside, or re-run with --force if\n"
-                  f"  it is a stale copy.", file=sys.stderr)
-            return 1
+            return refuse(f"{show_path(dest)} is not an install of this skill",
+                          "Nothing was overwritten. Move it aside, or re-run with",
+                          "--force if it is a stale copy.")
         if backup:
             back_up(dest, dry_run)
 
@@ -283,33 +387,35 @@ def install_skill(source: Path, dest: Path, *, force: bool, prune: bool, dry_run
                     d.rmdir()
 
     if not written and not stale:
-        print(f"already up to date: {dest} ({unchanged} files)")
+        item("same", f"already up to date, {unchanged} files", "dim",
+             trail=show_path(dest))
         return 0
 
     if written:
         verb = "would install" if dry_run else "installed"
-        print(f"{verb} {len(written)} file(s) -> {dest}"
-              + (f"  ({unchanged} unchanged)" if unchanged else ""))
+        count = f"{verb} {len(written)} file{'s' if len(written) != 1 else ''}"
+        if unchanged:
+            count += paint(f"  {MARKS['same']} {unchanged} unchanged", "dim")
+        item("ok", count, "green", trail=show_path(dest))
     else:
-        print(f"{dest}: {unchanged} files already current")
+        item("same", f"{unchanged} files already current", "dim", trail=show_path(dest))
     for rel in stale:
-        print(f"  {'would remove stale' if dry_run else 'removed stale'} {rel.as_posix()}")
+        verb = "would remove stale" if dry_run else "removed stale"
+        item("gone", f"{verb} {rel.as_posix()}", "yellow")
     return 0
 
 
 def uninstall_skill(dest: Path, *, force: bool, dry_run: bool) -> int:
     if not dest.exists():
-        print(f"not installed: {dest}")
+        item("same", "not installed", "dim", trail=show_path(dest))
         return 0
     if not looks_like_eniac(dest) and not force:
-        print(f"{dest} is not an install of this skill - nothing was removed.\n"
-              f"  Re-run with --force only if you are sure.", file=sys.stderr)
-        return 1
-    if dry_run:
-        print(f"would remove {dest}")
-        return 0
-    shutil.rmtree(dest)
-    print(f"removed {dest}")
+        return refuse(f"{show_path(dest)} is not an install of this skill",
+                      "Nothing was removed. Re-run with --force only if you are sure.")
+    if not dry_run:
+        shutil.rmtree(dest)
+    item("gone", "would remove" if dry_run else "removed", "yellow",
+         trail=show_path(dest))
     return 0
 
 
@@ -322,29 +428,28 @@ def install_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
     dest = project / meta["dest"]
 
     if not src.is_file():
-        print(f"missing adapter {src} - run scripts/build_adapters.py", file=sys.stderr)
-        return 1
+        return refuse(f"missing adapter {meta['src']}",
+                      "Run scripts/build_adapters.py to generate it.")
 
     if dest.exists():
         if dest.read_text(encoding="utf-8", errors="replace") == src.read_text(
                 encoding="utf-8", errors="replace"):
-            print(f"already installed and identical: {dest}")
+            item("same", "already installed and identical", "dim",
+                 trail=show_path(dest))
             return 0
         if not force:
             # These are files people edit, and a project's own rules outrank this skill
             # (SKILL.md#precedence), so merging is a decision rather than a copy.
-            print(f"{dest} already exists and differs.\n"
-                  f"  Nothing was overwritten. Merge by hand, keeping one file "
-                  f"authoritative,\n  or re-run with --force if it is a stale copy of "
-                  f"this adapter.", file=sys.stderr)
-            return 1
+            return refuse(f"{show_path(dest)} already exists and differs",
+                          "Nothing was overwritten. Merge by hand, keeping one file",
+                          "authoritative, or re-run with --force if it is a stale copy.")
 
     if not dry_run:
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, dest)
-    print(f"{'would install' if dry_run else 'installed'} {meta['src']} -> {dest}")
-    print("  Adjust the path inside it to wherever skills/Eniac actually lives in this "
-          "repository.")
+    item("ok", f"{'would install' if dry_run else 'installed'} {meta['src']}", "green",
+         trail=show_path(dest))
+    detail("adjust the path inside it to wherever skills/Eniac lives in that repository")
     return 0
 
 
@@ -354,20 +459,18 @@ def uninstall_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
     src = repo_root / "skills" / "Eniac" / "adapters" / meta["src"]
     dest = project / meta["dest"]
     if not dest.exists():
-        print(f"not installed: {dest}")
+        item("same", "not installed", "dim", trail=show_path(dest))
         return 0
     same = src.is_file() and dest.read_text(encoding="utf-8", errors="replace") == \
         src.read_text(encoding="utf-8", errors="replace")
     if not same and not force:
-        print(f"{dest} differs from the adapter - it has been edited, or it is somebody\n"
-              f"  else's file. Nothing was removed. Re-run with --force if you are sure.",
-              file=sys.stderr)
-        return 1
-    if dry_run:
-        print(f"would remove {dest}")
-        return 0
-    dest.unlink()
-    print(f"removed {dest}")
+        return refuse(f"{show_path(dest)} differs from the adapter",
+                      "It has been edited, or it is somebody else's file. Nothing was",
+                      "removed. Re-run with --force if you are sure.")
+    if not dry_run:
+        dest.unlink()
+    item("gone", "would remove" if dry_run else "removed", "yellow",
+         trail=show_path(dest))
     return 0
 
 
@@ -393,32 +496,53 @@ def adapter_confirmation() -> dict[str, str]:
             for key, meta in ADAPTER_RUNTIMES.items() if meta["src"] in by_out}
 
 
+def table(rows: list[tuple[str, str, str, tuple[str, ...]]], headers: tuple[str, str, str]
+          ) -> None:
+    """Three columns sized to their contents.
+
+    Fixed widths were the bug this replaces: a project path is as long as it happens to
+    be, and a hard-coded 50 turns one long row into a wrapped mess for every other row.
+    """
+    widths = [max(len(h), *(len(row[i]) for row in rows)) for i, h in enumerate(headers)]
+    header = "  ".join(h.ljust(w) for h, w in zip(headers, widths)).rstrip()
+    print("    " + paint(header, "dim"))
+    for key, dest, state, styles in rows:
+        print(f"    {paint(key.ljust(widths[0]), 'bold')}  "
+              f"{paint(dest.ljust(widths[1]), 'dim')}  {paint(state, *styles)}")
+
+
 def do_list(project: Path | None) -> int:
-    scope = f"project {project}" if project else "user-wide"
-    print("SKILL FOLDER - runtimes with a skills directory")
-    header = f"destination ({scope})"
-    print(f"  {'runtime':<11} {header:<50} state")
+    title("Skill folder" + paint("   runtimes with a skills directory", "dim"))
+    rows = []
     for key in SKILL_RUNTIMES:
         dest = skill_destination(key, project)
-        if dest.is_dir():
-            state = "installed" if looks_like_eniac(dest) else "occupied by something else"
+        if dest.is_dir() and looks_like_eniac(dest):
+            state, styles = "installed", ("green",)
+        elif dest.is_dir():
+            state, styles = "occupied by something else", ("yellow",)
         elif detected(key, project):
-            state = "runtime found, skill not installed"
+            state, styles = "runtime found, not installed", ()
         else:
-            state = "runtime not found"
-        print(f"  {key:<11} {str(dest):<50} {state}")
+            state, styles = "runtime not found", ("dim",)
+        rows.append((key, show_path(dest), state, styles))
+    scope = f"destination ({'project' if project else 'user-wide'})"
+    table(rows, ("runtime", scope, "state"))
 
-    print("\nADAPTER FILE - runtimes that read standing instructions (needs --project)")
+    title("Adapter file" + paint("   runtimes that read standing instructions", "dim"))
     confirmed = adapter_confirmation()
-    print(f"  {'runtime':<11} {'destination in that repository':<34} state")
+    rows = []
     for key, meta in ADAPTER_RUNTIMES.items():
         state = confirmed.get(key, "confirmation unknown without a checkout")
+        styles: tuple[str, ...] = ("yellow",) if state.startswith("path not") else ()
         if project is not None and (project / meta["dest"]).exists():
-            state = f"file present; {state}"
-        print(f"  {key:<11} {meta['dest']:<34} {state}")
-    print("\nAdapter destinations come from each runtime's own documentation rather than\n"
-          "from an install performed here, and a wrong one fails silently. If you confirm\n"
-          "one loads, record it: set `verified` for that target in build_adapters.py.")
+            state, styles = f"file present, {state}", ("green",)
+        rows.append((key, meta["dest"], state, styles))
+    table(rows, ("runtime", "destination in that repository", "state"))
+    print()
+    detail("adapters need --project: the repository that receives the file")
+    detail("destinations come from each runtime's own docs, not from an install done here,")
+    detail("and a wrong one fails silently. Confirm one and record it: set `verified`")
+    detail("for that target in build_adapters.py.")
     return 0
 
 
@@ -458,12 +582,17 @@ def main() -> int:
     ap.add_argument("--backup", action="store_true",
                     help="copy an existing install to <runtime>/eniac-backups/ first")
     ap.add_argument("--uninstall", action="store_true", help="remove what was installed")
+    ap.add_argument("--no-color", action="store_true",
+                    help="plain output (also honours NO_COLOR)")
     args = ap.parse_args()
+
+    if args.no_color:
+        global COLOR, COLOR_ERR
+        COLOR = COLOR_ERR = False
 
     project = Path(args.project).expanduser().resolve() if args.project else None
     if project is not None and not project.is_dir():
-        print(f"not a directory: {project}", file=sys.stderr)
-        return 1
+        return refuse(f"not a directory: {project}")
 
     if args.list:
         return do_list(project)
@@ -475,24 +604,21 @@ def main() -> int:
         keys = list(SKILL_RUNTIMES)
     unknown = [k for k in keys if k not in SKILL_RUNTIMES and k not in ADAPTER_RUNTIMES]
     if unknown:
-        print(f"unknown runtime {unknown[0]!r}; try --list", file=sys.stderr)
-        return 1
+        return refuse(f"unknown runtime {unknown[0]!r}", "Run --list to see the names.")
 
     adapters = [k for k in keys if k in ADAPTER_RUNTIMES]
     if adapters and project is None:
-        print(f"--project is required for {adapters[0]}: an adapter is a file inside a "
-              f"repository", file=sys.stderr)
-        return 1
+        return refuse(f"--project is required for {adapters[0]}",
+                      "An adapter is a file inside a repository, so it needs one.")
 
     skills = [k for k in keys if k in SKILL_RUNTIMES]
     if not keys and not args.into:
         skills = [k for k in SKILL_RUNTIMES if detected(k, project)]
         if not skills:
-            print(f"no known runtime found {'in ' + str(project) if project else 'on this machine'}.\n",
-                  file=sys.stderr)
+            where = f"in {show_path(project)}" if project else "on this machine"
+            refuse(f"no known runtime found {where}",
+                   "Name one explicitly with --runtime, or give a path with --into.")
             do_list(project)
-            print("\nName one explicitly with --runtime, or give a path with --into.",
-                  file=sys.stderr)
             return 1
 
     keep: list = []
@@ -501,7 +627,7 @@ def main() -> int:
 
     failures = 0
     for key in skills:
-        print(f"{SKILL_RUNTIMES[key]['label']}:")
+        title(SKILL_RUNTIMES[key]["label"])
         dest = skill_destination(key, project)
         if args.uninstall:
             failures += uninstall_skill(dest, force=args.force, dry_run=args.dry_run)
@@ -511,7 +637,7 @@ def main() -> int:
                                       backup=args.backup)
     if args.into:
         dest = Path(args.into).expanduser().resolve() / "Eniac"
-        print("custom path:")
+        title("Custom path")
         if args.uninstall:
             failures += uninstall_skill(dest, force=args.force, dry_run=args.dry_run)
         else:
@@ -519,7 +645,7 @@ def main() -> int:
                                       prune=not args.no_prune, dry_run=args.dry_run,
                                       backup=args.backup)
     for key in adapters:
-        print(f"{ADAPTER_RUNTIMES[key]['label']}:")
+        title(ADAPTER_RUNTIMES[key]["label"])
         if args.uninstall:
             failures += uninstall_adapter(repo_root, key, project, force=args.force,
                                           dry_run=args.dry_run)
@@ -528,9 +654,18 @@ def main() -> int:
                                         dry_run=args.dry_run)
 
     if failures:
+        print()
         return 1
-    if not args.uninstall and not args.dry_run:
-        print(f"\n{VERIFY}")
+    if args.dry_run:
+        print(f"\n  {paint(MARKS['warn'] + ' dry run:', 'yellow')} "
+              f"{paint('nothing above was written', 'dim')}")
+    elif not args.uninstall:
+        print(f"\n  {paint('Next', 'cyan', 'bold')}  restart the agent, then ask it:")
+        print(f"        {paint(QUESTION, 'bold')}")
+        for line in ("A loaded skill names itself. A generic answer means the file is not",
+                     "being read, and nothing will have errored to tell you - INSTALL.md"):
+            print(f"        {paint(line, 'dim')}")
+    print()
     return 0
 
 

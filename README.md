@@ -4,7 +4,38 @@ Eniac is a provider-neutral, agent-agnostic operating skill for full-cycle softw
 
 The cognitive model is borrowed from Freud's structural theory and used as machinery, not decoration.
 
+[![check](https://github.com/ParamissionLab/Eniac/actions/workflows/check.yml/badge.svg)](https://github.com/ParamissionLab/Eniac/actions/workflows/check.yml)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 Credit: [ParamissionLab](https://github.com/ParamissionLab)
+
+## Quick Start
+
+Install into every agent runtime found on the machine, without cloning anything:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python3 -
+```
+
+```powershell
+irm https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python -
+```
+
+Restart the agent, then use it:
+
+```text
+Use eniac to fix this bug, verify it, and keep the change scoped.
+```
+
+Then confirm it is actually loaded, which is worth ten seconds because a failed install of an agent instruction file **errors nowhere** — ask the agent:
+
+```text
+What operating skill or rules are you currently following?
+```
+
+A loaded skill names itself. A generic "I'm a helpful assistant" means the file is not being read, and the fix is a path rather than a prompt: [INSTALL.md](INSTALL.md).
+
+Requirements: Python 3.8+, used only to *copy files* — the skill itself is Markdown with no build step, no runtime, and no dependency. `--dry-run` shows what any command would touch before it touches it.
 
 ## The Model
 
@@ -31,33 +62,50 @@ These subsystems are wired in a stated order rather than offered as a menu: prec
 
 ## What It Does
 
+### Sizes the work before doing it
+
 - **Scales effort to real risk.** L0 answers directly with no ceremony; L4 inspects freely but asks before mutating. Applying L3 process to L1 work is treated as the expensive mistake it is.
 - **Scales to work that does not fit in one head.** Magnitude is tracked separately from risk, because a two-line change on a payment path is high risk and tiny while a 400-file rename is low risk and enormous. From M1 upward the binding constraint becomes memory rather than thinking, so the skill switches to durable checkpoints, models built from partial evidence, verified waves, and migrations where every intermediate state is a good state.
-- **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
-- **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
-- **Has a method for thinking slowly, not just permission to.** Frame the given, required, constraints, and the one unknown that would settle it. Decompose along a seam the system already has, so each part is independently checkable. Partition the case space and state which combinations are impossible *and why* — an unreasoned "impossible" is the most common origin of a production surprise. Derive constraints from the symptom rather than guessing better. Work backwards from the goal when forward search is too wide. Then name every proof obligation and discharge it, because an obligation you cannot discharge is a stated risk rather than an oversight.
-- **Knows when to think fast and when to think slow.** Pattern-matching is free and usually right, so it is the default — but it switches to deliberate work on an unfamiliar pattern, a one-way door, an answer that came too fluently, a problem turning on numbers or ordering or negation, or anything that has already surprised it once. It names the two traps that are invisible from the inside: silently answering an easier question than the one asked, and "verifying" by re-reading its own reasoning instead of touching reality.
-- **Decides in proportion to reversibility.** A two-way door gets decided now and answered by reality; deliberating there costs more than being wrong. A one-way door — persisted data, a public contract, a deletion, a release — earns a pre-mortem, an inverted failure list, a hunt for disconfirming evidence, base rates instead of the plan's own optimism, and a written `Revisit if`.
 - **Prioritizes automatically.** A fixed six-tier ladder — active harm, blockers, the stated outcome, proof of it, defects inside the blast radius, then everything else — so ordering does not depend on whatever was noticed most recently. Tier six is reported, never silently done.
 - **Refuses vagueness.** A request is actionable only when outcome, scope, and proof are each nameable in one line. Ambiguity is resolved from evidence, then by stated assumption, and only then by asking one specific question.
-- **Verifies before claiming.** A five-rung ladder from "it parses" to "nothing else broke", baseline capture before regression claims, and a vocabulary where *verified*, *implemented*, and *unverified* mean different things.
+- **Spends tokens on purpose.** Nothing loads without naming the decision it could change and the signal expected from it.
+
+### Thinks, and knows which mode it is in
+
+- **Knows when to think fast and when to think slow.** Pattern-matching is free and usually right, so it is the default — but it switches to deliberate work on an unfamiliar pattern, a one-way door, an answer that came too fluently, a problem turning on numbers or ordering or negation, or anything that has already surprised it once. It names the two traps that are invisible from the inside: silently answering an easier question than the one asked, and "verifying" by re-reading its own reasoning instead of touching reality.
+- **Has a method for thinking slowly, not just permission to.** Frame the given, required, constraints, and the one unknown that would settle it. Decompose along a seam the system already has, so each part is independently checkable. Partition the case space and state which combinations are impossible *and why* — an unreasoned "impossible" is the most common origin of a production surprise. Derive constraints from the symptom rather than guessing better. Work backwards from the goal when forward search is too wide. Then name every proof obligation and discharge it, because an obligation you cannot discharge is a stated risk rather than an oversight.
+- **Decides in proportion to reversibility.** A two-way door gets decided now and answered by reality; deliberating there costs more than being wrong. A one-way door — persisted data, a public contract, a deletion, a release — earns a pre-mortem, an inverted failure list, a hunt for disconfirming evidence, base rates instead of the plan's own optimism, and a written `Revisit if`.
 - **Watches its own avoidance.** Denial, rationalization, projection, displacement, repression, regression, reaction formation, intellectualization, and omnipotence — each with the behavior that gives it away and the move that breaks it. Plus sublimation, the one worth keeping.
 - **Knows when it is stuck.** Two failures of the same approach means the model is wrong, not the execution; the third attempt is where tokens go to die. It stops, states what it believed versus what happened, and either changes approach or reports a clear blocker.
-- **Defers to what is more specific than itself.** The runtime's rules, then the user's instructions, then the repository's conventions, then this skill. A project convention outranks a principle in these references, and applying the skill against the user's stated wish is disobedience with extra steps.
+
+### Proves rather than asserts
+
+- **Verifies before claiming.** A five-rung ladder from "it parses" to "nothing else broke", baseline capture before regression claims, and a vocabulary where *verified*, *implemented*, and *unverified* mean different things.
+- **Reports honestly.** Every claim in a review, audit, or plan is labelled `Fact`, `Inference`, `Assumption`, `Proposed`, or `Unknown`, because a reader cannot detect uncertainty smoothed into confident prose. Code is judged against the framework's documented conventions and the project's own dominant pattern — never personal taste — and `None identified` is a legitimate result. "No pass required" is a complete answer.
+
+### Knows the domain it is working in
+
 - **Has opinions about code.** When to abstract and when duplication is cheaper, how to name, which errors to catch and which to let fly, where a boundary is real, how to keep concurrent code correct, what a test should assert, what an interface promises, what is safe to delete.
-- **Disagrees once, then commits.** A request that looks like a mistake gets one concrete objection, then the work gets done — the user holds context the agent does not.
-- **Learns deliberately.** On correction, repeated failure, or surprise, it records *believed X · actually Y · cheapest check that would have caught it* and writes the lesson into the smallest durable place that will be read again — preferring a test over a comment over prose.
-- **Treats documentation as a deliverable with an owner.** Each durable fact lives in exactly one file and everything else links to it, because two copies drift and once they disagree both have negative value. Uncertainty is marked `UNKNOWN` with the check that settles it rather than smoothed into confident prose, every command written into a doc has been run, and an audit usually ends with *fewer* files.
-- **Designs interfaces rather than defaulting them.** When how a surface looks is part of the deliverable, the palette, type, layout, and one signature element are settled before any CSS exists, then each part is tested against a specific question: would this same answer have come out for any other brief in this category? If yes it is a default rather than a choice. Interface copy is treated as design material, and the handful of looks generated design converges on are named so they can be avoided on purpose.
-- **Runs on any agent runtime.** The skill names capabilities — read, search, edit, execute — never a vendor's tool or instruction file, and it says what a missing capability costs instead of routing around it silently. Levels, routes, gates, and triage are decisions rather than features, so they behave identically everywhere; what varies is proof, and on a weaker runtime the honest report gets longer rather than shorter. Adapters ship for skill directories, `AGENTS.md`, Cursor rules, and single-instruction-field assistants.
-- **Can tell you whether it is actually loaded.** Installing an agent instruction file fails *silently* on every runtime there is — a wrong path or an unrecognized front-matter key produces no error, the file is simply never read, and the agent behaves exactly as though nothing were installed. So the skill answers a bare "what rules are you following?" by naming itself, the eval suite runs that question as a gate before scoring anything, and `install.py` takes every destination — skill folders and adapters alike — from one table instead of asking anyone to retype a path. Without that gate, a failed install reports as *the skill did not help* — and you go rewrite guidance that was never loaded.
-- **Carries no version number inside the skill folder.** The version lives in the changelog and the git tag that carries it, so a vendored copy produces no diff when a release happens and nobody edits fourteen files to cut one. The checker enforces it in both directions: the marker is present everywhere, and it is bare.
-- **Is a system rather than a folder of files.** Every reference opens by declaring what it *owns* and what it *hands off* to a named neighbour, so when two look plausible the boundary is already written down instead of guessed at — and a future overlap fails the build rather than drifting for a year. `SKILL.md` groups them by the kind of question they answer, so choosing one is a step rather than a scan. The rule the package applies to other people's documentation, it applies to itself.
+- **Treats production and the organization as first-class constraints.** Every remote call needs a timeout, a retry decision, an idempotency answer, and a degradation path. Tenant isolation outranks every other invariant. Regulated data carries obligations that no amount of code reading can settle, so the skill names the gap instead of asserting compliance. Freeze windows, required reviewers, and CI gates are respected rather than routed around.
 - **Treats security as a property of the design, not a review at the end.** A trust boundary is anywhere data crosses from somewhere you do not control into somewhere you do — including the ones that do not look like boundaries: an internal queue, a row a user wrote three months ago, a webhook nobody verifies, a third-party API's response. Authorization is checked per path *and per object*, because the most common serious vulnerability in real software is an endpoint nobody guarded behind a button the interface does not show. Injection is recognized as one bug in many costumes — SQL, shell, template, path, XSS, deserialization, prompt — whose only real fix is structural separation. And it never asserts that something is secure or compliant, because that is a claim about the world no code reading supports.
 - **Knows that a model call is not an ordinary function call.** Software built on a model has one component that answers differently each time and fails with a well-formed success — truncation, refusal, confident fabrication. So versions get pinned because "latest" is a breaking change nobody reviewed, prompt injection is handled at the authorization layer rather than by instructing the model to be careful, model output is treated as untrusted input to whatever consumes it, and correctness is established by property assertions and an eval set rather than by equality on a string that will drift.
 - **Engineers the loop, not just the fix.** Almost all non-trivial work is iteration, so the loop is what gets designed: its latency, which multiplies by every turn you have not had yet and is why *shortening a slow loop beats running it*; its signal, because a turn that cannot change the next decision is a retry rather than an iteration; and its stop, named before the first turn instead of discovered at the tenth. A loop ends *converged*, *exhausted*, or *diverged*, and saying which is part of the report — collapsing them into "done" is how a loop that learned nothing gets reported as one that succeeded.
+- **Treats documentation as a deliverable with an owner.** Each durable fact lives in exactly one file and everything else links to it, because two copies drift and once they disagree both have negative value. Uncertainty is marked `UNKNOWN` with the check that settles it rather than smoothed into confident prose, every command written into a doc has been run, and an audit usually ends with *fewer* files.
+- **Designs interfaces rather than defaulting them.** When how a surface looks is part of the deliverable, the palette, type, layout, and one signature element are settled before any CSS exists, then each part is tested against a specific question: would this same answer have come out for any other brief in this category? If yes it is a default rather than a choice. Interface copy is treated as design material, and the handful of looks generated design converges on are named so they can be avoided on purpose.
+
+### Works with you, not around you
+
+- **Defers to what is more specific than itself.** The runtime's rules, then the user's instructions, then the repository's conventions, then this skill. A project convention outranks a principle in these references, and applying the skill against the user's stated wish is disobedience with extra steps.
+- **Disagrees once, then commits.** A request that looks like a mistake gets one concrete objection, then the work gets done — the user holds context the agent does not.
+- **Learns deliberately.** On correction, repeated failure, or surprise, it records *believed X · actually Y · cheapest check that would have caught it* and writes the lesson into the smallest durable place that will be read again — preferring a test over a comment over prose.
+
+### Is built the way it tells you to build
+
+- **Runs on any agent runtime.** The skill names capabilities — read, search, edit, execute — never a vendor's tool or instruction file, and it says what a missing capability costs instead of routing around it silently. Levels, routes, gates, and triage are decisions rather than features, so they behave identically everywhere; what varies is proof, and on a weaker runtime the honest report gets longer rather than shorter. Adapters ship for skill directories, `AGENTS.md`, Cursor rules, and single-instruction-field assistants.
+- **Can tell you whether it is actually loaded.** Installing an agent instruction file fails *silently* on every runtime there is — a wrong path or an unrecognized front-matter key produces no error, the file is simply never read, and the agent behaves exactly as though nothing were installed. So the skill answers a bare "what rules are you following?" by naming itself, the eval suite runs that question as a gate before scoring anything, and `install.py` takes every destination — skill folders and adapters alike — from one table instead of asking anyone to retype a path. Without that gate, a failed install reports as *the skill did not help* — and you go rewrite guidance that was never loaded.
+- **Is a system rather than a folder of files.** Every reference opens by declaring what it *owns* and what it *hands off* to a named neighbour, so when two look plausible the boundary is already written down instead of guessed at — and a future overlap fails the build rather than drifting for a year. `SKILL.md` groups them by the kind of question they answer, so choosing one is a step rather than a scan. The rule the package applies to other people's documentation, it applies to itself.
+- **Carries no version number inside the skill folder.** The version lives in the changelog and the git tag that carries it, so a vendored copy produces no diff when a release happens and nobody edits fourteen files to cut one. The checker enforces it in both directions: the marker is present everywhere, and it is bare.
 - **Is checked, not just written.** Structure, size budget, cross-references, adapter sync, and compact-file coverage are enforced by a script and by CI rather than by a checklist someone reads. Behaviour has its own suite in `evals/`, runtime-neutral so a result from one agent is comparable to another, and every case is required to reject a deliberately bad answer — an assertion that always passes makes a suite look green while measuring nothing.
-- **Spends tokens on purpose.** Nothing loads without naming the decision it could change and the signal expected from it.
 
 ## Structure
 
@@ -157,17 +205,7 @@ Eniac is plain Markdown with no build step and no dependency, so it installs int
 
 One installer covers both routes — `scripts/install.py` — because they fail the same way: a wrong destination installs nothing and **says nothing**, on every runtime there is. Copying the files by hand works exactly as well; the script exists so the path is stated once rather than retyped.
 
-**Without cloning anything**, straight from this repository:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python3 -
-```
-
-```powershell
-irm https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python -
-```
-
-It downloads the repository archive and installs into every runtime it finds on the machine. Add `--ref v1.1.0` to pin what it fetches, which is the honest default for anything you rely on: `main` is whatever was pushed a minute ago. Nothing from the download is executed — files are copied, and only under the skill folder.
+**Without cloning anything** — the one-liner in [Quick Start](#quick-start). It downloads the repository archive and installs into every runtime it finds. Add `--ref v1.1.0` to pin what it fetches, which is the honest default for anything you rely on: `main` is whatever was pushed a minute ago, so an unpinned install is a dependency that upgrades itself with no review. Nothing from the download is executed — files are copied, and only under the skill folder.
 
 **From a clone**, which is the same script with the files already local:
 
@@ -181,6 +219,7 @@ python scripts/install.py --list                # every destination, and what is
 python scripts/install.py --runtime claude      # one runtime, user-wide
 python scripts/install.py --project ../my-app   # into that repository, checked in with it
 python scripts/install.py --dry-run             # print the plan, change nothing
+python scripts/install.py --uninstall           # take it back out
 ```
 
 Either way it copies only what changed and removes reference files an older version left behind — a stale one keeps loading beside the file that replaced it, and contradicts it. `.\install.ps1` and `./install.sh` are the same thing for a terminal that would rather not name an interpreter. Restart the agent afterwards.
@@ -226,6 +265,10 @@ Use eniac to take this from empty folder to something that runs and has a README
 ใช้ eniac แก้หลายไฟล์ตาม pattern เดียวกันแบบประหยัด token และตรวจให้พอมั่นใจ
 ```
 
+Naming it is only needed where the runtime loads skills on demand. Installed as an adapter — `AGENTS.md`, Cursor rules, `.clinerules` — it is standing instruction: it applies to every task in that repository with nothing to invoke, which is also why it is worth installing per-project for a team rather than per-person.
+
+And it is not always the right call. A question with a one-line answer, a conversation about a decision you have already made, or anything where you want a draft rather than a verified change is work the skill will deliberately keep cheap — but the honest version is that you do not need it for those at all.
+
 ## Token Discipline
 
 The savings come from structure rather than from exhortation:
@@ -246,7 +289,31 @@ git pull
 python scripts/install.py
 ```
 
-The installer writes to wherever it already finds an install, so an update is the same command as the install. Restart your agent or start a new session afterwards; a running session keeps the skill it loaded.
+The installer writes to wherever it already finds an install, so an update is the same command as the install — and with no clone, re-running the one-liner from [Quick Start](#quick-start) does the same thing. It replaces only the files that changed and deletes the ones this version no longer ships, which is the part a re-copy misses: a reference removed in a later version keeps loading from the old install and contradicts the file that replaced it. Restart your agent or start a new session afterwards; a running session keeps the skill it loaded.
+
+## Documentation
+
+| Question | File |
+| --- | --- |
+| Where does this install on my runtime, and did it load? | [INSTALL.md](INSTALL.md) |
+| How do we roll it out to a team or a fleet without forking it? | [ADOPTION.md](ADOPTION.md) |
+| How do I change the skill, and what must still hold afterwards? | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| What changed, and why was it worth changing? | [CHANGELOG.md](CHANGELOG.md) |
+| Does it actually change how an agent behaves? | [evals/README.md](evals/README.md) |
+| How does an organization add its own rules on top? | [templates/house-rules.template.md](templates/house-rules.template.md) |
+
+## Checks
+
+The package is checked rather than reviewed by eye — the same four commands CI runs:
+
+```bash
+python scripts/check_skill.py          # structure, links, ownership, size budget
+python scripts/build_adapters.py --check   # every adapter still matches its one source
+python scripts/run_evals.py --self-test    # no case can pass a deliberately bad answer
+python -m compileall -q scripts
+```
+
+Behaviour is measured rather than asserted: `scripts/run_evals.py --agent-cmd '<your agent>'` runs the suite against any runtime, and `scripts/compare_evals.py` runs it with and without the skill and attributes each case — including the column that matters most, the cases the skill *lost*.
 
 ## Versioning
 
