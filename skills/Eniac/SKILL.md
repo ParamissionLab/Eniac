@@ -111,7 +111,7 @@ outcome. Start at the lightest level that can succeed and move up only on eviden
 | --- | --- | --- | --- |
 | **L0** trivial | direct answer, one-line fact | none — just answer | nothing |
 | **L1** simple | exact file and cause known | targeted edit plus a narrow check | the target file and its test |
-| **L2** normal | multi-file, or cause uncertain | scope lock, direct dependencies, focused proof | one primary reference at most |
+| **L2** normal | multi-file, or cause uncertain | scope lock, direct dependencies, focused proof | the route's first reference; a second only if it does not settle the next action |
 | **L3** complex | architecture, broad feature, repeated failure | written plan, milestones bound to proof, blast-radius map | matched references, added one at a time |
 | **L4** high-risk | production, credentials, destructive, irreversible, money/legal/medical | inspect freely, **ask before mutating** | safety reference before acting |
 
@@ -195,12 +195,22 @@ Pick the cheapest route that fits, then load at most what it names.
 | restructure without changing behavior | **Refactor** | `references/workflows.md#refactor` |
 | new project, empty repo, "build me a…" | **Greenfield** | `references/workflows.md#greenfield` |
 | discover, build, test, document, ship | **Full-cycle** | `references/workflows.md#full-cycle` |
-| judge a diff, a PR, or existing code | **Review** | `references/workflows.md#review` and `references/findings.md` |
-| understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, `references/architecture.md`, `references/findings.md` |
+| judge a diff, a PR, or existing code | **Review** | `references/workflows.md#review`, then `findings.md` when the output is findings |
+| understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, then `architecture.md` to judge it or `findings.md` to write it up |
 | something is measurably slow | **Optimize** | `references/performance.md` |
 | many small mechanical edits | **Batch** | `references/workflows.md#batch` |
 | a user-facing screen, page, or flow | **Product UI** | `references/workflows.md#product-ui` |
-| release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship` and `references/safety.md` |
+| release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship`, then `safety.md` before anything irreversible |
+
+A row names what the route *may* need, in the order it would be needed — not a set to
+load at once. Load the first, act, and reach for the second only if the first did not
+settle the next action.
+
+**Specify, Design, and Implement are a sequence, not a choice between three.** When more
+than one applies, they run in that order: settle what "done" means before choosing a
+shape, and choose the shape before building it. Skipping either of the first two is
+normal and usually right — a bug fix has no design phase — but say which you skipped and
+why, because the failure this ordering prevents is the phase nobody decided to skip.
 
 Whatever the route, when the work turns on a code judgment call rather than on
 correctness, load `references/craft.md`.
@@ -376,8 +386,8 @@ the full reporting discipline: `references/operating-manual.md#communication`.
 Load the most specific one, and only when it changes what you do next.
 
 This file governs. A reference that appears to contradict it is either being misread or
-is wrong, and the control plane wins — an eighteen-file system needs one place that
-settles arguments, or every conflict becomes a judgement call made twice.
+is wrong, and the control plane wins — a system this size needs one place that settles
+arguments, or every conflict becomes a judgement call made twice.
 
 - `references/operating-manual.md` — the detail behind this file: agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
 - `references/lifecycle.md` — the phase map from specify to evolve, plus the two activities nothing else owns: turning a vague ask into checkable criteria, and choosing a shape before building it.

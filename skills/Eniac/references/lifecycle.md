@@ -101,9 +101,17 @@ They behave differently under pressure, so blurring them costs you later:
 compromise invented quietly to make both sound satisfied usually satisfies neither, and
 the person who could have chosen never got to.
 
-**If you cannot write a single checkable criterion, that is the finding.** Say so, name
-the specific thing that would settle it, and stop — building against an unspecifiable ask
-produces work that cannot be judged and therefore cannot be finished.
+**If you cannot write a single checkable criterion, that is the finding** — but reach it
+through the ambiguity ladder in `operating-manual.md`, not instead of it. Try the evidence
+first, then a stated assumption. Most vague asks survive a labelled assumption perfectly
+well, and stopping to ask about one that was cheap to get wrong costs the user a round
+trip for nothing.
+
+Stopping is the right move only when both halves are true: no reasonable reading is
+available, **and** being wrong would be expensive or hard to undo. Then say so, name the
+specific thing that would settle it, and stop — building against an unspecifiable ask
+whose failure is costly produces work that cannot be judged and therefore cannot be
+finished.
 
 ## Design Before Building
 
