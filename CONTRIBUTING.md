@@ -40,6 +40,7 @@ skills/Eniac/
     defenses.md                — agent failure modes under pressure
     token-economy.md           — context budgeting and progressive loading
     learning-loop.md           — insight capture and durable placement
+    collaboration.md           — engagement modes, reading a preference, movable defaults
     safety.md                  — authorization, secrets, rollback, release
     autonomy.md                — unattended runs, envelopes, verdicts, fleets
     stack-signals.md           — any stack: deriving proofs, silent failures, contracts

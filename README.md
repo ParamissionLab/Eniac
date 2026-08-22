@@ -85,6 +85,7 @@ skills/
       defenses.md
       token-economy.md
       learning-loop.md
+      collaboration.md
       safety.md
       stack-signals.md
       architecture.md
@@ -131,6 +132,7 @@ templates/
 | `defenses.md` | the same approach has failed twice, or the work has started avoiding itself |
 | `token-economy.md` | large repositories, repeated compaction, expensive tools, long autonomous runs |
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
+| `collaboration.md` | the response is not landing — corrections about tone or depth, a run of output the user did not want, or a request whose verb is not *do*. Covers what is being asked *of* you rather than *for*: the five engagement modes and what each hands over, how a mode switches mid-conversation without anyone announcing it, reading a preference from four signals without over-fitting to two data points, which of this skill's own defaults a person may move, and the four that never move for anyone |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
 | `autonomy.md` | the run is unattended — a schedule, a CI job, a queue worker, a fleet — so "ask first" has nobody to ask: the authorization envelope decided in advance, gates that fail closed into a recorded request rather than a guess, the machine-readable verdict every run emits, budget reservation, idempotence and resumability, and the failure modes that only appear at fleet scale |
 | `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything. Built as a method rather than a catalogue, so it works on a language nobody has written a guide for: deriving the proof commands from the project itself, the four questions that surface what fails *without* failing a build, the changes that break a published contract in any language, and how to write code a maintainer would recognize in an ecosystem you met an hour ago |

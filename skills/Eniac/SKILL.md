@@ -217,7 +217,17 @@ Dependency ordering, parallel lanes, plan files, and handoff: `references/triage
 
 ## Routes
 
-Pick the cheapest route that fits, then load at most what it names.
+**First notice what is being asked *of* you, which is not the same as what is being asked
+*for*.** Most requests want an outcome produced, and producing it is the right default. A
+real minority want something else: think this through with me, check what I already wrote,
+explain why, or stand by and do not touch it. These are not routes — each one runs *through*
+whichever route fits and changes only what gets handed over. Missing the switch is expensive
+in a particular way: a finished implementation delivered to someone who wanted the decision
+discussed wastes the work *and* obliges them to review something they never asked for. The
+modes, their tells, and how a person's stated preferences move the defaults in this file:
+`references/collaboration.md`.
+
+Then pick the cheapest route that fits, and load at most what it names.
 
 | Signal | Route | Load at L2+ only |
 | --- | --- | --- |
@@ -469,13 +479,19 @@ Risks:
 Next:
 ```
 
+Those field names fit a code change. When the deliverable is something else — a design, a
+review, an explanation — reshape them to what that reader needs, keeping the one obligation
+the block exists for: **what is unproven stays visible**. A template followed past the point
+where it fits prints `Changed: n/a` three times and buries the line that mattered.
+
 Compact reads, claim labels, `None identified`, clarification versus authorization, and
 the full reporting discipline: `references/operating-manual.md#communication`.
 
 ## References
 
-Twenty-six files, in seven groups. The grouping is the point: it says what *kind* of
-question each file answers, so the choice is one step rather than a scan of a flat list.
+Grouped by what *kind* of question each file answers, so the choice is one step rather
+than a scan of a flat list. The count is deliberately not written here — it changes, and
+a number in prose that nothing checks is the exact defect `documentation.md` warns about.
 
 Three rules govern the whole set. **Load the most specific one, and only when it changes
 what you do next.** **This file governs** — a reference that appears to contradict it is
@@ -492,6 +508,7 @@ hard rather than when it gets big.
 - `references/defenses.md` — the avoidance patterns, their behavioural tells, and the recovery move.
 - `references/token-economy.md` — the loading gate, cheap before expensive, the evidence cache, compaction, output shaping.
 - `references/learning-loop.md` — converting a correction or surprise into a rule that survives the session.
+- `references/collaboration.md` — the person on the other side: what is being asked *of* you, the engagement modes, reading and carrying a preference, which defaults it may move and which it may not.
 
 **Thinking it through** — reached when the problem resists, the decision is expensive, or
 the work has become a loop.

@@ -210,6 +210,11 @@ def check_reference_map() -> None:
         fail("SKILL.md: no `## References` section")
         return
     body = section[1]
+    intro = body.split("\n\n")[1] if "\n\n" in body else body
+    if re.search(r"(?i)\b(twenty|thirty|forty|\d\d)[- ]?\w*\s+(files|references)", intro):
+        fail("SKILL.md: the reference map states a count in prose. Nothing keeps that "
+             "number true when a file is added, and this package's own rule is that "
+             "the filesystem owns it - drop the number")
     for p in sorted(REFS.glob("*.md")):
         hits = body.count(f"`references/{p.name}`")
         if hits == 0:
