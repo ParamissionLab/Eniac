@@ -108,9 +108,14 @@ it and is checked by something before you call it done.
   contract-first.
 - **M3** weeks, staged rollout, backfill — expand/contract or strangler, flags, recorded
   decisions.
+- **M4** more than one team must agree, and the work outlives any of them — contracts
+  between teams before code, a path each can adopt on its own schedule, decisions recorded
+  where people who were not there will find them.
 
 At M1 and above the binding constraint stops being thinking and becomes **memory**: what
-you knew last session, what is already proven, what must not be redone. When the work is
+you knew last session, what is already proven, what must not be redone. At M4 it becomes
+**consent** — the limit is what other people will agree to, adopt, and keep maintaining, so
+a migration nobody adopts is not a migration and the rollout is the product. When the work is
 genuinely M2+ and the user wants it now, say the size once and deliver a first phase that
 stands on its own — a whole system at ten percent depth is the dishonest answer.
 
@@ -289,6 +294,43 @@ Every command written in a doc has been run. Describe what exists in the present
 what is planned as planned. Never write "secure", "fully tested", or "production ready" —
 a document cannot make those claims on its own authority. An audit usually ends with
 *fewer* files; deleting a stale doc beats keeping one that gets believed.
+
+## Any stack, any system
+
+**A stack you do not know asks four questions.** *Detect* — what says which stack this is.
+*Prove* — which commands, when they fail, mean something is wrong. *Silent* — what breaks
+here without failing a build. *Contract* — what counts as a breaking change for anything
+others import.
+
+- **The project's own commands outrank ecosystem defaults**: CI workflow first, then the
+  task runner, then the docs, then the default. Sort them into build / type check / test /
+  lint — in several ecosystems the type check is a *separate command from the build*, which
+  is the most common gap.
+- **Confirm each check can fail.** Break something on purpose once. A check that cannot go
+  red is not proof, and this is how you find a test command that matched zero tests.
+- **Silent failures hide in four places**: what the language lets you ignore, what is
+  checked at runtime rather than compile time, what differs between your environment and
+  the real one, and what is asserted only in a comment.
+- **Writing in an unfamiliar stack**: read three neighbours before writing one line — the
+  file, its closest sibling, and its test. Copy the shape of the nearest working example.
+  Turn the tools up rather than down. Add no dependency or pattern the project does not
+  already use. Label what you inferred as an assumption.
+- **A published contract is a one-way door.** Adding a member to an interface, adding a
+  required parameter, narrowing an input, widening an output, changing an error type,
+  adding an enum variant, changing a serialized shape, renaming anything reachable by name,
+  raising a minimum version — all look additive and are not. Additive first, and the
+  contract is what people actually depend on, not what you documented.
+
+**What kind of system this is changes the method.** Six questions: how a change *reaches* a
+user and what that costs; whether it can be *reversed*, by whom, how fast; how late the
+*feedback* is; who owns the *state* that matters; what "*works*" means beyond a successful
+return; and what you are *blind* to from where you sit.
+
+Deploy-and-watch advice assumes the first three are cheap. When delivery is gated — an app
+store, a customer's schedule, a device in a field — flags stop being optional, old versions
+run forever so every change is a compatibility problem, and the failure sits in the field
+for as long as you take to notice. Name what you cannot observe rather than testing what
+you can and reporting it as coverage.
 
 ## Security, and systems that call a model
 

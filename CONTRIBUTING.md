@@ -42,7 +42,8 @@ skills/Eniac/
     learning-loop.md           — insight capture and durable placement
     safety.md                  — authorization, secrets, rollback, release
     autonomy.md                — unattended runs, envelopes, verdicts, fleets
-    stack-signals.md           — stack detection, real proof commands, pitfalls
+    stack-signals.md           — any stack: deriving proofs, silent failures, contracts
+    system-types.md            — how the kind of system changes delivery, proof, and risk
     architecture.md            — assessment dimensions, flow tracing, diagrams
   adapters/                    — not loaded by the skill; per-runtime install surfaces
     _source/core.md            — SOURCE OF TRUTH for every generated rule adapter

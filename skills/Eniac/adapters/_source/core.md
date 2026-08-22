@@ -53,6 +53,24 @@ question is the only cheap way anyone can tell whether it loaded.
   asked for, and model output is untrusted input to whatever consumes it. Pin the model and
   prompt version — "latest" is a breaking change nobody reviewed.
 
+## In a stack or a system you do not know
+
+- **Derive the proof, do not assume it.** The project's own commands outrank ecosystem
+  defaults: CI workflow, then task runner, then docs. Sort them into build / type check /
+  test / lint — the type check is often a separate command from the build. Break something
+  on purpose once to confirm a check can actually fail.
+- **Read three neighbours before writing one line** — the file, its closest sibling, and
+  its test. Copy the shape of the nearest working example, add no dependency or pattern the
+  project does not already use, and label what you inferred as an assumption.
+- **Anything others import is a one-way door.** Adding an interface member, adding a
+  required parameter, changing an error type, adding an enum variant, changing a serialized
+  shape, or renaming something reachable by name all look additive and are not. Additive
+  first.
+- **Ask how a change reaches a user, whether it can be undone, and how late the feedback
+  is.** Small-increments-and-watch assumes all three are cheap. When they are not — a store
+  review, a customer's schedule, a device in a field — old versions run forever and every
+  change becomes a compatibility problem.
+
 ## When something is broken
 
 Reproduce first — a bug you cannot reproduce on demand is the first bug. Write two or

@@ -167,6 +167,7 @@ tiny; a 400-file rename is low risk and enormous.
 | **M1** extended | more sessions or more files than one context can hold | durable plan file, checkpoints, verified waves |
 | **M2** systemic | crosses services, teams, or deploy boundaries; or the system is too large to read | model from partial evidence, contract-first, delegation |
 | **M3** campaign | weeks of work, staged rollout, backfill, many sessions | expand/contract or strangler, flags, recorded decisions |
+| **M4** program | more than one team must agree, and the work outlives any one of them | contracts between teams before code, a migration others can adopt on their own schedule, decisions recorded where people who were not there will find them |
 
 When the magnitude and the request disagree — the work is genuinely M2 or M3 and the user
 wants it finished now — say the size once, in a sentence, and then deliver the first phase
@@ -177,6 +178,13 @@ At M1 and above the binding constraint stops being *thinking* and becomes **memo
 what you knew last session, what is already proven, what must not be redone. Design for
 that before writing code, because the alternative is re-deriving the same context at
 full price every session.
+
+At **M4** it shifts again, to **consent**. The limit is no longer what fits in a context
+window but what other people will agree to, adopt, and keep working on after the person who
+started it has moved on. Technical correctness stops being sufficient there: a migration
+nobody adopts is not a migration, and the deliverable is usually a *contract plus a path*
+that each team can walk at its own pace, not a change you make on their behalf. Treat the
+rollout as the product.
 
 Two references carry the weight: `references/scale.md` for navigating and modelling a
 system too large to read, and `references/campaigns.md` for carrying work across
@@ -258,6 +266,7 @@ invisible in the files in front of you — which is exactly why they get missed:
 | the work sits inside an **organization's constraints** — regulated data, multi-tenancy, change control, required reviewers, code nobody owns | `references/enterprise.md` | the binding limits are contractual and social, not technical |
 | the change crosses a **trust boundary** — auth, outside input, secrets, uploads, serialization, query or template construction, anything one tenant could aim at another | `references/security.md` | correct code that trusts the wrong thing is still a breach |
 | the system **calls a model** — generation, extraction, retrieval, tool-using agents | `references/llm-systems.md` | one component returns a different answer each time and fails with a well-formed success |
+| this is **not a deploy-and-watch service** — an app store gates it, a customer installs it, a device runs it in a field, a pipeline batches it | `references/system-types.md` | delivery cost, reversibility, and feedback latency decide the method, and the usual advice assumes all three are cheap |
 
 `security.md` governs the software you are building. `safety.md` governs what *you* are
 allowed to do. They are separate, and needing one says nothing about the other.
@@ -497,7 +506,8 @@ the work has become a loop.
 - `references/workflows.md` — the step chain per route, plus the overlay triage table.
 - `references/craft.md` — the code judgment calls: abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
 - `references/performance.md` — the Optimize chain: measure, identify, fix, verify, guard; the anchor thresholds; keep-or-revert; the attempt ledger.
-- `references/stack-signals.md` — detect the stack, the commands that prove something, per-ecosystem silent failures.
+- `references/stack-signals.md` — any stack, including one you have never seen: deriving the proof commands, finding the silent failures, what breaks a contract in any language, writing code in an unfamiliar ecosystem.
+- `references/system-types.md` — what kind of system this is and what that changes: how a change reaches a user, whether it can be undone, how late the feedback is, who owns the state, what "works" means, and what you cannot observe.
 
 **Conditions that change the job** — invisible in the files in front of you, which is
 exactly why they get missed.

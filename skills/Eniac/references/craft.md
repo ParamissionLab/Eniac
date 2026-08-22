@@ -8,7 +8,7 @@ who touches it in six months?** That person is usually the user, sometimes you, 
 they will not have the context you have right now.
 
 > **Owns** — the code judgment calls — abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, comments, designing an interface others use, taking a dependency, commits.
-> **Defers** — whether the change is proven → `reality-testing.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`.
+> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`.
 
 ## Make The Change Easy, Then Make The Easy Change
 

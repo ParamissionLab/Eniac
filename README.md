@@ -133,7 +133,8 @@ templates/
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
 | `autonomy.md` | the run is unattended — a schedule, a CI job, a queue worker, a fleet — so "ask first" has nobody to ask: the authorization envelope decided in advance, gates that fail closed into a recorded request rather than a guess, the machine-readable verdict every run emits, budget reservation, idempotence and resumability, and the failure modes that only appear at fleet scale |
-| `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything |
+| `stack-signals.md` | an unfamiliar stack, or uncertainty about which command actually proves anything. Built as a method rather than a catalogue, so it works on a language nobody has written a guide for: deriving the proof commands from the project itself, the four questions that surface what fails *without* failing a build, the changes that break a published contract in any language, and how to write code a maintainer would recognize in an ecosystem you met an hour ago |
+| `system-types.md` | the thing being built is not a deploy-and-watch service — a mobile or desktop app, a customer-installed product, firmware, a data pipeline, a game, a compiler, a distributed store. Six questions decide how the method changes: how a change reaches a user, whether it can be undone and by whom, how late the feedback is, who owns the state that matters, what "correct" means beyond a successful return, and what you can never observe from where you are |
 | `architecture.md` | judging an existing system rather than only describing it — the five assessment dimensions, tracing a flow before calling it a conflict, using a codebase graph as evidence without letting it pre-judge, the named artifacts, diagram discipline |
 
 ## Installation
