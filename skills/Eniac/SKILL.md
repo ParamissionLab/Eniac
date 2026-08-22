@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, deploying, shipping — and for architecture, planning, triage, incident response, and code audits. Use it even when the user only says 'fix this', 'add a feature', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints. Provider-neutral, stack-neutral, language-neutral."
+description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, deploying, shipping — and for architecture, planning, triage, incident response, and code audits. Use it even when the user only says 'fix this', 'add a feature', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints."
 ---
 
 # Eniac
@@ -194,7 +194,7 @@ Pick the cheapest route that fits, then load at most what it names.
 | new project, empty repo, "build me a…" | **Greenfield** | `references/workflows.md#greenfield` |
 | discover, build, test, document, ship | **Full-cycle** | `references/workflows.md#full-cycle` |
 | judge a diff, a PR, or existing code | **Review** | `references/workflows.md#review` and `references/findings.md` |
-| understand an unfamiliar system, map it | **Audit** | `references/workflows.md#audit` and `references/findings.md` |
+| understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, `references/architecture.md`, `references/findings.md` |
 | something is measurably slow | **Optimize** | `references/performance.md` |
 | many small mechanical edits | **Batch** | `references/workflows.md#batch` |
 | a user-facing screen, page, or flow | **Product UI** | `references/workflows.md#product-ui` |
@@ -377,21 +377,22 @@ This file governs. A reference that appears to contradict it is either being mis
 is wrong, and the control plane wins — an eighteen-file system needs one place that
 settles arguments, or every conflict becomes a judgement call made twice.
 
-- `operating-manual.md` — the detail behind this file: agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
-- `workflows.md` — step chains and gates per route, plus the risk overlays.
-- `craft.md` — the code judgment calls: abstraction timing, naming, error handling, boundaries, concurrency, tests, deletion, interfaces, dependencies, commits.
-- `reasoning.md` — the method slow mode runs when the problem is hard to hold.
-- `judgment.md` — deciding well when being wrong is expensive; where fast thinking fails predictably.
-- `findings.md` — read-only output discipline: claim labels, finding shape, severity honesty, handoff bar.
-- `performance.md` — measure → identify → fix → verify → guard, and the attempt ledger.
-- `production.md` — running systems: resilience per remote call, observability, SLOs, real load, data at scale, runbooks, cost.
-- `enterprise.md` — organizational constraints: regulated data, tenant isolation, least privilege, change control, legacy code, postmortems, supply chain.
-- `scale.md` — M2+ systems too large to read: modelling from partial evidence, locating anything, blast radius.
-- `campaigns.md` — M1+ long-horizon work: contract, checkpoints, verified waves, migration patterns, rollout, abandonment.
-- `triage.md` — dependency ordering, parallel lanes, plan files, WIP and parking, handoff.
-- `reality-testing.md` — verification ladder, proof types, baseline versus regression, closing criteria.
-- `defenses.md` — full defense-mechanism catalog with worked examples and recovery moves.
-- `token-economy.md` — context budgeting, progressive loading, compaction survival, output shaping.
-- `learning-loop.md` — insight capture, converting reflex into rule, durable memory placement.
-- `safety.md` — authorization gates, secrets, destructive operations, rollback, release proof.
-- `stack-signals.md` — detect the stack, the commands that prove something, per-ecosystem silent failures.
+- `references/operating-manual.md` — the detail behind this file: agency arbitration, the fast/slow switch, ambiguity resolution, the stuck protocol, full reporting discipline.
+- `references/workflows.md` — step chains and gates per route, plus the risk overlays.
+- `references/craft.md` — the code judgment calls: abstraction timing, naming, error handling, boundaries, concurrency, tests, deletion, interfaces, dependencies, commits.
+- `references/reasoning.md` — the method slow mode runs when the problem is hard to hold.
+- `references/judgment.md` — deciding well when being wrong is expensive; where fast thinking fails predictably.
+- `references/architecture.md` — judging an existing system: the five assessment dimensions, tracing flows, graph tools as evidence, the named artifacts, diagram discipline.
+- `references/findings.md` — read-only output discipline: claim labels, finding shape, severity honesty, handoff bar.
+- `references/performance.md` — measure → identify → fix → verify → guard, and the attempt ledger.
+- `references/production.md` — running systems: resilience per remote call, observability, SLOs, real load, data at scale, runbooks, cost.
+- `references/enterprise.md` — organizational constraints: regulated data, tenant isolation, least privilege, change control, legacy code, postmortems, supply chain.
+- `references/scale.md` — M2+ systems too large to read: modelling from partial evidence, locating anything, blast radius.
+- `references/campaigns.md` — M1+ long-horizon work: contract, checkpoints, verified waves, migration patterns, rollout, abandonment.
+- `references/triage.md` — dependency ordering, parallel lanes, plan files, WIP and parking, handoff.
+- `references/reality-testing.md` — verification ladder, proof types, baseline versus regression, closing criteria.
+- `references/defenses.md` — full defense-mechanism catalog with worked examples and recovery moves.
+- `references/token-economy.md` — context budgeting, progressive loading, compaction survival, output shaping.
+- `references/learning-loop.md` — insight capture, converting reflex into rule, durable memory placement.
+- `references/safety.md` — authorization gates, secrets, destructive operations, rollback, release proof.
+- `references/stack-signals.md` — detect the stack, the commands that prove something, per-ecosystem silent failures.

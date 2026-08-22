@@ -1,1 +1,8 @@
 demo/
+Eniac-workspace/
+Eniac.skill
+
+# Python build noise
+__pycache__/
+*.py[cod]
+.pytest_cache/

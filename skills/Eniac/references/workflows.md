@@ -195,7 +195,9 @@ Outcome first, style last. Reviewing style before correctness is how real bugs s
 
 Finding shape, severity honesty, the two legitimate baselines for judging code, and
 the list of things that are *not* findings are in `findings.md` — load it whenever the
-output is a set of findings rather than a change.
+output is a set of findings rather than a change. When the review is about structure rather
+than a diff — boundaries, coupling, convention drift — `architecture.md` names the
+dimensions to look along.
 
 Every finding needs file:line, what breaks, a concrete failure scenario, and a
 suggested fix. A finding with no failure scenario is an opinion — label it as one or
@@ -227,6 +229,12 @@ understand anything.
 5. **Blast radius** for anything you propose.
 
 Mapping never authorizes redesign, and a sensitive topic alone never forces Full.
+
+Steps 2 and 4 are where this route is usually weakest. `architecture.md` carries what to
+look *for* — the five assessment dimensions, how to trace a flow before calling it a
+conflict, using a codebase graph as evidence without letting it pre-judge, the named
+artifacts, and diagram discipline. Load it whenever the deliverable is a map or an
+assessment rather than a quick orientation.
 
 For how to label claims, when to write `None identified`, how to declare that no pass
 was needed at all, and the artifact budget per depth, use `findings.md`.
