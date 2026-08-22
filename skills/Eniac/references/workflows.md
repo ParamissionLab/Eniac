@@ -43,12 +43,17 @@ reading the others costs you the budget the route was supposed to save.
    observation that would rule it *out*. A hypothesis with no falsifier is a belief.
 5. **Discriminate.** Run the cheapest experiment that kills the most hypotheses.
    Instrument at the boundary between suspects, not everywhere.
-6. **Fix at the cause, minimally.** If only a symptom fix is possible right now,
-   say so explicitly and name the real cause with an owner.
+6. **Fix at the cause, minimally.** Before writing a guard, answer where the bad value
+   came from — a purely additive change at the point of failure is a symptom fix until
+   argued otherwise (`defenses.md#symptom-substitution`). If only a symptom fix is
+   possible right now, say so explicitly, name the real cause with an owner, and make
+   the mitigation visibly temporary in the code rather than a silent guard the next
+   reader takes for design.
 7. **Lock it.** Add a check that fails on the old code and passes on the new.
    Without this the bug comes back and nobody knows why.
 8. **Sweep.** Does the same cause exist elsewhere? Report siblings; fix only those
-   in scope.
+   in scope. Once the answer is *yes, several* this stops being the last step of one
+   diagnosis and becomes its own problem — `defect-sets.md`.
 
 **Anti-patterns:** changing more than one thing per experiment; adding logging
 everywhere instead of at the decisive boundary; "try this and see"; declaring

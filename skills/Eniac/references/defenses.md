@@ -103,6 +103,52 @@ Adding validation to internal functions that only you call.
 errors is strictly worse than a crash, because it converts a loud failure into a silent
 one. Ask what actually fails, how often, and who notices.
 
+### Symptom Substitution
+
+*Relieving the presenting complaint and leaving what produces it.* The clinical original
+is exact: remove a symptom without touching the conflict underneath and another symptom
+takes its place. Code behaves the same way, which is why a round of fixes so often ends
+with the same number of bugs in different places.
+
+The tells are specific, and each one is a real fix in some other context — that is what
+makes them hard to catch in your own work:
+
+- a nil, null, or `undefined` guard where the bad value should never have arrived
+- `try/except` around a call that is not supposed to fail
+- a retry around something that fails deterministically, or that is not idempotent
+- a `sleep`, a raised timeout, or a reordered call "fixing" a race
+- clamping a value back into range instead of asking who put it out of range
+- special-casing the exact input from the bug report
+- widening a type or relaxing a validation so the bad value becomes legal
+- raising a limit — memory, pool size, page size, recursion depth — instead of finding
+  what consumes it
+- **changing the test to match the behaviour** rather than the behaviour to match the test
+
+Three questions separate it from a real fix, cheapest first:
+
+1. **Where did the bad value come from?** If that cannot be answered in one sentence, you
+   are not choosing between symptom and cause — you never localized, and the choice was
+   never on the table.
+2. **Which direction does the change go?** A cause fix usually deletes, narrows, or moves
+   something. A symptom fix is almost always purely additive at the point where the
+   failure surfaced. **A fix that only adds is a symptom fix until argued otherwise.**
+3. **What does the next bad value on this path do?** A cause fix makes the class
+   impossible. A symptom fix makes this one instance survive, and the guard now hides its
+   successors.
+
+**Why it happens is not ignorance.** The symptom fix *works*, and working is difficult to
+argue with — especially when the cause sits in code you do not own, the reproduction is
+slow, or the deadline is now.
+
+**Correction:** ask question 1 before writing the guard, not after. Then decide
+deliberately. Mitigating on purpose is legitimate and sometimes required — during an
+incident, when the cause is in a dependency, when the cause fix is `M2` work and this is
+not the moment. What is never legitimate is doing it silently. A mitigation carries
+obligations that a fix does not: label it as one, name the real cause, give it an owner,
+and make it visibly temporary in the code. An unlabelled symptom fix is worse than a
+labelled one, because the next reader takes the guard for deliberate design and builds on
+it.
+
 ### Intellectualization
 
 *Substituting analysis for contact.* Long explanations of what might be wrong. Elaborate

@@ -181,6 +181,55 @@ Pick the cheapest that fits.
 Specify → Design → Implement is a sequence, not a choice. Skipping the first two is normal
 and usually right; say which you skipped.
 
+## Fix causes, not symptoms
+
+- **Answer where the bad value came from before writing the guard.** If that cannot be
+  said in one sentence, the cause was never located and the choice was never available.
+- **A fix that only adds is a symptom fix until argued otherwise.** A cause fix usually
+  deletes, narrows, or moves something. The shapes to distrust in your own diff: a null
+  guard where the value should never have arrived, `try/except` around a call that should
+  not fail, a retry around a deterministic failure, a `sleep` or raised timeout for a race,
+  clamping back into range, special-casing the exact input from the report, widening a type
+  so the bad value becomes legal, raising a limit instead of finding what consumes it, and
+  changing the test to match the behaviour.
+- **Ask what the next bad value on this path does.** A cause fix makes the class
+  impossible; a symptom fix makes this one instance survive and hides its successors.
+- **Mitigating on purpose is legitimate; doing it silently is not.** In an incident, when
+  the cause is in a dependency, or when the real fix is weeks of work — ship the
+  mitigation, then label it as one, name the cause, give it an owner, and make it visibly
+  temporary in the code. An unlabelled symptom fix is worse than a labelled one, because
+  the next reader takes the guard for deliberate design.
+
+## More than one defect at once
+
+A list of bugs is a projection of a smaller number of causes onto whatever surface you
+happened to look at. Working through it as a list is what leaves residue *and* what creates
+new bugs, and neither is a failure of effort.
+
+- **On the second defect, stop collecting and find the generator.** What single thing would
+  produce both? A misunderstood API, a copy-pasted block, a missing check at a boundary, a
+  wrong default, an unsafe-unless-careful primitive, one wrong belief about timezone or
+  encoding or ordering. A list of instances has unknown length; a class can be enumerated.
+- **Enumerate the class, do not sample it.** A text search is a hypothesis — it finds one
+  spelling and silently omits the alias, the wrapper, the dynamic call. Enumerate by what
+  cannot be spelled differently: the caller list, the type's implementors, the import graph,
+  the route table, the schema. Then state the size. "Found several places" is an admission
+  the class was never enumerated, phrased to sound like a result.
+- **Relate the findings before fixing any of them.** Which share a cause, a file, a piece of
+  shared state, or an ordering dependency. Fix causes before symptoms and shared state
+  before its readers. Fixing in discovery order is the most reliable way to create new bugs,
+  because discovery order is arbitrary with respect to how the defects relate.
+- **After a fix that touches shared state, re-derive the rest of the list** rather than
+  trusting findings derived against a system that no longer exists.
+- **Close the class, not the ticket.** Strongest first: make the wrong state
+  unrepresentable; funnel it through one validated entry point; add a mechanical check in
+  CI; a property test over the enumerated set; a test per instance. The last is honest and
+  closes nothing — say which rung you settled for and why.
+- **Say what you did not scan.** Reading code is blind to what is absent and to anything
+  decided at runtime. Running it is blind to every path not exercised. Name the modalities
+  used and the ones not; an unstated blind spot reads as coverage. Then say which stop ended
+  it: the class is closed, the budget ran out, or the sweep stopped producing new findings.
+
 ## Reality testing
 
 - Only executed output is evidence. A run proves exactly the behavior it exercised.

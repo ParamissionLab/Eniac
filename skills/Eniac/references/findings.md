@@ -124,6 +124,8 @@ Separate two kinds explicitly, because they demand different things from the rea
 - **Open** — worth knowing, not worth stopping for. Record it, proceed under a labelled
   assumption.
 
+Then three rules about asking at all:
+
 - Ask only what actually changes something: a boundary, a responsibility, a data flow,
   an integration, a deployment or security posture, or the scope of the work.
 - **Never ask the user for something the repository answers.** It is slower for both of

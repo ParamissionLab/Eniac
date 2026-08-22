@@ -121,6 +121,13 @@ each nameable in one line. Until then resolve it from evidence, then by stating 
 assumption, and only then by asking one specific question. Never deliver a hedged
 half-answer covering several readings at once.
 
+**A fix that only adds is a symptom fix until argued otherwise.** A guard, a catch, a
+retry, or a raised limit at the point where the failure surfaced treats the *arrival* of a
+bad value rather than its origin, so ask where the value came from before writing the
+guard. If that cannot be answered in one sentence, the cause was never located and the
+choice between symptom and cause was never available. Mitigating deliberately is fine and
+sometimes required; doing it without saying so is how a class of bug survives its own fix.
+
 **Two failures of the same approach mean the model of the system is wrong, not the
 execution.** Stop editing, state what you believed versus what happened, and get the
 observation that discriminates before touching code again. After three, change the
@@ -244,6 +251,7 @@ Then pick the cheapest route that fits, and load at most what it names.
 | understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, then `architecture.md` to judge it or `findings.md` to write it up |
 | something is measurably slow | **Optimize** | `references/performance.md` |
 | many small mechanical edits | **Batch** | `references/workflows.md#batch` |
+| more than one defect at once — a scan, a bug bash, an audit backlog, a list of failing tests | **Sweep** | `references/defect-sets.md` |
 | a user-facing screen, page, or flow | **Product UI** | `references/workflows.md#product-ui`, then `interface-design.md` when how it *looks* is part of the deliverable |
 | docs are the deliverable — write, audit, or reorganize them | **Document** | `references/documentation.md` |
 | release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship`, then `safety.md` before anything irreversible |
@@ -267,7 +275,15 @@ case space that has to be covered rather than sampled — load `references/reaso
 That kind of question is answered by enumeration, and reading the code carefully is not
 enumeration. It reliably feels sufficient and reliably is not.
 
-Four conditions change the job itself rather than its difficulty, and all four are
+And whatever the route, **the moment there is more than one defect in front of you** — a
+scan, a review backlog, failing tests, or one fix that turned out to have neighbours — load
+`references/defect-sets.md`. A list of defects is a projection of a smaller number of causes
+onto whatever surface you happened to look at, which is why working through it as a list
+both misses members and creates new ones. Find what generates them, enumerate that class
+rather than sampling it, and fix in the order the relationships dictate rather than the
+order you happened to find them.
+
+Five conditions change the job itself rather than its difficulty, and all five are
 invisible in the files in front of you — which is exactly why they get missed:
 
 | When | Load | Because |
@@ -402,7 +418,8 @@ failure does not count (**rationalization**); blaming the tool before isolating
 (**displacement**); quietly dropping part of the request (**repression**); shotgun edits
 and retry-until-green (**regression**); blanket try/except and premature abstraction
 (**reaction formation**); writing about the problem instead of touching it
-(**intellectualization**); skipping the check because the answer feels obvious
+(**intellectualization**); guarding against the bad value instead of finding where it came
+from (**symptom substitution**); skipping the check because the answer feels obvious
 (**omnipotence**). The healthy one is **sublimation** — urgency redirected into a runnable
 slice, which is what the Id is for.
 
@@ -514,6 +531,7 @@ hard rather than when it gets big.
 the work has become a loop.
 
 - `references/reasoning.md` — the method slow mode runs: framing, decomposition, case coverage, invariants, proof obligations.
+- `references/defect-sets.md` — more than one defect at once: why a scan is structurally incomplete, the generator behind the instances, enumerating a class, fix order, where new bugs come from mid-sweep, closing a class, the frontier.
 - `references/judgment.md` — deciding when being wrong is expensive; where fast thinking fails predictably.
 - `references/loops.md` — iterative work: designing the loop, shortening it, reading convergence, the three stops, the outer loop.
 

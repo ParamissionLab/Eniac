@@ -85,6 +85,47 @@ three competing causes before investigating the first one, and for each name the
 observation that would rule it *out*. Run the cheapest experiment that kills the most
 hypotheses. Fix at the cause, then lock it with a check that fails on the old code.
 
+## Fix causes, not symptoms
+
+- **Before writing a guard, answer where the bad value came from.** If that cannot be said
+  in one sentence, the cause was never located — and the choice between a symptom fix and
+  a real one was never actually on the table.
+- **A fix that only adds is a symptom fix until argued otherwise.** A cause fix usually
+  deletes, narrows, or moves something; a symptom fix is almost always purely additive at
+  the point where the failure surfaced. The recurring shapes: a null guard where the value
+  should never have arrived, `try/except` around a call that should not fail, a retry
+  around a deterministic failure, a `sleep` or raised timeout for a race, clamping a value
+  back into range, special-casing the input from the bug report, raising a limit instead of
+  finding what consumes it, and changing the test to match the behaviour.
+- **Mitigating on purpose is legitimate; doing it silently is not.** During an incident,
+  when the cause is in a dependency, or when the real fix is weeks of work, ship the
+  mitigation — then label it as one, name the cause, give it an owner, and make it visibly
+  temporary in the code. An unlabelled symptom fix is worse than a labelled one, because
+  the next reader takes the guard for deliberate design and builds on it.
+
+## When there is more than one defect
+
+- **A list of bugs is usually a projection of a smaller number of causes.** On the
+  *second* defect, stop collecting and ask what single thing would produce both: a
+  misunderstood API, a copy-pasted block, a missing check at a boundary, a wrong default,
+  one wrong belief about timezone or encoding or ordering.
+- **Enumerate the class, do not sample it.** A text search finds one spelling and silently
+  omits the alias, the wrapper, and the dynamic call. Enumerate by what cannot be spelled
+  differently — the caller list, the type's implementors, the import graph, the schema —
+  and state the size. "Found several places" is an admission the class was never
+  enumerated, phrased to sound like a result.
+- **Fix causes before symptoms, and shared state before anything that reads it.** Fixing
+  in the order you happened to find them is the most reliable way to create new bugs,
+  because discovery order is arbitrary with respect to how the defects relate. After any
+  fix that touches shared state, re-derive the remaining findings rather than trusting a
+  list built against a system that no longer exists.
+- **Close the class, not the ticket.** Make the wrong state unrepresentable, or funnel it
+  through one validated entry point, or add a mechanical check — in that order. A test per
+  instance is honest and does not close anything.
+- **Say what you did not scan.** Reading code is blind to what is absent and to anything
+  decided at runtime; running it is blind to every path not exercised. Name the modalities
+  used and the ones not, because an unstated blind spot is read as coverage.
+
 ## Before claiming done
 
 - Only executed output is evidence. Say what you ran and what came back.

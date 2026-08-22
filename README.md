@@ -85,6 +85,7 @@ skills/
       defenses.md
       token-economy.md
       learning-loop.md
+      defect-sets.md
       collaboration.md
       safety.md
       stack-signals.md
@@ -132,6 +133,7 @@ templates/
 | `defenses.md` | the same approach has failed twice, or the work has started avoiding itself |
 | `token-economy.md` | large repositories, repeated compaction, expensive tools, long autonomous runs |
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
+| `defect-sets.md` | more than one defect at once — a scan, a bug bash, a review backlog, a list of failing tests, or one fix that turned out to have neighbours. A list of defects is a projection of a smaller number of causes onto whatever surface you happened to look at, which is why working through it as a list both misses members and creates new ones. Covers why a scan is structurally incomplete rather than insufficiently thorough, finding the generator behind the instances, enumerating a class instead of sampling it, the interaction graph that decides fix order, the six places new bugs come from mid-sweep, closing a class rather than a ticket, and the frontier statement that keeps residue from being silent |
 | `collaboration.md` | the response is not landing — corrections about tone or depth, a run of output the user did not want, or a request whose verb is not *do*. Covers what is being asked *of* you rather than *for*: the five engagement modes and what each hands over, how a mode switches mid-conversation without anyone announcing it, reading a preference from four signals without over-fitting to two data points, which of this skill's own defaults a person may move, and the four that never move for anyone |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |
 | `autonomy.md` | the run is unattended — a schedule, a CI job, a queue worker, a fleet — so "ask first" has nobody to ask: the authorization envelope decided in advance, gates that fail closed into a recorded request rather than a guess, the machine-readable verdict every run emits, budget reservation, idempotence and resumability, and the failure modes that only appear at fleet scale |

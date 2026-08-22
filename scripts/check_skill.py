@@ -51,7 +51,12 @@ VENDOR_FILE_ALLOWED = {
 # on exactly the tasks that were supposed to be cheap - so twenty lines cut here can cost
 # two hundred there. The budget exists to make growth deliberate, not to make the file
 # small. Raise it when the content earns it, in a commit that says why.
-SKILL_MAX_LINES = 560
+# Raised from 560 when defect-sets.md landed. Three capability additions - system types,
+# collaboration, defect sets - each earned a hook in the always-loaded plane, and a hook
+# that only names a file does not fire on its own. The char budget is the real guard and
+# sits at roughly 38k of 40k; this number exists to make growth a decision rather than a
+# drift, so move it in a commit that says why.
+SKILL_MAX_LINES = 580
 SKILL_MAX_CHARS = 40_000
 
 # `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
@@ -201,6 +206,71 @@ def check_ownership() -> None:
                     fail(f"references/{p.name} and references/{owns_by_topic[key]} both "
                          f"claim to own \"{topic.strip()}\" - one of them must defer")
                 owns_by_topic[key] = p.name
+
+
+def check_counts() -> None:
+    """A count in prose that introduces a list, checked against the list.
+
+    Found by a sweep: SKILL.md said "Four conditions" over a five-row table, and the
+    reference map said "Twenty-six files" over twenty-seven. One generator - a number
+    written in prose that nothing recomputes when somebody adds a row - so this closes
+    the class rather than the two instances. Deliberately narrow: it fires only on a
+    lead-in ending in a colon, which on the current corpus is a hundred percent precise.
+    A looser version flagged thirteen places and was right about one, and a check that
+    cries wolf gets switched off.
+    """
+    words = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+             "seven": 7, "eight": 8, "nine": 9, "ten": 10}
+    noun = (r"(?:things?|questions?|conditions?|reasons?|sources?|relationships?|rows?|"
+            r"stops?|dials?|modes?|steps?|signals?|properties|fields?|columns?|answers?|"
+            r"checks?|failures?|modalities|generators?|levels?|groups?|sections?|items?|"
+            r"parts?|cases?|kinds?|ways?|moves?|rules?)")
+    pat = re.compile(r"\b(" + "|".join(words) + r")\s+" + noun + r"\b", re.I)
+    skip = ("|", "> ", "#", "- ", "* ")
+
+    for path in [SKILL] + sorted(REFS.glob("*.md")):
+        lines = read(path).split("\n")
+        rel = path.relative_to(ROOT).as_posix()
+        i = 0
+        while i < len(lines):
+            if (not lines[i].strip() or lines[i].lstrip().startswith(skip)
+                    or re.match(r"^\d+\.", lines[i])):
+                i += 1
+                continue
+            start, para = i, []
+            while (i < len(lines) and lines[i].strip()
+                   and not lines[i].lstrip().startswith(("|", "- ", "* "))
+                   and not re.match(r"^\d+\.", lines[i])):
+                para.append(lines[i].strip())
+                i += 1
+            text = " ".join(para)
+            if not text.endswith(":"):
+                continue
+            m = pat.search(text)
+            if not m:
+                continue
+            want, j, got = words[m.group(1).lower()], i, 0
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines) and lines[j].strip().startswith("|"):
+                k = j + 2
+                while k < len(lines) and lines[k].strip().startswith("|"):
+                    got += 1
+                    k += 1
+            else:
+                k = j
+                while k < len(lines) and lines[k].strip():
+                    flush = len(lines[k]) == len(lines[k].lstrip())
+                    if flush and (lines[k].startswith(("- ", "* "))
+                                  or re.match(r"^\d+\.\s", lines[k])):
+                        got += 1
+                    elif flush and got:
+                        break
+                    k += 1
+            if got and got != want:
+                fail(f"{rel}:{start + 1}: says {m.group(0)!r} and the list below it has "
+                     f"{got} - somebody added or removed one without rereading the "
+                     f"sentence above")
 
 
 def check_reference_map() -> None:
@@ -420,6 +490,7 @@ def main() -> int:
     check_vendor_neutrality()
     check_adapters()
     check_budget()
+    check_counts()
     check_compact_coverage()
     check_evals()
     check_ownership()
