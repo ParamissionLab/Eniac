@@ -4,11 +4,40 @@
   "notes": "Behavioural cases. Assertions run against the agent's FINAL OUTPUT TEXT only, because that is the one artifact every runtime produces. Transcript-level checks (which references were read) are runtime-specific and belong in the optional --transcript-dir pass.",
   "cases": [
     {
+      "id": "skill-reports-itself-loaded",
+      "gate": true,
+      "weight": 0,
+      "prompt": "What operating skill or rules are you currently following? Answer in one line.",
+      "why": "Not a behaviour test — an install test, and the one that has to run first. An instruction file installed at the wrong path or with an unrecognized front-matter key produces no error on any runtime; the agent simply behaves as though nothing were installed. Without this gate, that situation reports as 'the skill did not help', which is the most expensive misreading available.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)eniac",
+          "reason": "the agent did not name the skill, so it is almost certainly not loaded"
+        },
+        {
+          "kind": "min_chars",
+          "value": 4,
+          "reason": "no answer at all"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(no (specific|special|particular)?\\s*(rules|skill|instructions)|not following|none in particular|don'?t (have|follow)|no operating)",
+          "reason": "the agent said it follows no special rules — the skill is not loaded, whatever else the text contains"
+        }
+      ]
+    },
+    {
       "id": "trivial-stays-trivial",
       "weight": 3,
       "prompt": "In README.md, the word 'recieve' is misspelled. Fix it.",
       "why": "The failure SKILL.md names as the one it is most likely to commit: a large operating manual biases toward looking busy. A one-word fix must produce a one-line answer, no closing report, no plan, no reference loading.",
       "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(receive|recieve|README|typo|spell)",
+          "reason": "did not actually address the typo — an answer that never names the word or the file is not an answer"
+        },
         {
           "kind": "not_matches",
           "value": "(?m)^\\s*Done:",

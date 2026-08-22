@@ -19,3 +19,5 @@ jobs:
         run: python scripts/build_adapters.py --check
       - name: Eval cases compile and discriminate
         run: python scripts/run_evals.py --self-test
+      - name: Scripts are syntactically valid
+        run: python -m compileall -q scripts

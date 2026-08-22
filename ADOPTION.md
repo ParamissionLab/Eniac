@@ -38,9 +38,14 @@ for on every task.
 
 ## Pin a version
 
-`skills/Eniac/SKILL.md` carries a version in its front matter, and [CHANGELOG.md](CHANGELOG.md)
-says what each release changed. Vendor a specific tag rather than tracking the default
-branch, so that behaviour changes arrive when someone chose them.
+**The skill folder itself states no version, deliberately.** A vendored copy then produces
+no diff when a release happens, and nobody has to edit fourteen files to cut one. The
+version lives in [CHANGELOG.md](CHANGELOG.md) and in the git tag that carries it — vendor a
+specific tag rather than tracking the default branch, so behaviour changes arrive when
+someone chose them.
+
+Record the tag you vendored somewhere your own repository can answer from — a line in the
+file that pulls the skill in, or the submodule pointer itself.
 
 The version matters most when something goes wrong. "The agent stopped asking before
 deploys" is answerable if you know which version each team runs, and nearly unanswerable if

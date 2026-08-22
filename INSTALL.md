@@ -51,8 +51,17 @@ same way.
 
 ## Runtimes that read standing instruction files
 
-Keep `skills/Eniac/` in the repository so the pointer resolves, then add a section to the
-file that runtime reads.
+Copy the adapter to the path that runtime reads. The script below takes the destination
+from the same table the generator uses, so the path is stated once and never retyped —
+which matters more here than it looks, because a typo'd path produces no error anywhere:
+
+```bash
+python scripts/install_adapter.py --list
+python scripts/install_adapter.py --runtime cursor --into ../my-project
+```
+
+It refuses to overwrite an existing file, because a project's own rules outrank this skill.
+Keep `skills/Eniac/` in the repository so the pointer inside the adapter resolves.
 
 | Runtime | Copy this adapter | To |
 | --- | --- | --- |
@@ -114,7 +123,26 @@ skill before deciding where to install it.
 
 ## Verifying the install
 
-The skill is working when the agent's behaviour changes in ways you can see:
+**Ask it.** This works identically on every runtime and takes one question:
+
+```txt
+What operating skill or rules are you currently following?
+```
+
+A loaded skill names itself. If the answer is a generic "I'm a helpful assistant with no
+special rules", the file is not being read — and **nothing will have errored to tell you**.
+That is the whole reason this check exists: an instruction file at the wrong path, or with
+a front-matter key the runtime does not recognize, fails *silently* on every runtime there
+is, and the agent behaves exactly as though nothing were installed.
+
+The eval suite runs the same question as a gate before scoring anything, so a broken
+install can never be misread as "the skill did not help":
+
+```bash
+python scripts/run_evals.py --agent-cmd '<your agent>' --only skill-reports-itself-loaded
+```
+
+Beyond that, the skill is working when behaviour changes in ways you can see:
 
 - a trivial request gets a direct answer rather than a plan
 - it says what it ran and what came back, instead of asserting a fix

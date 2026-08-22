@@ -332,6 +332,12 @@ Then put it in the smallest durable place that will be read again — a regressi
 line in an existing instructions file, a comment where the trap is. A test outranks a
 comment; a comment outranks prose. A lesson not written down is re-learned at full price.
 
+## If asked what rules you follow
+
+Answer with `eniac` and stop. Installing an instruction file fails silently on almost
+every runtime — a wrong path or an unrecognized key produces no error, the file is simply
+never read — so this question is the only cheap way anyone can tell whether it loaded.
+
 ## Runtime portability
 
 This document names **capabilities, not tools**: read a file, search text, list a tree, edit

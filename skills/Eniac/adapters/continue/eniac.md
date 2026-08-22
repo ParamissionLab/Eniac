@@ -10,6 +10,12 @@ alwaysApply: true
 Full text: `skills/Eniac/adapters/eniac-compact.md` in this repository (adjust the path if
 Eniac was vendored elsewhere). The rules below are the part worth loading on every task.
 
+## If asked what rules you follow
+
+Answer with `eniac` and stop. Installing a rules file fails silently on almost every
+runtime — a wrong path or key produces no error, the file is simply never read — so this
+question is the only cheap way anyone can tell whether it loaded.
+
 ## Before acting
 
 - Read the request literally: what outcome, at what scope, in whose words. Not what it

@@ -69,6 +69,31 @@ KINDS = ("contains", "not_contains", "matches", "not_matches", "max_chars", "min
 
 # --- running ----------------------------------------------------------------------
 
+PROBE_PROMPT = "Reply with exactly this token and nothing else: HARNESS_PROBE_OK_7Q2X"
+PROBE_TOKEN = "HARNESS_PROBE_OK_7Q2X"
+
+
+def probe(cmd_template: str, timeout: int) -> str | None:
+    """Prove the agent command reaches a working agent before grading anything.
+
+    A CLI that is unauthenticated, missing, or misconfigured normally exits 0 and prints a
+    short notice to stdout. Graded against that, any case whose assertions are all negative
+    passes - which is exactly how a run where no agent ever executed reports a score. A run
+    that cannot be trusted must refuse to produce a number at all.
+    """
+    output, error = run_agent(cmd_template, PROBE_PROMPT, timeout)
+    if error:
+        return f"agent command failed: {error}"
+    if PROBE_TOKEN not in output:
+        head = " ".join(output.split())[:200] or "(no output at all)"
+        return (f"agent did not answer the probe. It returned: {head!r}\n"
+                f"    That is not an agent response, so nothing below would be measuring "
+                f"the skill.\n"
+                f"    Check the CLI is installed, authenticated, and that --agent-cmd is "
+                f"right.")
+    return None
+
+
 def run_agent(cmd_template: str, prompt: str, timeout: int) -> tuple[str, str | None]:
     """Return (output, error). Substitutes {prompt}, or pipes it in if absent."""
     try:
@@ -113,20 +138,34 @@ def grade(case: dict, output: str) -> dict:
 # --- reporting --------------------------------------------------------------------
 
 def report_markdown(label: str, results: list[dict], meta: dict) -> str:
-    earned = sum(r["weight"] for r in results if r["passed"])
-    total = sum(r["weight"] for r in results)
+    scored = [r for r in results if not r.get("gate")]
+    gates = [r for r in results if r.get("gate")]
+    gate_failed = [g for g in gates if not g["passed"]]
+    earned = sum(r["weight"] for r in scored if r["passed"])
+    total = sum(r["weight"] for r in scored)
     errored = [r for r in results if r.get("error")]
 
-    lines = [
-        f"# Eniac behavioural evals — {label}",
-        "",
-        f"- Skill version: `{meta.get('version', 'unknown')}`",
+    lines = [f"# Eniac behavioural evals - {label}", ""]
+    if gate_failed:
+        lines += [
+            "> **The skill did not report itself as loaded.** Everything below is measuring",
+            "> the model on its own. Confirm the install before reading further: the agent",
+            "> should answer a bare \"what rules are you following?\" by naming the skill.",
+            "> See INSTALL.md, *Verifying the install*.",
+            "",
+        ]
+    elif gates:
+        lines += ["> Skill confirmed loaded - the agent named it when asked.", ""]
+    lines += [
+        f"- Suite version: `{meta.get('version', 'unknown')}`",
         f"- Agent command: `{meta.get('agent_cmd', 'n/a')}`",
-        f"- Weighted score: **{earned} / {total}**",
-        f"- Cases passed: {sum(1 for r in results if r['passed'])} / {len(results)}",
+        f"- Weighted score: **{earned} / {total}**"
+        + ("  *(not attributable - see the gate above)*" if gate_failed else ""),
+        f"- Cases passed: {sum(1 for r in scored if r['passed'])} / {len(scored)}",
     ]
     if errored:
-        lines.append(f"- Cases that failed to run: {len(errored)} (not counted as passes)")
+        lines.append(f"- **Cases that never produced an answer: {len(errored)}** - the "
+                     f"score is not measuring the skill for these")
     lines += ["", "| Case | Weight | Result | Failing check |", "| --- | --- | --- | --- |"]
     for r in results:
         if r.get("error"):
@@ -136,7 +175,9 @@ def report_markdown(label: str, results: list[dict], meta: dict) -> str:
             bad = [c for c in r["checks"] if not c["passed"]]
             detail = bad[0]["reason"] if bad else ""
             mark = "pass" if r["passed"] else "FAIL"
-        lines.append(f"| `{r['id']}` | {r['weight']} | {mark} | {detail} |")
+        name = f"`{r['id']}`" + (" *(gate)*" if r.get("gate") else "")
+        weight = "-" if r.get("gate") else r["weight"]
+        lines.append(f"| {name} | {weight} | {mark} | {detail} |")
 
     lines += [
         "",
@@ -186,11 +227,28 @@ def self_test() -> int:
             "I also cleaned up the quotes while I was there. "
             "Creating a new file docs/api/password-reset.md. "
             "Deleted 4,201 rows. references/craft.md " + "x" * 2000)
+    # A case whose assertions are all negative passes an EMPTY output, which means a run
+    # where the agent never executed reports a green case. That is the worst failure this
+    # harness can have, so it is checked structurally as well as by example.
+    non_answers = ["", "   ", "Not logged in - please run /login", "command not found"]
+
     for case in data["cases"]:
+        positives = [a for a in case.get("pass_if", [])
+                     if a["kind"] in ("contains", "matches", "min_chars")]
+        if not positives:
+            problems.append(f"{case['id']}: every assertion is negative, so an empty "
+                            f"output would pass. Add one matches/contains/min_chars that "
+                            f"a real answer must satisfy")
         try:
             if grade(case, junk)["passed"]:
-                problems.append(f"{case['id']}: passes a deliberately bad answer — "
+                problems.append(f"{case['id']}: passes a deliberately bad answer - "
                                 f"the assertions do not discriminate")
+            for bad in non_answers:
+                if grade(case, bad)["passed"]:
+                    problems.append(f"{case['id']}: passes a non-answer ({bad[:30]!r}) - "
+                                    f"this case would report green on a run where no "
+                                    f"agent executed")
+                    break
         except ValueError as exc:
             problems.append(f"{case['id']}: {exc}")
 
@@ -200,8 +258,10 @@ def self_test() -> int:
         print(f"\n{len(problems)} problem(s).")
         return 1
     weights = sum(c.get("weight", 1) for c in data["cases"])
-    print(f"ok - {len(data['cases'])} cases ({weights} weighted points), assertions "
-          f"compile and all reject a known-bad answer")
+    gates = sum(1 for c in data["cases"] if c.get("gate"))
+    print(f"ok - {len(data['cases'])} cases ({gates} gate, {weights} weighted points); "
+          f"assertions compile, each has a positive check, and all reject both a "
+          f"known-bad answer and a non-answer")
     return 0
 
 
@@ -220,6 +280,7 @@ def main() -> int:
 
     data = json.loads(CASES.read_text(encoding="utf-8"))
     cases = [c for c in data["cases"] if not args.only or c["id"] == args.only]
+    cases.sort(key=lambda c: not c.get("gate"))  # the install check runs first
     if not cases:
         print(f"no case matching {args.only!r}", file=sys.stderr)
         return 1
@@ -234,14 +295,28 @@ def main() -> int:
             print(f"checks: {len(c['pass_if'])}\n")
         return 0
 
+    print("probing the agent command ...", flush=True)
+    blocked = probe(args.agent_cmd, args.timeout)
+    if blocked:
+        print(f"\n  ABORTED - {blocked}", file=sys.stderr)
+        print("\n  No results were written. A score from a run where the agent never "
+              "answered\n  is worse than no score, because it looks like evidence.",
+              file=sys.stderr)
+        return 2
+    print("  probe ok\n", flush=True)
+
     results = []
     for c in cases:
         print(f"running {c['id']} ...", flush=True)
         output, error = run_agent(args.agent_cmd, c["prompt"], args.timeout)
+        if not error and len(output.strip()) < 40:
+            error = (f"agent returned {len(output.strip())} characters, which is not an "
+                     f"answer: {output.strip()[:120]!r}")
         r = grade(c, output) if not error else {
             "id": c["id"], "weight": c.get("weight", 1), "passed": False,
-            "checks": [], "output_chars": 0, "error": error,
+            "checks": [], "output_chars": len(output), "error": error,
         }
+        r["gate"] = bool(c.get("gate"))
         r["output"] = output
         results.append(r)
         print(f"  {'pass' if r['passed'] else 'FAIL'}")
@@ -255,8 +330,9 @@ def main() -> int:
     (RESULTS / f"{args.label}.md").write_text(md, encoding="utf-8", newline="\n")
     print("\n" + md)
 
-    earned = sum(r["weight"] for r in results if r["passed"])
-    total = sum(r["weight"] for r in results)
+    scored = [r for r in results if not r.get("gate")]
+    earned = sum(r["weight"] for r in scored if r["passed"])
+    total = sum(r["weight"] for r in scored)
     return 0 if earned == total else 1
 
 

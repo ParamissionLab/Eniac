@@ -54,6 +54,8 @@ scripts/
   check_skill.py               — structural checks, budget, compact coverage
   build_adapters.py            — regenerates the rule adapters from _source/core.md
   run_evals.py                 — runtime-neutral behavioural eval harness
+  compare_evals.py             — runs both arms and attributes the difference
+  install_adapter.py           — copies an adapter to the path its runtime reads
 evals/
   cases.json                   — behavioural cases with discriminating assertions
   trigger.json                 — should-fire / should-not-fire queries for the description

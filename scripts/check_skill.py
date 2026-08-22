@@ -311,6 +311,41 @@ def check_adapters() -> None:
                 fail(f"adapters/eniac-compact.md: missing {why} (`{phrase}`)")
 
 
+def check_loaded_marker() -> None:
+    """The marker must exist everywhere, and must never carry a version number.
+
+    It exists because installing an instruction file fails silently on almost every
+    runtime — a wrong path or an unrecognized key produces no error, the file is simply
+    never read — so asking the agent what it follows is the only cheap cross-runtime way
+    to tell.
+
+    The skill folder deliberately states no version anywhere. A vendored copy should
+    produce no diff when a release happens, the version belongs to CHANGELOG.md and the
+    git tag that carries it, and a literal repeated across fourteen generated files is the
+    duplication `references/documentation.md` tells everyone else to avoid. So this check
+    runs in both directions: the marker is present, and it is bare.
+    """
+    for path in (SKILL,
+                 ADAPTERS / "_source" / "core.md",
+                 ADAPTERS / "eniac-compact.md"):
+        if not path.exists():
+            continue
+        rel = path.relative_to(ROOT)
+        if not re.search(r"`eniac`", read(path)):
+            fail(f"{rel}: no bare `eniac` loaded-marker; an install that fails silently "
+                 f"would be undetectable here")
+
+    for path in [SKILL, *sorted(REFS.glob("*.md")), *sorted(ADAPTERS.rglob("*.md"))]:
+        rel = path.relative_to(ROOT)
+        text = read(path)
+        if re.search(r"^\s*version:\s*[\"']?\d", text, re.M):
+            fail(f"{rel}: declares a version. The skill folder carries none - version "
+                 f"lives in CHANGELOG.md and the git tag")
+        for m in re.findall(r"`eniac[ @v]+([0-9][^`]*)`", text):
+            fail(f"{rel}: loaded-marker pins version {m!r}. Keep it bare so a release "
+                 f"produces no diff inside the skill")
+
+
 def check_budget() -> None:
     """The control plane is paid for on every task, so its size is enforced, not hoped."""
     text = read(SKILL)
@@ -359,10 +394,13 @@ def check_evals() -> None:
             return
         if len(data.get("cases", [])) < 5:
             fail("evals/cases.json: fewer than five behavioural cases is not a suite")
-        version = re.search(r'version:\s*"([^"]+)"', read(SKILL))
-        if version and data.get("version") != version.group(1):
-            fail(f"evals/cases.json: version {data.get('version')!r} does not match "
-                 f"SKILL.md {version.group(1)!r} - the suite is describing a different skill")
+        changelog = ROOT / "CHANGELOG.md"
+        if changelog.exists():
+            latest = re.search(r"^## \[([^\]]+)\]", read(changelog), re.M)
+            if latest and data.get("version") != latest.group(1):
+                fail(f"evals/cases.json: version {data.get('version')!r} does not match "
+                     f"the newest CHANGELOG entry {latest.group(1)!r} - the suite is "
+                     f"describing a different release")
 
 
 def main() -> int:
@@ -381,6 +419,7 @@ def main() -> int:
     check_evals()
     check_ownership()
     check_reference_map()
+    check_loaded_marker()
 
     if problems:
         for p in problems:

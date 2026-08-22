@@ -44,22 +44,42 @@ python scripts/run_evals.py --agent-cmd 'codex exec {prompt}'  --label with-skil
 `{prompt}` is substituted if present; otherwise the prompt is piped to stdin. Results land
 in `results/<label>.json` and `results/<label>.md`.
 
+## The gate runs first
+
+`skill-reports-itself-loaded` is not a behaviour test — it is an install test, and it is
+scored separately from everything else. It asks the agent what rules it follows and checks
+that the skill names itself.
+
+Without it, an install that silently failed reports as *the skill did not help*, which is
+the most expensive misreading available: you would go and rewrite guidance that was never
+loaded. When the gate fails, the report says so at the top and marks the score
+unattributable rather than printing a number that looks like a finding.
+
 ## The comparison that matters
 
-**A single score measures the model, not the skill.** Run the same cases twice — once with
-the skill installed, once without — and compare:
+**A single score measures the model, not the skill.** One command runs both arms — it moves
+the installed skill aside, runs the baseline, restores it in a `finally`, runs again, and
+writes an attributed comparison:
 
 ```bash
-# with skills/Eniac installed
-python scripts/run_evals.py --agent-cmd '<your agent>' --label with-skill
-
-# with it removed or disabled
-python scripts/run_evals.py --agent-cmd '<your agent>' --label baseline
+python scripts/compare_evals.py \
+    --agent-cmd 'claude -p {prompt}' \
+    --skill-path ~/.claude/skills/Eniac
 ```
 
-A case both runs pass is telling you the model already did that. A case only the with-skill
-run passes is the skill earning its tokens. A case neither passes is a gap in the skill or
-a badly written case — read the output before deciding which.
+`--skill-path` is required and never guessed, because this moves a directory outside the
+repository.
+
+The comparison splits every case four ways, and the columns are not equally interesting:
+
+- **Skill earned it** — only the with-skill run passed. The only column that argues the
+  guidance is worth its tokens.
+- **Model already did it** — both passed. Not evidence for the skill; a rule that only
+  produces behaviour the model defaults to is costing tokens for nothing.
+- **Skill lost it** — only the baseline passed. The most important column and the easiest
+  to skip. Read those outputs before anything else.
+- **Neither passed** — a gap in the skill, or a badly written case. Read the output before
+  deciding which; assuming the first is how a suite drifts into testing its own vocabulary.
 
 ## What a pass does not prove
 
