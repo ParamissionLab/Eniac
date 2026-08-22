@@ -205,11 +205,6 @@ The savings come from structure rather than from exhortation:
 - Output answers the question asked: no restating the request, no narrating routine tool calls, no unrequested tutorial.
 - Budgets are gates, not quotas — a risky change may cross one, and says in a clause why the cheap path was not enough.
 
-## Updating
-
-```bash
-git pull
-cp -r skills/Eniac ~/.claude/skills/Eniac
 ```
 
 Replace the destination with wherever you installed it, then restart your agent or start a new session.
