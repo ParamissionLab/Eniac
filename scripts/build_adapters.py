@@ -111,6 +111,14 @@ TARGETS: list[dict] = [
         "header": "# Conventions — Eniac\n",
     },
     {
+        "out": "kiro/eniac.md",
+        "runtime": "Kiro",
+        "install": "copy to .kiro/steering/eniac.md, or ~/.kiro/steering/eniac.md for "
+                   "every workspace",
+        "verified": None,
+        "header": "---\ninclusion: always\n---\n\n# Eniac\n",
+    },
+    {
         "out": "junie/guidelines.md",
         "runtime": "JetBrains Junie",
         "install": "copy to .junie/guidelines.md",

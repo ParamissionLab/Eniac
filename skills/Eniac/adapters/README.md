@@ -29,10 +29,11 @@ script. Adding a runtime is one entry in that script's `TARGETS` table.
 | `gemini/GEMINI.md` | Gemini CLI and Gemini Code Assist | copy to GEMINI.md in the project root | not confirmed by an install |
 | `continue/eniac.md` | Continue | copy to .continue/rules/eniac.md | not confirmed by an install |
 | `aider/CONVENTIONS.md` | Aider | add with `aider --read CONVENTIONS.md` | not confirmed by an install |
+| `kiro/eniac.md` | Kiro | copy to .kiro/steering/eniac.md, or ~/.kiro/steering/eniac.md for every workspace | not confirmed by an install |
 | `junie/guidelines.md` | JetBrains Junie | copy to .junie/guidelines.md | not confirmed by an install |
 | `generic/system-prompt.md` | any assistant with a single instruction field, and any API integration | paste as the system prompt, or prepend to it | not confirmed by an install |
 
-**11 of 11 paths are unconfirmed.** The rules in every adapter are
+**12 of 12 paths are unconfirmed.** The rules in every adapter are
 generated and therefore correct; what is not independently verified is each runtime's
 *filename and front-matter contract*, which comes from that runtime's documentation rather
 than from an install performed here. This distinction matters because the failure is

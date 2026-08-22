@@ -142,6 +142,7 @@ Keep `skills/Eniac/` in the repository so the pointer inside the adapter resolve
 | Continue | `adapters/continue/eniac.md` | `.continue/rules/eniac.md` |
 | Aider | `adapters/aider/CONVENTIONS.md` | `CONVENTIONS.md`, then `aider --read CONVENTIONS.md` |
 | JetBrains Junie | `adapters/junie/guidelines.md` | `.junie/guidelines.md` |
+| Kiro | `adapters/kiro/eniac.md` | `.kiro/steering/eniac.md`, or `~/.kiro/steering/eniac.md` for every workspace. Kiro also reads `AGENTS.md`, so a project that already has one can merge the `agents-md` adapter into it instead of carrying both |
 | Claude Code | — | usually unnecessary; install the skill instead |
 
 Paths are relative to `skills/Eniac/`. Every one of those files is generated from

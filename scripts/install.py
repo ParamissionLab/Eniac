@@ -87,6 +87,8 @@ ADAPTER_RUNTIMES: dict[str, dict[str, str]] = {
               "src": "aider/CONVENTIONS.md", "dest": "CONVENTIONS.md"},
     "junie": {"label": "JetBrains Junie", "src": "junie/guidelines.md",
               "dest": ".junie/guidelines.md"},
+    "kiro": {"label": "Kiro", "src": "kiro/eniac.md",
+             "dest": ".kiro/steering/eniac.md"},
     "generic": {"label": "any single instruction field (API, custom assistant)",
                 "src": "generic/system-prompt.md", "dest": "eniac-system-prompt.md"},
 }

@@ -149,7 +149,7 @@ skills/
       _source/core.md            — the one source every rule adapter is generated from
       eniac-compact.md           — hand-written full distillation, one file
       agents-md/ cursor/ copilot/ windsurf/ cline/ zed/
-      gemini/ continue/ aider/ junie/ generic/ codex/
+      gemini/ continue/ aider/ junie/ kiro/ generic/ codex/
 scripts/
   install.py                     — the installer: skill folders and adapters, one table
   check_skill.py                 — structural checks, size budget, compact coverage
@@ -224,13 +224,13 @@ python scripts/install.py --uninstall           # take it back out
 
 Either way it copies only what changed and removes reference files an older version left behind — a stale one keeps loading beside the file that replaced it, and contradicts it. `.\install.ps1` and `./install.sh` are the same thing for a terminal that would rather not name an interpreter. Restart the agent afterwards.
 
-**A runtime that reads standing instruction files** — Codex, Cursor, Copilot, Windsurf, Cline, Roo Code, Zed, Gemini CLI, Continue, Aider, Junie, Antigravity, Jules, Amp — takes a generated adapter instead of the folder, from the same command:
+**A runtime that reads standing instruction files** — Codex, Cursor, Copilot, Windsurf, Cline, Roo Code, Zed, Gemini CLI, Continue, Aider, Junie, Kiro, Antigravity, Jules, Amp — takes a generated adapter instead of the folder, from the same command:
 
 ```bash
 python scripts/install.py --runtime cursor --project ../my-app
 ```
 
-All eleven adapters are generated from one source, so the rules are identical across runtimes and cannot drift apart. An existing instruction file is never overwritten: a project's own rules outrank this skill, so merging is your decision.
+All twelve adapters are generated from one source, so the rules are identical across runtimes and cannot drift apart. An existing instruction file is never overwritten: a project's own rules outrank this skill, so merging is your decision.
 
 **A runtime with one instruction field** — custom GPTs, assistant configurations, chat system prompts — paste `skills/Eniac/adapters/eniac-compact.md`. It is self-contained: a distillation of every rule, without the depth the references carry.
 

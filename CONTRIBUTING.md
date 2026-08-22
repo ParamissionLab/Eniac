@@ -54,7 +54,7 @@ skills/Eniac/
     eniac-compact.md           — hand-written; the whole mind in one self-contained file
     codex/openai.yaml          — hand-written; Codex interface metadata only
     agents-md/ cursor/ copilot/ windsurf/ cline/ zed/ gemini/
-    continue/ aider/ junie/ generic/    — GENERATED, do not edit by hand
+    continue/ aider/ junie/ kiro/ generic/  — GENERATED, do not edit by hand
 scripts/
   install.py                   — the installer: skill folders and adapters, one table
   check_skill.py               — structural checks, budget, compact coverage
@@ -82,7 +82,7 @@ Edit `SKILL.md` only for core behavior — the agencies, the loop, investment le
 - Do not add reference content that would be loaded for simple tasks unless it prevents a concrete, describable mistake.
 - Explain *why* a rule exists. Rules the model understands survive paraphrase and novel situations; bare imperatives do not. Prefer a reason over an emphatic `MUST`.
 - Preserve provider-neutral and stack-neutral language, except where a section is explicitly about a named platform or ecosystem. Naming one vendor's instruction file, tool, or model where a capability was meant makes the skill wrong on every other runtime — write the capability and give the vendor names as examples.
-- **Adapters are generated, not written.** Editing a file under `adapters/agents-md/`, `cursor/`, `copilot/`, `windsurf/`, `cline/`, `zed/`, `gemini/`, `continue/`, `aider/`, `junie/`, or `generic/` forks that runtime from every other one. Edit `adapters/_source/core.md` and run `python scripts/build_adapters.py`; CI rejects the mismatch otherwise. Supporting a new runtime is one entry in that script's `TARGETS` table, not a new hand-written file.
+- **Adapters are generated, not written.** Editing a file under `adapters/agents-md/`, `cursor/`, `copilot/`, `windsurf/`, `cline/`, `zed/`, `gemini/`, `continue/`, `aider/`, `junie/`, `kiro/`, or `generic/` forks that runtime from every other one. Edit `adapters/_source/core.md` and run `python scripts/build_adapters.py`; CI rejects the mismatch otherwise. Supporting a new runtime is one entry in that script's `TARGETS` table, not a new hand-written file.
 - **`eniac-compact.md` is the one deliberate restatement.** It is a distillation rather than a reformat, so it cannot be generated — which means it is the file that drifts. When a load-bearing rule in `SKILL.md` changes, that file needs the same edit in the same commit.
 - Keep the Freudian model doing real work. Each borrowed concept should map onto a mechanism that changes behavior — an agency that produces something, a principle that gates something. Decorative psychoanalytic vocabulary costs tokens and earns nothing.
 - Never introduce three-voice narration as visible output. Arbitration is internal and costs at most one line.
