@@ -373,6 +373,26 @@ def uninstall_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
 
 # ------------------------------------------------------------------------- listing
 
+def adapter_confirmation() -> dict[str, str]:
+    """Per-adapter: has anyone confirmed this destination actually loads?
+
+    The generator owns that fact (`verified` in its TARGETS), so it is read rather than
+    restated here. It is the most useful column in the table: an unconfirmed path is the
+    one that will fail silently. Absent when running from a download with no clone, which
+    is why every row still says something rather than going blank.
+    """
+    if not ROOT or not (ROOT / "scripts" / "build_adapters.py").is_file():
+        return {}
+    sys.path.insert(0, str(ROOT / "scripts"))
+    try:
+        import build_adapters
+    except Exception:
+        return {}
+    by_out = {t["out"]: t.get("verified") for t in build_adapters.TARGETS}
+    return {key: (by_out.get(meta["src"]) or "path not confirmed by an install")
+            for key, meta in ADAPTER_RUNTIMES.items() if meta["src"] in by_out}
+
+
 def do_list(project: Path | None) -> int:
     scope = f"project {project}" if project else "user-wide"
     print("SKILL FOLDER - runtimes with a skills directory")
@@ -389,11 +409,13 @@ def do_list(project: Path | None) -> int:
         print(f"  {key:<11} {str(dest):<50} {state}")
 
     print("\nADAPTER FILE - runtimes that read standing instructions (needs --project)")
-    print(f"  {'runtime':<11} {'destination in that repository':<34} for")
+    confirmed = adapter_confirmation()
+    print(f"  {'runtime':<11} {'destination in that repository':<34} state")
     for key, meta in ADAPTER_RUNTIMES.items():
-        present = project is not None and (project / meta["dest"]).exists()
-        note = f"[file exists] {meta['label']}" if present else meta["label"]
-        print(f"  {key:<11} {meta['dest']:<34} {note}")
+        state = confirmed.get(key, "confirmation unknown without a checkout")
+        if project is not None and (project / meta["dest"]).exists():
+            state = f"file present; {state}"
+        print(f"  {key:<11} {meta['dest']:<34} {state}")
     print("\nAdapter destinations come from each runtime's own documentation rather than\n"
           "from an install performed here, and a wrong one fails silently. If you confirm\n"
           "one loads, record it: set `verified` for that target in build_adapters.py.")
