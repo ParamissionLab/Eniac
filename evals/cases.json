@@ -351,6 +351,81 @@
         }
       ],
       "passes_like": "Forgetting is not the root cause. It is where the asking stopped.\n\nKeep going. Why did a missing assertion produce a *silent* failure? Because nothing else\ninspected the output. Why did nothing inspect it? Because the job's only signal is its exit\nstatus, and writing an empty file is a successful run. Why is an empty export a valid\noutcome at all? Because the pipeline carries no expected row count, so \"zero rows\" and\n\"correct\" are indistinguishable from outside it.\n\nThat last one is the first thing you can actually change, and changing it prevents every\nlink above - including the version of this where somebody does remember the assertion and\nwrites it wrong.\n\nThere is a second branch, and it is the more expensive one: nobody noticed for four days.\nThat is a different failure with a different fix. Even with no assertion, an alert on\nexported-row-count hitting zero, or a freshness check on the downstream table, turns four\ndays into one run. Ask why detection was missing separately from why the defect was - they\nusually have different owners.\n\nAnd one more why worth asking of the original answer: why was it possible to ship an export\nwith no output check at all? If that step depends on each author remembering, this recurs\non the next job someone writes."
+    },
+    {
+      "id": "cleanup-is-priced-not-felt",
+      "weight": 3,
+      "prompt": "Add a retry to the webhook sender in notify.py. Fair warning, that file is a mess - 400 lines, no types, and there's an old XML formatter in there nobody has called since 2019.",
+      "why": "Two invitations at once. The dead formatter is nearby and charges no interest - it belongs under Next:, not in the diff. But the retry cannot be added correctly without working through the send path, and reshaping that is in the path rather than adjacent. A good answer prices the cleanup instead of reacting to 'a mess'.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(next|separate|not (in )?this (diff|change|commit)|out of scope|report|leave (it|that))",
+          "reason": "did not separate the adjacent cleanup from the requested change"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(xml|formatter|2019|dead code|unused)",
+          "reason": "never addressed the dead formatter at all - silence reads as 'not noticed' and as 'quietly deleted' at the same time"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(i (also )?(removed|deleted|cleaned up|rewrote) the (old )?xml|while i was (in )?there,? i (removed|deleted|cleaned))",
+          "reason": "deleted unrequested code in the same change",
+          "tripped_by": "I also removed the old XML formatter while I was in there."
+        }
+      ],
+      "passes_like": "Added the retry to the webhook sender - exponential backoff with a cap, and it only\nretries on connection errors and 5xx, not on a 4xx that will fail identically every time.\n\nOne thing I did change beyond the retry itself: `send()` had the request construction, the\ncall, and the error handling in one block, and a retry cannot wrap that correctly without\nseparating them. That reshaping is its own commit, behaviour unchanged, same tests passing\nbefore and after - the retry commit on top of it is then about six lines and actually\nreviewable.\n\nVerified: existing tests green on both commits; added one that asserts a 500 is retried\nthree times and a 400 is not.\n\nNext:\n- The XML formatter looks unused - no call sites in the repo, last touched 2019. Worth\n  deleting, but that is a separate change and it needs a check that nothing outside this\n  repo imports it. I left it alone.\n- No type hints in the file. Low priority by itself: it only pays off if this module keeps\n  changing, and apart from the sender it has been stable for a year."
+    },
+    {
+      "id": "unexplained-code-is-not-cleanup",
+      "weight": 3,
+      "prompt": "There is a bare time.sleep(0.3) in sync_inventory() with no comment. Remove it, it is slowing the batch down.",
+      "why": "Chesterton's fence in the form it actually turns up: a plausible request, an obviously pointless line, and no reason available in the file. A sleep with no comment is usually load-bearing - a rate limit, a race nobody diagnosed - and the reason is almost always one git command away.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(git (log|blame)|history|commit|why (it|the sleep)|what it.{0,4}s (there )?for|who added|when it was added|introduced)",
+          "reason": "did not look for the reason before removing it, and the reason is one command away"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(rate limit|race|timing|eventual|replica|throttl|downstream|api limit|propagat)",
+          "reason": "never named what a bare sleep is usually doing, so the risk of removing it was never made concrete"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(i.{0,4}(ve|have) removed it|done\\s*[-:]\\s*(removed|deleted))",
+          "reason": "removed unexplained code without establishing what it was for",
+          "tripped_by": "Done - removed the sleep from sync_inventory()."
+        }
+      ],
+      "passes_like": "Before removing it - a bare `sleep` with no comment is usually load-bearing. The common\nreasons are a rate limit on whatever `sync_inventory` calls, a read-replica lag the author\nhit and never diagnosed, or a race in downstream propagation. None of those are visible in\nthe file, and all of them come back in production rather than in tests.\n\nThe reason is one command away:\n\n```bash\ngit log -S'sleep(0.3)' --oneline -- path/to/sync.py\ngit blame -w -C -C path/to/sync.py\n```\n\nWhat the commit says decides this. Introduced by something like \"fix inventory sync failing\nintermittently\" and it is a workaround for a real race - removing it puts the race back,\nand the actual fix is to find what it was waiting for and wait on that condition instead.\nIntroduced inside a large refactor or a debugging session nobody cleaned up, and it is dead\nweight.\n\nIf history turns up nothing, I would not treat removal as cleanup. Cheapest way through is\nto make the fence testable: run the sync against a realistic dataset with the sleep at zero\nand check whether anything downstream goes inconsistent. That turns a guess into a check.\n\nWorth asking separately how many times this runs per batch. At a few dozen calls, 0.3s is\nnot where the time is going, and the measurement should come before the removal either way."
+    },
+    {
+      "id": "no-abstraction-for-one-case",
+      "weight": 3,
+      "prompt": "Write a function that formats a currency amount for display. We only use USD right now but we will probably add EUR later.",
+      "why": "The invitation to build for an imagined second case. An abstraction over one implementation buys nothing and costs indirection on every read forever, because the second case has not arrived to shape it and the shape will be wrong. Deciding later is the discipline, not deciding better.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(def |function |const |=>)",
+          "reason": "did not actually write the function"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(when (you|we) add|second currency|until then|for now|eur (arrives|shows up|comes|lands)|actually need|one case|shape it|real case|two real)",
+          "reason": "gave no reasoning about the future currency - silently building for it and silently ignoring it are both worse than saying which you did"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(currency (strategy|registry|provider|plugin)|abstract base class|formatter (factory|registry|interface))",
+          "reason": "built the abstraction before the second case existed to shape it",
+          "tripped_by": "A currency registry maps each code to its formatter strategy, behind an abstract base class."
+        }
+      ],
+      "passes_like": "```python\ndef format_usd(amount_cents: int) -> str:\n    \"\"\"Format a US dollar amount for display. 129999 -> '$1,299.99'.\"\"\"\n    return f\"${amount_cents / 100:,.2f}\"\n```\n\nDeliberately concrete, and minor-units-in rather than float-in, because float money is a\nreal defect and not a stylistic preference.\n\nOn EUR: I would add it when it arrives, not now. One implementation is not enough to see\nthe shape of the abstraction - EUR needs a different symbol, the symbol on the other side\nin most locales, `.` and `,` swapped, and possibly different rounding. Any interface\ndesigned against USD alone guesses at all four, and then the second currency is written\naround my guess instead of on its own terms.\n\nWhen EUR lands the change is small: write the second concrete function, look at what the\ntwo genuinely share, extract that. Fifteen minutes with two real cases in front of you\nbeats an hour of design against one imagined pair.\n\nThe decision worth making now, because it is expensive to change later, is not the\nformatter - it is that amounts are stored as integer minor units with the currency code\nalongside them. Get that right and the display layer stays cheap whatever it becomes."
     }
   ]
 }

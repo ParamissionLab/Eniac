@@ -33,8 +33,10 @@ skills/Eniac/
     llm-systems.md             — building on models: injection, evals, cost, versions
     production.md              — resilience, observability, load, data ops, runbooks
     enterprise.md              — regulated data, tenancy, change control, legacy
+    comprehension.md          — intent that is lost: history, anomalies, Chesterton's fence
     scale.md                   — systems too large to read
     campaigns.md               — multi-session work, migrations, rollout, delegation
+    debt.md                    — interest-rate ranking, in-path vs nearby, when not to pay
     triage.md                  — dependency order, lanes, plan files, handoff
     reality-testing.md         — verification ladder, baseline, honest reporting
     defenses.md                — agent failure modes under pressure

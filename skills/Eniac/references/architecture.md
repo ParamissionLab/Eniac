@@ -137,6 +137,43 @@ before anyone deletes anything.
 Divergence between your hand-built map and the graph is useful in both directions: it
 means one of them is wrong, and finding out which is cheap.
 
+## Structural Properties You Can Measure
+
+The five dimensions above are judged. A handful of properties are not — they are facts
+about the system, and checking them costs minutes and settles arguments that otherwise run
+on taste. Do these before forming an opinion, because they frequently contradict it.
+
+**Do the module boundaries survive contact with the change history?** This is the sharpest
+test available and almost nobody runs it. Two modules that always change together are one
+module wearing two names, whatever the directory tree claims — the boundary between them
+does not hold, and every change pays the cost of pretending it does:
+
+```bash
+git log --format='%n' --since='12 months ago' --name-only   | awk -F/ 'NF>1 {print $1"/"$2}' | sort -u
+```
+
+Run per commit and count which pairs recur. Where a supposed boundary appears in the same
+commits over and over, the split is administrative rather than real. The reverse is also
+information: a module that never changes with anything is genuinely independent, and it is
+a candidate for extraction or for being left alone forever.
+
+**Do dependencies point one way?** A cycle between modules means they are one module with
+extra ceremony, and it is a fact rather than a preference — the language's own tooling, an
+import graph, or a linter will answer it. Note where the cycle passes through, because the
+edge that closes it is usually a single misplaced import rather than a design decision.
+
+**Does anything skip a declared layer?** If the structure promises request → service →
+repository, find the handlers that reach the database directly. One violation is a mistake;
+a dozen means the layer is not real and the document should say so instead of repeating the
+promise.
+
+**Which boundaries does the deployment actually respect?** Things that ship together and
+fail together are one unit operationally, regardless of how many packages they occupy.
+
+When a measured property disagrees with the intended design, **the measurement is the
+finding** — and the report says both: what the structure claims, what the evidence shows,
+and which one the next change will actually be constrained by.
+
 ## The Artifacts
 
 `findings.md` sets how many of these you may write. This is what each one is for. Each
@@ -155,6 +192,15 @@ answers one question, and an artifact that does not answer its question is decor
 | open questions | what is unresolved, blocking or not |
 | decision record | what was decided, why, and what would reverse it |
 | handoff notes | what the next session needs — the bar is in `findings.md` |
+
+**Every one of these describes *what*. The half that rots slowest and costs most to
+recover is *why*** — why this boundary and not the obvious one, what was tried and
+abandoned, which constraint is still live and which is a scar from a system that no longer
+exists. A reader who has the what can derive most of it again from the code in an afternoon;
+nobody can derive the why from anything. A `decision record` is where it belongs, and an
+overview that carries three sentences of it is worth more than a fourth diagram. Where the
+why is genuinely unrecoverable, `comprehension.md` is how to go looking, and "not
+recoverable, here is what was checked" is a legitimate entry.
 
 Prefer updating an existing artifact over adding a new one. A second document covering
 the same ground splits the truth, and the next reader finds the wrong half.

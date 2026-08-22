@@ -79,8 +79,10 @@ skills/
       production.md
       enterprise.md
       scale.md
+      comprehension.md
       campaigns.md
       triage.md
+      debt.md
       reality-testing.md
       defenses.md
       token-economy.md
@@ -133,6 +135,8 @@ templates/
 | `defenses.md` | the same approach has failed twice, or the work has started avoiding itself |
 | `token-economy.md` | large repositories, repeated compaction, expensive tools, long autonomous runs |
 | `learning-loop.md` | capturing a lesson and deciding where it should durably live |
+| `comprehension.md` | code whose *reasons* are gone — an inherited system, a module everyone avoids, anything where "why does it do this?" is currently a guess, or a deletion you cannot justify. Distinct from size (`scale.md`) and from ownership (`enterprise.md`): the missing thing is intent, and source code never records it. Covers version history as the primary source and how to rank what it gives you, why a line from a hotfix commit and the same line from a mass reformat mean opposite things, collecting every anomaly before explaining any of them so the first one does not become the frame for the rest, the workable form of Chesterton's fence — you need to know the reason, not agree with it — and making the fence testable when the reason is unrecoverable. Also characterization tests used as an instrument rather than a net: predict the output first, because the failed prediction is the finding |
+| `debt.md` | a change is harder to make than it should be, a shortcut is about to be taken deliberately, or the request is an explicit cleanup or modernization. Debt is what *charges interest* rather than what looks bad, so it is ranked by `interest rate × remaining lifetime` — and the first term is sitting in version control, which makes this one of the few prioritization questions with a mechanical answer. Also: whether paying is in scope for *this* task (in the path, in the blast radius, or merely nearby), naming a shortcut at the moment you take it with the trigger that retires it, why environmental decay is a deadline rather than interest, and the six situations where refusing to pay is the right engineering call |
 | `defect-sets.md` | more than one defect at once — a scan, a bug bash, a review backlog, a list of failing tests, or one fix that turned out to have neighbours. A list of defects is a projection of a smaller number of causes onto whatever surface you happened to look at, which is why working through it as a list both misses members and creates new ones. Covers why a scan is structurally incomplete rather than insufficiently thorough, finding the generator behind the instances, enumerating a class instead of sampling it, the interaction graph that decides fix order, the six places new bugs come from mid-sweep, closing a class rather than a ticket, and the frontier statement that keeps residue from being silent |
 | `collaboration.md` | the response is not landing — corrections about tone or depth, a run of output the user did not want, or a request whose verb is not *do*. Covers what is being asked *of* you rather than *for*: the five engagement modes and what each hands over, how a mode switches mid-conversation without anyone announcing it, reading a preference from four signals without over-fitting to two data points, which of this skill's own defaults a person may move, and the four that never move for anyone |
 | `safety.md` | production, credentials, destructive operations, dependency or data risk, release gates |

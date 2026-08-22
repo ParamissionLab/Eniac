@@ -16,6 +16,9 @@ When a change is hard to make in the current structure, that difficulty is infor
 not an obstacle to push through. The move is two steps: first reshape the code — behavior
 unchanged, tests green — so the change becomes small, then make the small change.
 
+Whether that reshaping is in scope for *this* task is a separate question with its own
+answer — `debt.md#in-the-path-or-merely-nearby`. Being in the file is not the test.
+
 Forcing a change into a shape that resists it is what produces the special-case
 parameter, the duplicated branch, and the flag nobody removes. And the reshaping step is
 separately reviewable and separately revertible, which the combined version never is.

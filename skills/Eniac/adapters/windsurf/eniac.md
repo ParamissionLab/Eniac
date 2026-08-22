@@ -169,6 +169,72 @@ available when a bug resists:
 - If a gate was crossed without authorization, say so in the next message — what was done,
   the state now, and what would undo it. Never repair it quietly first.
 
+## Technical debt
+
+- **Debt is what charges interest, not what looks bad.** Code nobody will touch again costs
+  nothing however unpleasant it is. Rank by `how often this area changes × how long it will
+  keep existing` — and the first term is in version control, so it is answerable rather than
+  arguable: `git log --since='12 months ago' --format= --name-only | sort | uniq -c | sort -rn`.
+  The consequence is worth stating: the worst code in a repository is usually not the most
+  expensive debt. The most expensive is mediocre code in the file everyone edits.
+- **Pay what is in the path; report what is merely nearby.** If you must reshape or fully
+  understand something to make the change correctly, that is part of the task — do it as a
+  **separate commit before** the change, behaviour unchanged and the same tests green either
+  side. If you can simply see it from where you are standing, it goes under `Next:` with its
+  interest rate and stays out of the diff. "I am already in this file" is the *nearby* test,
+  and it is why diffs end up four times bigger than the request.
+- **Name a shortcut when you take it**, in the code and in the report: what was done instead,
+  the constraint that made it right now, what it makes harder, and **the specific condition
+  that should retire it**. That last field is the one usually missing — `TODO: clean this up`
+  has no trigger, so it is never true that now is the time. Deliberate debt nobody recorded
+  is the dangerous kind, because the next reader cannot tell it from design.
+- **A dependency going end-of-life is a deadline, not interest.** It costs nothing, then
+  costs everything: a security patch you cannot take because the upgrade path is four majors
+  long. Rank that by date, not by how much it currently hurts, and note that "nothing is
+  going wrong" is not evidence about it.
+- **Refusing to pay is often correct** — the code is scheduled for deletion, the area is
+  genuinely stable, there are no tests and you cannot cheaply add one, or the proposal is
+  really a rewrite. Say so with the interest rate attached, so the call is the user's rather
+  than silently yours.
+- **Most avoidable debt is a decision made before the information existed.** Real debt buys
+  something — a deadline, a market tested, a decision deferred until it could be made well.
+  A whole category buys nothing: an abstraction over one implementation, parameters nobody
+  passes, a plugin system for two cases, configuration nobody asked for, a layer that only
+  forwards, a `try/except` around something that has never failed, a dependency taken to
+  avoid twenty lines. The discipline is not deciding better, it is **deciding later** —
+  duplicate twice and abstract on the third, add the parameter when the second caller needs
+  it, and let the shape come from two real cases rather than one imagined pair.
+
+## Understanding a system nobody can explain
+
+- **Working code tells you what happens, never why.** Two failures follow from that same
+  gap: assuming there was no reason and removing the odd branch, or assuming the reason
+  still applies and preserving a workaround for a bug fixed years ago. Both are guesses
+  presented as decisions.
+- **Version history is the primary source, and it is under-used.** `git log -S'value'`
+  finds when something appeared, `git log -L n,m:file` gives the history of one region, and
+  `git blame -w -C -C` sees through reformatting and code movement. The name is not the
+  point — the **commit message and whatever it links to** is. The commit's character matters
+  as much as its text: a line introduced by *"hotfix: payments failing in AU"* is
+  load-bearing, while the same line introduced inside a nine-hundred-file reformat is
+  probably an accident of the tooling.
+- **Collect every anomaly before explaining any of them.** List the redundant check, the
+  magic number, the sleep, the always-null field, the unreachable branch — then resolve them
+  one at a time. Explaining as you go makes the first anomaly the frame for all the rest.
+  Weirdness is compressed information: ordinary code teaches nothing, and somebody paid for
+  the weird line, usually with an incident.
+- **Do not remove what you cannot explain — but the bar is knowing the reason, not agreeing
+  with it.** Search history, tests, and tickets; when that comes up empty, removal stops
+  being cleanup and becomes a change that needs proof. The move that resolves most of these
+  cheaply: write a check asserting what you *believe* the suspicious code does. If it fails,
+  you were wrong and have just learned the missing thing. If it passes, removal is now
+  verifiable rather than hopeful.
+- **Predict before you run.** Write down the expected output first; every wrong prediction
+  locates a wrong belief more cheaply than more reading. Familiarity arrives well before
+  understanding and feels identical from the inside, so the stopping test is whether you can
+  say *why* the system is like this — which parts are deliberate, which are historical
+  scars, and which are genuinely arbitrary.
+
 ## Documentation
 
 One owner per fact: update the file already responsible rather than creating a second one,

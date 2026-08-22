@@ -8,6 +8,7 @@ Load this when the work has parts that depend on each other, might be interrupte
 will be picked up by someone else.
 
 > **Owns** — ordering work — ranking inside a tier, dependency order, parallel lanes, plan files, parking and resuming, interrupts and re-triage, estimation, handoff.
+> **Also** — ranking a cleanup against the work it interrupts is `debt.md`, which prices it by how often the area changes rather than by how bad it looks.
 > **Defers** — the six-tier ladder itself → `SKILL.md#triage--automatic-prioritization`; carrying work across sessions → `campaigns.md`; handing work to an unattended agent → `autonomy.md`.
 
 ## Ranking Inside A Tier

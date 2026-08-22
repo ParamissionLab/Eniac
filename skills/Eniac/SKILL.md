@@ -193,9 +193,8 @@ nobody adopts is not a migration, and the deliverable is usually a *contract plu
 that each team can walk at its own pace, not a change you make on their behalf. Treat the
 rollout as the product.
 
-Two references carry the weight: `references/scale.md` for navigating and modelling a
-system too large to read, and `references/campaigns.md` for carrying work across
-sessions and changing large systems safely. Do not load either for M0 work.
+`references/scale.md` carries a system too large to read; `references/campaigns.md`
+carries work across sessions and large systems changed safely. Neither belongs near M0.
 
 ## Triage — Automatic Prioritization
 
@@ -213,7 +212,9 @@ Two rules keep the ladder honest:
 
 - **Tier 6 is reported, never silently done.** Adjacent refactors, style fixes,
   dependency bumps, and "while I'm here" cleanups belong in `Next:`, not in the
-  diff. Unrequested work spends the user's tokens and their review attention.
+  diff. Unrequested work spends the user's tokens and their review attention. The
+  exception is debt sitting *in the path* — code you must reshape before the change can
+  be made small. That is tier 3, and it ships as its own commit first (`references/debt.md`).
 - **WIP = 1.** Finish or explicitly park one item before starting another. Parking
   means writing down where it stopped and what would prove it done.
 
@@ -248,17 +249,13 @@ Then pick the cheapest route that fits, and load at most what it names.
 | new project, empty repo, "build me a…" | **Greenfield** | `references/workflows.md#greenfield` |
 | discover, build, test, document, ship | **Full-cycle** | `references/workflows.md#full-cycle` |
 | judge a diff, a PR, or existing code | **Review** | `references/workflows.md#review`, then `findings.md` when the output is findings |
-| understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, then `architecture.md` to judge it or `findings.md` to write it up |
+| understand a system, map it, or diagram it | **Audit** | `references/workflows.md#audit`, then `architecture.md` to judge it, `comprehension.md` when its reasons are lost, or `findings.md` to write it up |
 | something is measurably slow | **Optimize** | `references/performance.md` |
 | many small mechanical edits | **Batch** | `references/workflows.md#batch` |
 | more than one defect at once — a scan, a bug bash, an audit backlog, a list of failing tests | **Sweep** | `references/defect-sets.md` |
 | a user-facing screen, page, or flow | **Product UI** | `references/workflows.md#product-ui`, then `interface-design.md` when how it *looks* is part of the deliverable |
 | docs are the deliverable — write, audit, or reorganize them | **Document** | `references/documentation.md` |
 | release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship`, then `safety.md` before anything irreversible |
-
-A row names what the route *may* need, in the order it would be needed — not a set to
-load at once. Load the first, act, and reach for the second only if the first did not
-settle the next action.
 
 **Specify, Design, and Implement are a sequence, not a choice between three.** When more
 than one applies, they run in that order: settle what "done" means before choosing a
@@ -310,8 +307,9 @@ material. Pick the matching one from `references/workflows.md#overlays`.
 
 Unfamiliar stack, or unsure which command proves anything: `references/stack-signals.md`.
 
-**When several of these match at once**, load one, act, and load the next only if the
-first did not settle the question. Order: the route chain first; then whatever could
+**A row names what a route *may* need, in the order needed — never a set to load at
+once.** When several match at once, load one, act, and load the next only if the first
+did not settle the question. Order: the route chain first; then whatever could
 *stop* the work (`safety.md`, `enterprise.md`); then whatever shapes *how* it is done
 (`production.md`, `scale.md`, `campaigns.md`); then `craft.md`, `reasoning.md`, or
 `judgment.md` if one specific call is still open.
@@ -561,8 +559,10 @@ exactly why they get missed.
 **Size and time** — when the work outgrows one context or one session.
 
 - `references/scale.md` — systems too large to read: modelling from partial evidence, locating anything, blast radius.
+- `references/comprehension.md` — a system whose *intent* is lost: history as the primary source, collecting anomalies before explaining them, removing what nobody can explain, characterization tests as comprehension, and the test for whether you understood it.
 - `references/campaigns.md` — long-horizon work: the contract, checkpoints, verified waves, migrations, rollout, abandonment.
 - `references/triage.md` — dependency ordering, parallel lanes, plan files, parking, estimation, handoff.
+- `references/debt.md` — debt as an economic object: the interest-rate ranking read from version control, in-the-path versus merely nearby, naming a shortcut when you take it, the four kinds, and when refusing to pay is the right call.
 
 **Proof and permission** — what closes a task, and what may be done at all.
 
