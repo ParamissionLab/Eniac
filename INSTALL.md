@@ -15,35 +15,101 @@ Prefer the full folder wherever the runtime supports it. Its whole design is pro
 disclosure: a small control plane loads, and a reference file is read only when a task
 earns it. Pasting everything into one prompt gives that up and costs tokens on every task.
 
+One script installs both — `scripts/install.py` — because the two routes fail in exactly
+the same way and only the destination table differs. `--runtime` names either kind,
+`--list` prints both tables, and every destination is stated once so nobody retypes a path.
+
+## Straight from the repository URL, with no clone
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python3 -
+```
+
+```powershell
+irm https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python -
+```
+
+Piped into an interpreter the script has no `skills/Eniac` beside it, so it downloads the
+repository archive over HTTPS and installs from that. Arguments work as usual — everything
+after `python3 -` is passed through:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py \
+  | python3 - --ref v1.1.0 --dry-run
+```
+
+**Pin `--ref` for anything you rely on.** The default is `main`, which is whatever was
+pushed a minute ago; an install that silently follows a moving branch is a dependency that
+upgrades itself with no review. A tag or a full commit SHA both work.
+
+Two things this does not do, because they are what makes `curl | interpreter` worth being
+careful about: nothing from the download is *executed* — the archive is unpacked and files
+are copied — and archive members that escape the extraction directory, or that are not
+plain files or directories, are dropped before extraction rather than trusted. If you
+would rather read the script before running it, download it first and run it as a file;
+it is one file with no imports outside the standard library.
+
+Cloning does the same thing with the files already local, which is the better choice when
+you want to read the diff of an update before installing it:
+
+```bash
+git clone https://github.com/ParamissionLab/Eniac.git && cd Eniac
+python scripts/install.py
+```
+
 ## Runtimes with a skills directory
 
-Copy the folder in, keeping the name `Eniac`, then restart the agent or start a new
-session so the skill list refreshes.
+From a clone, one command installs into every runtime it finds on the machine:
 
-**Claude Code** — user-wide:
+```bash
+python scripts/install.py
+```
+
+`.\install.ps1` and `./install.sh` do the same and find a Python first, which matters more
+on Windows than it looks: the `python3` on `PATH` there is usually the Microsoft Store
+stub, which exists, prints an advert, and installs nothing. Python 3.8+ is the only
+requirement, and it is used to *copy files* — the skill itself has no runtime.
+
+```bash
+python scripts/install.py --list                # destinations, and what is already installed
+python scripts/install.py --runtime claude      # one runtime, user-wide
+python scripts/install.py --project ../my-app   # into that repository, checked in with it
+python scripts/install.py --dry-run             # print the plan, change nothing
+python scripts/install.py --backup              # keep the previous install under eniac-backups/
+python scripts/install.py --uninstall
+```
+
+What it does that a copy does not: it removes reference files an older version left behind
+— a stale reference keeps loading beside the file that replaced it, and contradicts it —
+and it refuses a destination that is not an install of this skill, so a folder of somebody
+else's work named `Eniac` is never overwritten silently. It writes nothing else, and
+`--dry-run` will show you exactly what it would touch.
+
+| Runtime | User-wide | Per-project |
+| --- | --- | --- |
+| Claude Code | `~/.claude/skills/Eniac` | `.claude/skills/Eniac` |
+| Codex | `~/.codex/skills/Eniac` | `.codex/skills/Eniac` |
+| The shared convention | `~/.agents/skills/eniac` | `.agents/skills/eniac` |
+
+On Windows those are under `%USERPROFILE%`, which the script resolves for you.
+`adapters/codex/openai.yaml` carries interface metadata only; the behaviour still comes
+from `SKILL.md`.
+
+Copying the folder in by hand works exactly as well — keep the name `Eniac`, keep
+`SKILL.md` and `references/` together so the relative links resolve:
 
 ```bash
 cp -r skills/Eniac ~/.claude/skills/Eniac
 ```
 
-Or per-project, checked in with the repository:
+**Any other runtime with a skills directory** — `--into` takes the path directly:
 
 ```bash
-cp -r skills/Eniac .claude/skills/Eniac
+python scripts/install.py --into ~/.config/some-agent/skills
 ```
 
-**Codex** — user-wide:
-
-```bash
-cp -r skills/Eniac ~/.codex/skills/Eniac
-```
-
-On Windows the equivalent is `%USERPROFILE%\.codex\skills\Eniac`. `adapters/codex/openai.yaml`
-carries interface metadata only; the behaviour still comes from `SKILL.md`.
-
-**Any other runtime with a skills directory** — the same copy into whatever path it loads
-skills from. Where a shared convention is supported, `.agents/skills/eniac/` works the
-same way.
+Either way, restart the agent or start a new session afterwards so the skill list
+refreshes; a running session keeps whatever it loaded at start.
 
 > Skill directory paths are set by each runtime and do change between versions. If the
 > skill does not appear after a restart, check that runtime's current documentation for
@@ -51,13 +117,14 @@ same way.
 
 ## Runtimes that read standing instruction files
 
-Copy the adapter to the path that runtime reads. The script below takes the destination
-from the same table the generator uses, so the path is stated once and never retyped —
+Copy the adapter to the path that runtime reads — the same installer, naming the runtime
+and the repository that receives the file. The path is stated once and never retyped,
 which matters more here than it looks, because a typo'd path produces no error anywhere:
 
 ```bash
-python scripts/install_adapter.py --list
-python scripts/install_adapter.py --runtime cursor --into ../my-project
+python scripts/install.py --list                              # both tables
+python scripts/install.py --runtime cursor --project ../my-project
+python scripts/install.py --runtime cursor --project ../my-project --uninstall
 ```
 
 It refuses to overwrite an existing file, because a project's own rules outrank this skill.
@@ -83,7 +150,9 @@ apart — which is what makes a mixed-runtime team workable. Adjust the path *in
 adapter to wherever `skills/Eniac/` actually lives in your repository.
 
 Adding a runtime that is not listed is one entry in `TARGETS` in
-`scripts/build_adapters.py`, then `python scripts/build_adapters.py`.
+`scripts/build_adapters.py`, then `python scripts/build_adapters.py`, plus its destination
+in `ADAPTER_RUNTIMES` in `scripts/install.py` — what to generate and where it goes are
+two different facts.
 
 If a project already has one of these files, **merge rather than replace**, and keep one
 of them authoritative with the others pointing at it. Several instruction files that each
@@ -169,11 +238,16 @@ python scripts/run_evals.py --agent-cmd '<your agent>' --label with-skill
 
 ```bash
 git pull
-cp -r skills/Eniac ~/.claude/skills/Eniac
+python scripts/install.py
 ```
 
-Replace the destination with wherever you installed it. Restart the agent afterwards.
-Adapters change less often than the references; re-copy them only when
+An update is the same command as the install: it writes to wherever it already finds a
+copy, replaces only the files that changed, and deletes the ones this version no longer
+ships. That last part is the reason to prefer it over re-copying — a reference removed in
+a later version keeps loading from the old install, and it will contradict the file that
+replaced it. Restart the agent afterwards.
+
+Adapters are separate and change less often than the references; re-install one only when
 `skills/Eniac/adapters/` shows changes in the diff.
 
 ## Beyond one machine

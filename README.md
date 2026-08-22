@@ -50,9 +50,9 @@ These subsystems are wired in a stated order rather than offered as a menu: prec
 - **Treats documentation as a deliverable with an owner.** Each durable fact lives in exactly one file and everything else links to it, because two copies drift and once they disagree both have negative value. Uncertainty is marked `UNKNOWN` with the check that settles it rather than smoothed into confident prose, every command written into a doc has been run, and an audit usually ends with *fewer* files.
 - **Designs interfaces rather than defaulting them.** When how a surface looks is part of the deliverable, the palette, type, layout, and one signature element are settled before any CSS exists, then each part is tested against a specific question: would this same answer have come out for any other brief in this category? If yes it is a default rather than a choice. Interface copy is treated as design material, and the handful of looks generated design converges on are named so they can be avoided on purpose.
 - **Runs on any agent runtime.** The skill names capabilities — read, search, edit, execute — never a vendor's tool or instruction file, and it says what a missing capability costs instead of routing around it silently. Levels, routes, gates, and triage are decisions rather than features, so they behave identically everywhere; what varies is proof, and on a weaker runtime the honest report gets longer rather than shorter. Adapters ship for skill directories, `AGENTS.md`, Cursor rules, and single-instruction-field assistants.
-- **Can tell you whether it is actually loaded.** Installing an agent instruction file fails *silently* on every runtime there is — a wrong path or an unrecognized front-matter key produces no error, the file is simply never read, and the agent behaves exactly as though nothing were installed. So the skill answers a bare "what rules are you following?" by naming itself, the eval suite runs that question as a gate before scoring anything, and `install_adapter.py` takes the destination path from the same table that generates the adapters instead of asking anyone to retype it. Without that gate, a failed install reports as *the skill did not help* — and you go rewrite guidance that was never loaded.
+- **Can tell you whether it is actually loaded.** Installing an agent instruction file fails *silently* on every runtime there is — a wrong path or an unrecognized front-matter key produces no error, the file is simply never read, and the agent behaves exactly as though nothing were installed. So the skill answers a bare "what rules are you following?" by naming itself, the eval suite runs that question as a gate before scoring anything, and `install.py` takes every destination — skill folders and adapters alike — from one table instead of asking anyone to retype a path. Without that gate, a failed install reports as *the skill did not help* — and you go rewrite guidance that was never loaded.
 - **Carries no version number inside the skill folder.** The version lives in the changelog and the git tag that carries it, so a vendored copy produces no diff when a release happens and nobody edits fourteen files to cut one. The checker enforces it in both directions: the marker is present everywhere, and it is bare.
-- **Is a system rather than a folder of files.** Each of the twenty-six references opens by declaring what it *owns* and what it *hands off* to a named neighbour, so when two look plausible the boundary is already written down instead of guessed at — and a future overlap fails the build rather than drifting for a year. `SKILL.md` groups them by the kind of question they answer, so choosing one is a step rather than a scan. The rule the package applies to other people's documentation, it applies to itself.
+- **Is a system rather than a folder of files.** Every reference opens by declaring what it *owns* and what it *hands off* to a named neighbour, so when two look plausible the boundary is already written down instead of guessed at — and a future overlap fails the build rather than drifting for a year. `SKILL.md` groups them by the kind of question they answer, so choosing one is a step rather than a scan. The rule the package applies to other people's documentation, it applies to itself.
 - **Treats security as a property of the design, not a review at the end.** A trust boundary is anywhere data crosses from somewhere you do not control into somewhere you do — including the ones that do not look like boundaries: an internal queue, a row a user wrote three months ago, a webhook nobody verifies, a third-party API's response. Authorization is checked per path *and per object*, because the most common serious vulnerability in real software is an endpoint nobody guarded behind a button the interface does not show. Injection is recognized as one bug in many costumes — SQL, shell, template, path, XSS, deserialization, prompt — whose only real fix is structural separation. And it never asserts that something is secure or compliant, because that is a claim about the world no code reading supports.
 - **Knows that a model call is not an ordinary function call.** Software built on a model has one component that answers differently each time and fails with a well-formed success — truncation, refusal, confident fabrication. So versions get pinned because "latest" is a breaking change nobody reviewed, prompt injection is handled at the authorization layer rather than by instructing the model to be careful, model output is treated as untrusted input to whatever consumes it, and correctness is established by property assertions and an eval set rather than by equality on a string that will drift.
 - **Engineers the loop, not just the fix.** Almost all non-trivial work is iteration, so the loop is what gets designed: its latency, which multiplies by every turn you have not had yet and is why *shortening a slow loop beats running it*; its signal, because a turn that cannot change the next decision is a retry rather than an iteration; and its stop, named before the first turn instead of discovered at the tenth. A loop ends *converged*, *exhausted*, or *diverged*, and saying which is part of the report — collapsing them into "done" is how a loop that learned nothing gets reported as one that succeeded.
@@ -90,7 +90,12 @@ skills/
       defect-sets.md
       collaboration.md
       safety.md
+      autonomy.md
+      security.md
+      llm-systems.md
+      loops.md
       stack-signals.md
+      system-types.md
       architecture.md
     adapters/
       _source/core.md            — the one source every rule adapter is generated from
@@ -98,18 +103,19 @@ skills/
       agents-md/ cursor/ copilot/ windsurf/ cline/ zed/
       gemini/ continue/ aider/ junie/ generic/ codex/
 scripts/
+  install.py                     — the installer: skill folders and adapters, one table
   check_skill.py                 — structural checks, size budget, compact coverage
   build_adapters.py              — regenerate the rule adapters
   run_evals.py                   — runtime-neutral behavioural eval harness
   compare_evals.py               — baseline vs with-skill, attributed
-  install_adapter.py             — install an adapter without retyping a path
+install.sh install.ps1           — the installer, for a terminal that has no Python named
 evals/
   cases.json trigger.json        — behavioural cases, and description-triggering queries
 templates/
   house-rules.template.md        — your own rules, at precedence level 3
 ```
 
-`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The twenty-two reference files are loaded only when one can change the next decision. `adapters/` is not loaded by the skill at all — it exists so the same mind installs into runtimes that have no skill system; see [INSTALL.md](INSTALL.md).
+`SKILL.md` is the always-loaded control plane and is self-sufficient for most work. The reference files above are loaded only when one can change the next decision. `adapters/` is not loaded by the skill at all — it exists so the same mind installs into runtimes that have no skill system; see [INSTALL.md](INSTALL.md).
 
 | Reference | Load when |
 | --- | --- |
@@ -149,15 +155,43 @@ templates/
 
 Eniac is plain Markdown with no build step and no dependency, so it installs into anything that reads instructions.
 
-**A runtime with a skills directory** — copy the folder in and restart:
+One installer covers both routes — `scripts/install.py` — because they fail the same way: a wrong destination installs nothing and **says nothing**, on every runtime there is. Copying the files by hand works exactly as well; the script exists so the path is stated once rather than retyped.
+
+**Without cloning anything**, straight from this repository:
 
 ```bash
-cp -r skills/Eniac ~/.claude/skills/Eniac    # Claude Code, user-wide
-cp -r skills/Eniac ~/.codex/skills/Eniac     # Codex, user-wide
-cp -r skills/Eniac .claude/skills/Eniac      # per-project, checked in
+curl -fsSL https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python3 -
 ```
 
-**A runtime that reads standing instruction files** — Codex, Cursor, Copilot, Windsurf, Cline, Roo Code, Zed, Gemini CLI, Continue, Aider, Junie, Antigravity, Jules, Amp — copy the matching adapter from `skills/Eniac/adapters/`. All eleven are generated from one source, so the rules are identical across runtimes and cannot drift apart.
+```powershell
+irm https://raw.githubusercontent.com/ParamissionLab/Eniac/main/scripts/install.py | python -
+```
+
+It downloads the repository archive and installs into every runtime it finds on the machine. Add `--ref v1.1.0` to pin what it fetches, which is the honest default for anything you rely on: `main` is whatever was pushed a minute ago. Nothing from the download is executed — files are copied, and only under the skill folder.
+
+**From a clone**, which is the same script with the files already local:
+
+```bash
+git clone https://github.com/ParamissionLab/Eniac.git && cd Eniac
+python scripts/install.py
+```
+
+```bash
+python scripts/install.py --list                # every destination, and what is installed
+python scripts/install.py --runtime claude      # one runtime, user-wide
+python scripts/install.py --project ../my-app   # into that repository, checked in with it
+python scripts/install.py --dry-run             # print the plan, change nothing
+```
+
+Either way it copies only what changed and removes reference files an older version left behind — a stale one keeps loading beside the file that replaced it, and contradicts it. `.\install.ps1` and `./install.sh` are the same thing for a terminal that would rather not name an interpreter. Restart the agent afterwards.
+
+**A runtime that reads standing instruction files** — Codex, Cursor, Copilot, Windsurf, Cline, Roo Code, Zed, Gemini CLI, Continue, Aider, Junie, Antigravity, Jules, Amp — takes a generated adapter instead of the folder, from the same command:
+
+```bash
+python scripts/install.py --runtime cursor --project ../my-app
+```
+
+All eleven adapters are generated from one source, so the rules are identical across runtimes and cannot drift apart. An existing instruction file is never overwritten: a project's own rules outrank this skill, so merging is your decision.
 
 **A runtime with one instruction field** — custom GPTs, assistant configurations, chat system prompts — paste `skills/Eniac/adapters/eniac-compact.md`. It is self-contained: a distillation of every rule, without the depth the references carry.
 
@@ -205,9 +239,14 @@ The savings come from structure rather than from exhortation:
 - Output answers the question asked: no restating the request, no narrating routine tool calls, no unrequested tutorial.
 - Budgets are gates, not quotas — a risky change may cross one, and says in a clause why the cheap path was not enough.
 
+## Updating
+
+```bash
+git pull
+python scripts/install.py
 ```
 
-Replace the destination with wherever you installed it, then restart your agent or start a new session.
+The installer writes to wherever it already finds an install, so an update is the same command as the install. Restart your agent or start a new session afterwards; a running session keeps the skill it loaded.
 
 ## Versioning
 

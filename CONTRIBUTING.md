@@ -56,17 +56,18 @@ skills/Eniac/
     agents-md/ cursor/ copilot/ windsurf/ cline/ zed/ gemini/
     continue/ aider/ junie/ generic/    — GENERATED, do not edit by hand
 scripts/
+  install.py                   — the installer: skill folders and adapters, one table
   check_skill.py               — structural checks, budget, compact coverage
   build_adapters.py            — regenerates the rule adapters from _source/core.md
   run_evals.py                 — runtime-neutral behavioural eval harness
   compare_evals.py             — runs both arms and attributes the difference
-  install_adapter.py           — copies an adapter to the path its runtime reads
 evals/
   cases.json                   — behavioural cases with discriminating assertions
   trigger.json                 — should-fire / should-not-fire queries for the description
   README.md                    — how to run them and how to write one
 templates/
   house-rules.template.md      — an organization's own rules, at precedence level 3
+install.sh install.ps1         — wrappers that find a Python and run scripts/install.py
 INSTALL.md                     — per-runtime installation
 ADOPTION.md                    — team and fleet rollout, versioning, customization
 ```
