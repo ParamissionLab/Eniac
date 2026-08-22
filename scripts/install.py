@@ -13,6 +13,8 @@ once, here, and never retyped.
     python scripts/install.py --runtime claude      # one runtime, user-wide
     python scripts/install.py --project ../my-app   # into that repository, checked in
     python scripts/install.py --runtime cursor --project ../my-app     # an adapter
+    python scripts/install.py --runtime kiro        # adapter, user-wide where
+                                                    # the runtime documents one
     python scripts/install.py --into ~/.config/some-agent/skills
     python scripts/install.py --dry-run             # print the plan, touch nothing
     python scripts/install.py --uninstall
@@ -68,27 +70,36 @@ SKILL_RUNTIMES: dict[str, dict[str, str]] = {
 # Runtimes that read a standing instruction file: adapter under `skills/Eniac/adapters/`
 # -> where that runtime reads it, relative to the repository receiving it. Generated from
 # one source (scripts/build_adapters.py), so the rules cannot drift between runtimes.
+#
+# `user` is the same runtime's user-wide path, present only where that runtime documents
+# one. Most do not: their rules file is a project artifact by design, checked in so a team
+# shares it, and inventing a home-directory path for those would install a file nothing
+# reads. `home` is the directory whose existence suggests the runtime is on this machine -
+# a hint for what to offer, never a reason to write anything.
 ADAPTER_RUNTIMES: dict[str, dict[str, str]] = {
     "agents-md": {"label": "AGENTS.md convention (Codex, Gemini CLI, Windsurf, Jules, Amp)",
-                  "src": "agents-md/AGENTS.example.md", "dest": "AGENTS.md"},
+                  "src": "agents-md/AGENTS.example.md", "dest": "AGENTS.md",
+                  # Codex reads ~/.codex/AGENTS.md as personal defaults for every repo.
+                  "user": ".codex/AGENTS.md", "home": ".codex"},
     "cursor": {"label": "Cursor", "src": "cursor/eniac.mdc",
-               "dest": ".cursor/rules/eniac.mdc"},
+               "dest": ".cursor/rules/eniac.mdc", "home": ".cursor"},
     "copilot": {"label": "GitHub Copilot", "src": "copilot/copilot-instructions.md",
                 "dest": ".github/copilot-instructions.md"},
     "windsurf": {"label": "Windsurf", "src": "windsurf/eniac.md",
-                 "dest": ".windsurf/rules/eniac.md"},
+                 "dest": ".windsurf/rules/eniac.md", "home": ".windsurf"},
     "cline": {"label": "Cline, Roo Code", "src": "cline/.clinerules", "dest": ".clinerules"},
     "zed": {"label": "Zed", "src": "zed/rules.md", "dest": ".rules"},
     "gemini": {"label": "Gemini CLI, Gemini Code Assist", "src": "gemini/GEMINI.md",
-               "dest": "GEMINI.md"},
+               "dest": "GEMINI.md", "user": ".gemini/GEMINI.md", "home": ".gemini"},
     "continue": {"label": "Continue", "src": "continue/eniac.md",
-                 "dest": ".continue/rules/eniac.md"},
+                 "dest": ".continue/rules/eniac.md", "home": ".continue"},
     "aider": {"label": "Aider (then: aider --read CONVENTIONS.md)",
               "src": "aider/CONVENTIONS.md", "dest": "CONVENTIONS.md"},
     "junie": {"label": "JetBrains Junie", "src": "junie/guidelines.md",
               "dest": ".junie/guidelines.md"},
     "kiro": {"label": "Kiro", "src": "kiro/eniac.md",
-             "dest": ".kiro/steering/eniac.md"},
+             "dest": ".kiro/steering/eniac.md", "user": ".kiro/steering/eniac.md",
+             "home": ".kiro"},
     "generic": {"label": "any single instruction field (API, custom assistant)",
                 "src": "generic/system-prompt.md", "dest": "eniac-system-prompt.md"},
 }
@@ -158,6 +169,15 @@ def paint(text: str, *styles: str, err: bool = False) -> str:
     if not styles or not (COLOR_ERR if err else COLOR):
         return text
     return f"\033[{';'.join(ANSI[s] for s in styles)}m{text}\033[0m"
+
+
+def under_home(path: Path) -> bool:
+    """`Path.is_relative_to` arrived in 3.9, and the wrappers promise 3.8."""
+    try:
+        path.relative_to(Path.home())
+        return True
+    except ValueError:
+        return False
 
 
 def show_path(path: Path) -> str:
@@ -423,11 +443,32 @@ def uninstall_skill(dest: Path, *, force: bool, dry_run: bool) -> int:
 
 # ------------------------------------------------------------------- adapter files
 
-def install_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
+def adapter_destination(key: str, project: Path | None) -> Path | None:
+    """Where this adapter goes: inside a repository, or the runtime's user-wide path.
+
+    Returns None when asked for a user-wide install the runtime does not document one
+    for - which is most of them, because a rules file that a team shares is a project
+    artifact on purpose. Guessing a home-directory path there installs a file nothing
+    ever reads, and nothing errors to say so.
+    """
+    meta = ADAPTER_RUNTIMES[key]
+    if project is not None:
+        return project / meta["dest"]
+    return Path.home() / meta["user"] if meta.get("user") else None
+
+
+def installed_elsewhere(project: Path | None) -> list[str]:
+    """Adapter runtimes whose config directory exists here - a hint, not an install."""
+    if project is not None:
+        return []
+    return [key for key, meta in ADAPTER_RUNTIMES.items()
+            if meta.get("home") and (Path.home() / meta["home"]).is_dir()]
+
+
+def install_adapter(repo_root: Path, key: str, dest: Path, *, force: bool,
                     dry_run: bool) -> int:
     meta = ADAPTER_RUNTIMES[key]
     src = repo_root / "skills" / "Eniac" / "adapters" / meta["src"]
-    dest = project / meta["dest"]
 
     if not src.is_file():
         return refuse(f"missing adapter {meta['src']}",
@@ -451,15 +492,20 @@ def install_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
         shutil.copyfile(src, dest)
     item("ok", f"{'would install' if dry_run else 'installed'} {meta['src']}", "green",
          trail=show_path(dest))
-    detail("adjust the path inside it to wherever skills/Eniac lives in that repository")
+    # The rules are inline in every adapter; the pointer to the full text is depth on
+    # demand. Worth saying only where it resolves - inside a repository that vendors the
+    # skill - because a user-wide copy has no repository around it to point into.
+    if meta.get("user") and under_home(dest):
+        detail("the rules are inline; the pointer to the full text needs a checkout")
+    else:
+        detail("adjust the path inside it to wherever skills/Eniac lives in that repository")
     return 0
 
 
-def uninstall_adapter(repo_root: Path, key: str, project: Path, *, force: bool,
+def uninstall_adapter(repo_root: Path, key: str, dest: Path, *, force: bool,
                       dry_run: bool) -> int:
     meta = ADAPTER_RUNTIMES[key]
     src = repo_root / "skills" / "Eniac" / "adapters" / meta["src"]
-    dest = project / meta["dest"]
     if not dest.exists():
         item("same", "not installed", "dim", trail=show_path(dest))
         return 0
@@ -536,12 +582,17 @@ def do_list(project: Path | None) -> int:
     for key, meta in ADAPTER_RUNTIMES.items():
         state = confirmed.get(key, "confirmation unknown without a checkout")
         styles: tuple[str, ...] = ("yellow",) if state.startswith("path not") else ()
-        if project is not None and (project / meta["dest"]).exists():
+        # Show the destination this invocation would actually use, so the table answers
+        # "where does it go" rather than "where would it go in some other invocation".
+        dest = adapter_destination(key, project)
+        where = show_path(dest) if dest and project is None else meta["dest"]
+        if dest is not None and dest.exists():
             state, styles = f"file present, {state}", ("green",)
-        rows.append((key, meta["dest"], state, styles))
-    table(rows, ("runtime", "destination in that repository", "state"))
+        rows.append((key, where, state, styles))
+    table(rows, ("runtime", "destination", "state"))
     print()
-    detail("adapters need --project: the repository that receives the file")
+    detail("a destination shown as ~/... installs user-wide with no --project;")
+    detail("the rest are project files, so name the repository with --project")
     detail("destinations come from each runtime's own docs, not from an install done here,")
     detail("and a wrong one fails silently. Confirm one and record it: set `verified`")
     detail("for that target in build_adapters.py.")
@@ -561,7 +612,7 @@ def main() -> int:
                          f"Default: every skill runtime detected here")
     ap.add_argument("--project", metavar="PATH",
                     help="the repository that receives this, instead of the user's home. "
-                         "Required for an adapter")
+                         "Required for adapters whose runtime documents no user-wide path")
     ap.add_argument("--into", metavar="PATH",
                     help="an explicit skills directory, for a runtime not in the table")
     ap.add_argument("--source", metavar="PATH",
@@ -609,9 +660,11 @@ def main() -> int:
         return refuse(f"unknown runtime {unknown[0]!r}", "Run --list to see the names.")
 
     adapters = [k for k in keys if k in ADAPTER_RUNTIMES]
-    if adapters and project is None:
-        return refuse(f"--project is required for {adapters[0]}",
-                      "An adapter is a file inside a repository, so it needs one.")
+    homeless = [k for k in adapters if adapter_destination(k, project) is None]
+    if homeless:
+        return refuse(f"--project is required for {homeless[0]}",
+                      "That runtime reads its rules from inside a repository and",
+                      "documents no user-wide path, so name the repository it goes in.")
 
     skills = [k for k in keys if k in SKILL_RUNTIMES]
     if not keys and not args.into:
@@ -648,11 +701,13 @@ def main() -> int:
                                       backup=args.backup)
     for key in adapters:
         title(ADAPTER_RUNTIMES[key]["label"])
+        dest = adapter_destination(key, project)
+        assert dest is not None  # `homeless` above rejected the ones with nowhere to go
         if args.uninstall:
-            failures += uninstall_adapter(repo_root, key, project, force=args.force,
+            failures += uninstall_adapter(repo_root, key, dest, force=args.force,
                                           dry_run=args.dry_run)
         else:
-            failures += install_adapter(repo_root, key, project, force=args.force,
+            failures += install_adapter(repo_root, key, dest, force=args.force,
                                         dry_run=args.dry_run)
 
     if failures:
@@ -661,7 +716,28 @@ def main() -> int:
     if args.dry_run:
         print(f"\n  {paint(MARKS['warn'] + ' dry run:', 'yellow')} "
               f"{paint('nothing above was written', 'dim')}")
-    elif not args.uninstall:
+    # A default run installs the skill folder and stops, which looks like "it missed my
+    # other IDEs" when the truth is that those read a file inside a repository and the
+    # installer will not write into one it was not pointed at. Saying so beats being
+    # silently correct.
+    if not args.uninstall and not adapters:
+        others = [k for k in installed_elsewhere(project) if k not in skills]
+        if others:
+            print(f"\n  {paint('Also here', 'cyan', 'bold')}  these read a standing "
+                  f"instruction file rather than a skill:")
+            rows = []
+            for key in others:
+                dest = adapter_destination(key, None)
+                command = f"--runtime {key}" if dest else f"--runtime {key} --project ."
+                rows.append((key, command,
+                             show_path(dest) if dest else ADAPTER_RUNTIMES[key]["dest"]))
+            keyw = max(len(r[0]) for r in rows)
+            cmdw = max(len(r[1]) for r in rows)
+            for key, command, where in rows:
+                print(f"        {paint(key.ljust(keyw), 'bold')}  "
+                      f"{paint(command.ljust(cmdw), 'dim')}  {paint(where, 'dim')}")
+
+    if not args.uninstall and not args.dry_run:
         print(f"\n  {paint('Next', 'cyan', 'bold')}  restart the agent, then ask it:")
         print(f"        {paint(QUESTION, 'bold')}")
         for line in ("A loaded skill names itself. A generic answer means the file is not",

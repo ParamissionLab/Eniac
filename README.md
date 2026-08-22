@@ -230,7 +230,7 @@ Either way it copies only what changed and removes reference files an older vers
 python scripts/install.py --runtime cursor --project ../my-app
 ```
 
-All twelve adapters are generated from one source, so the rules are identical across runtimes and cannot drift apart. An existing instruction file is never overwritten: a project's own rules outrank this skill, so merging is your decision.
+Kiro, Gemini CLI, and Codex also document a user-wide path, so those install without `--project` and apply everywhere. All twelve adapters are generated from one source, so the rules are identical across runtimes and cannot drift apart. An existing instruction file is never overwritten: a project's own rules outrank this skill, so merging is your decision.
 
 **A runtime with one instruction field** — custom GPTs, assistant configurations, chat system prompts — paste `skills/Eniac/adapters/eniac-compact.md`. It is self-contained: a distillation of every rule, without the depth the references carry.
 

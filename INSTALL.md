@@ -130,6 +130,23 @@ python scripts/install.py --runtime cursor --project ../my-project --uninstall
 It refuses to overwrite an existing file, because a project's own rules outrank this skill.
 Keep `skills/Eniac/` in the repository so the pointer inside the adapter resolves.
 
+Three of these runtimes document a **user-wide** path as well, so `--project` is optional
+for them and the file applies to every repository you open:
+
+| Runtime | User-wide destination |
+| --- | --- |
+| Kiro | `~/.kiro/steering/eniac.md` |
+| Gemini CLI | `~/.gemini/GEMINI.md` |
+| Codex, via the AGENTS.md adapter | `~/.codex/AGENTS.md` |
+
+```bash
+python scripts/install.py --runtime kiro        # no --project needed
+```
+
+The rest are project files on purpose — a team's rules belong in the repository where
+everyone gets them — so the installer asks which repository rather than inventing a
+home-directory path that runtime would never read.
+
 | Runtime | Copy this adapter | To |
 | --- | --- | --- |
 | Codex, Gemini CLI, Windsurf, Antigravity, Jules, Amp, and others on the convention | `adapters/agents-md/AGENTS.example.md` | `AGENTS.md` |
