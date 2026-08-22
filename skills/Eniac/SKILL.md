@@ -215,6 +215,12 @@ why, because the failure this ordering prevents is the phase nobody decided to s
 Whatever the route, when the work turns on a code judgment call rather than on
 correctness, load `references/craft.md`.
 
+And whatever the route, when it turns on **whether a condition actually holds** — code
+checked against a written rule, a compound boolean, a boundary word like "at least", a
+case space that has to be covered rather than sampled — load `references/reasoning.md`.
+That kind of question is answered by enumeration, and reading the code carefully is not
+enumeration. It reliably feels sufficient and reliably is not.
+
 Two conditions change the job itself rather than its difficulty. When the change will
 meet **real traffic** — remote calls, real data volumes, partial failure, on-call — load
 `references/production.md`. When the work sits inside an **organization's constraints** —

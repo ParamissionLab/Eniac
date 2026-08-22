@@ -65,6 +65,49 @@ Then state which combinations are **impossible, and why**. An "impossible" with 
 attached is the single most common origin of a production surprise — it usually means
 "I did not think about it", which is a different claim entirely.
 
+## Check It Against The Written Rule
+
+When a spec, policy, or contract exists and the question is whether the code implements
+it, the reliable method is mapping, not reading. Reading finds the defects that look like
+defects, which is a different set from the defects that are there.
+
+Build the row-per-clause table. Every clause of the rule gets one row, the code that
+implements it, and the verdict:
+
+```text
+Clause                              Implemented at        Verdict
+account at least 180 days           line 13  age < 180    correct — 180 passes
+spent at least 500                  line 20  spend > 500  WRONG — excludes exactly 500
+staff exempt from 1 and 3           line 10-11            correct
+```
+
+The value is in the rows you cannot fill. A clause with no line number is unimplemented,
+and a line with no clause is behaviour nobody asked for — both are invisible to a read
+that goes file-first instead of rule-first.
+
+**Boundary words carry the operator, and they are the highest-yield place to look.**
+"At least" and "no fewer than" are `>=`. "More than" and "over" are `>`. "Up to" and "at
+most" are `<=`. "Between" is undefined until someone says whether the ends are included.
+When a spec states its own examples — *exactly 500 qualifies* — that sentence outranks
+any reading of the prose around it, and a mismatch there is a defect with no argument
+available.
+
+**A compound condition needs its rows enumerated, not parsed.** `A and not (B or C)`
+read fluently is a guess; the four or eight rows are an answer. This is exactly the shape
+fast thinking handles worst — negation, mixed `and`/`or`, and De Morgan's transformation
+all read as obvious and are wrong at a rate that has nothing to do with how obvious they
+felt.
+
+**Before filing a defect, construct the input that demonstrates it.** A suspicious
+operator you cannot make fail is not a defect — it is a pattern match, and filing it costs
+the reader more than saying nothing. This is the discipline that separates checking from
+scanning: two comparisons can look identical and sit on opposite sides of a boundary, so
+one is broken and the other is correct, and only the constructed case tells you which.
+
+Run the demonstrating inputs rather than arguing them, whenever the code can be executed
+at all. A table of cases you claim would fail is an argument; the same table with observed
+output is evidence, and `reality-testing.md` explains why nothing weaker closes the loop.
+
 ## Find The Invariant
 
 "Lock the invariant" is only useful advice if you can find one. Two questions produce most

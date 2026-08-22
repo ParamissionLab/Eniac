@@ -104,6 +104,14 @@ Leaving these out is what makes the real findings readable:
 And the inverse rule: **never soften a supported finding to be agreeable.** Evidence is
 evidence, and a finding withheld for tone is a finding the user paid for and did not get.
 
+**Record what you considered and rejected, in one line each.** A reader cannot tell the
+difference between a candidate you examined and dismissed and one you never noticed, and
+they will assume the second. Three or four lines at the end — *"considered and not filed:
+no `__init__.py` (works as a namespace package here); no type hints (consistent with the
+rest of the repo); 'should be Postgres' (no evidence of present harm)"* — costs almost
+nothing and turns silence into a decision. It also protects you from re-examining the
+same candidates on the next pass.
+
 ## Questions
 
 Separate two kinds explicitly, because they demand different things from the reader:
