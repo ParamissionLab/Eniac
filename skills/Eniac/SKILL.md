@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, designing an interface, deploying, shipping — and for architecture, planning, triage, incident response, and code audits. Use it even when the user only says 'fix this', 'add a feature', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints."
+description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, designing an interface, deploying, shipping — and for architecture, planning, triage, incident response, code audits, and whole-codebase health scans across reliability, security, and maintainability. Use it even when the user only says 'fix this', 'add a feature', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints."
 license: Apache-2.0
 ---
 
@@ -215,6 +215,8 @@ Two rules keep the ladder honest:
   diff. Unrequested work spends the user's tokens and their review attention. The
   exception is debt sitting *in the path* — code you must reshape before the change can
   be made small. That is tier 3, and it ships as its own commit first (`references/debt.md`).
+  When cleanup *is* the request rather than a temptation, it stops being tier 6 and becomes
+  a route with a scope gate of its own — `references/code-health.md`.
 - **WIP = 1.** Finish or explicitly park one item before starting another. Parking
   means writing down where it stopped and what would prove it done.
 
@@ -253,6 +255,7 @@ Then pick the cheapest route that fits, and load at most what it names.
 | something is measurably slow | **Optimize** | `references/performance.md` |
 | many small mechanical edits | **Batch** | `references/workflows.md#batch` |
 | more than one defect at once — a scan, a bug bash, an audit backlog, a list of failing tests | **Sweep** | `references/defect-sets.md` |
+| the whole codebase is the target — "clean this up", "scan the project", "make it production-grade" | **Health scan** | `references/code-health.md` |
 | a user-facing screen, page, or flow | **Product UI** | `references/workflows.md#product-ui`, then `interface-design.md` when how it *looks* is part of the deliverable |
 | docs are the deliverable — write, audit, or reorganize them | **Document** | `references/documentation.md` |
 | release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship`, then `safety.md` before anything irreversible |
@@ -544,6 +547,7 @@ the work has become a loop.
 - `references/lifecycle.md` — the phase map, plus the two activities nothing else owns: turning a vague ask into criteria, and choosing a shape before building.
 - `references/workflows.md` — the step chain per route, plus the overlay triage table.
 - `references/craft.md` — the code judgment calls: abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
+- `references/code-health.md` — the whole repository as the target: bounding the surface, the reliability/security/maintainability order, the smell catalog, recovering files deleted by accident, proving code dead before deleting it, and the gate between finding and changing.
 - `references/performance.md` — the Optimize chain: measure, identify, fix, verify, guard; the anchor thresholds; keep-or-revert; the attempt ledger.
 - `references/stack-signals.md` — any stack, including one you have never seen: deriving the proof commands, finding the silent failures, what breaks a contract in any language, writing code in an unfamiliar ecosystem.
 - `references/system-types.md` — what kind of system this is and what that changes: how a change reaches a user, whether it can be undone, how late the feedback is, who owns the state, what "works" means, and what you cannot observe.

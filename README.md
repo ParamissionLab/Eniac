@@ -118,6 +118,7 @@ skills/
       lifecycle.md
       workflows.md
       craft.md
+      code-health.md
       reasoning.md
       judgment.md
       findings.md
@@ -171,6 +172,7 @@ templates/
 | `lifecycle.md` | the work is big enough that phase order matters — the map from specify to evolve, turning a vague ask into checkable acceptance criteria, choosing a shape before building, and tracing each criterion to the proof that ran |
 | `workflows.md` | running a route end to end — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — or applying a risk overlay for performance, security, data migration, API contracts, dependencies, concurrency, or observability |
 | `craft.md` | the work turns on code judgment rather than correctness — abstraction timing, naming, error handling, boundaries, concurrency, test design, interface design, deletion, dependencies, commits |
+| `code-health.md` | the target is the whole repository rather than a change — *clean this up*, *scan the project*, *make it production-grade*. Bounds the surface, the depth, and the authority before the first file is opened, then runs reliability, security, and maintainability in that fixed order because a refactor applied to wrong code produces clean wrong code inside a diff large enough to hide it. Carries the reliability families a reading pass can actually find, the line between waste that will exhaust a resource and waste that merely costs time, the check nothing else performs — what the repository expects to exist and does not, and how to tell an accidental deletion from a deliberate one before restoring it — a smell catalog whose middle column is a signal you can run, and the proof required before deleting code, files, or dependencies |
 | `loops.md` | the work is genuinely iterative and the iteration is expensive or open-ended — designing the turn/cost/signal/stop before the first run, the technique for shortening a loop rather than running it more, reading whether it is converging, the three ways a loop ends and why saying which one matters, the outer loop that improves the thing doing the work, and recurring or self-paced runs |
 | `reasoning.md` | the problem itself is hard to hold — framing, decomposition, case partition with proved coverage, finding a checkable invariant, constraint propagation, working backwards, cost reasoning, proof obligations |
 | `judgment.md` | a decision is expensive to get wrong — one-way versus two-way doors, pre-mortem, inversion, disconfirming evidence, base rates, second-order effects, Goodhart's law, when to stop deciding |

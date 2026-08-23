@@ -1,6 +1,6 @@
 {
   "skill": "eniac",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "notes": "Does the description make the skill fire when it should and stay quiet when it should not. The should_trigger=false entries are deliberately near-misses: queries sharing vocabulary with the skill that genuinely need something else. Obviously irrelevant negatives test nothing.",
   "queries": [
     {

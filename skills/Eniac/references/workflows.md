@@ -7,7 +7,7 @@ Load only the one section matching the route you selected — they are independe
 reading the others costs you the budget the route was supposed to save.
 
 > **Owns** — the step chain per route — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — and the overlay triage table.
-> **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; and each overlay's depth to the file its row names.
+> **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; a quality pass whose target is the whole repository rather than a change → `code-health.md`; and each overlay's depth to the file its row names.
 
 ## Contents
 
@@ -23,6 +23,7 @@ reading the others costs you the budget the route was supposed to save.
 - [Product UI](#product-ui) — a user-facing screen, page, or flow
 - Optimize — something is measurably slow; the chain for it lives in `performance.md`
 - Document — docs are the deliverable; the chain for it lives in `documentation.md`
+- Health scan — the whole codebase is the target; the chain for it lives in `code-health.md`
 - [Ship](#ship) — release, deploy, migrate
 - [Overlays](#overlays) — performance, security, data, contracts, deps, concurrency, observability
 
@@ -223,6 +224,10 @@ wrong review costs more than no review.
 When receiving review feedback, check the claim against the system before agreeing or
 defending. Agreeing with a wrong review is as expensive as ignoring a right one.
 
+When the target is not a diff but the whole repository — *review the project*, *find
+everything wrong with it* — this is not a bigger review. It has no bounded surface and no
+scope gate, and both have to be set before reading: `code-health.md`.
+
 ---
 
 ## Audit
@@ -244,7 +249,9 @@ understand anything.
    separate. A handoff built on blurred inference is worse than no handoff.
 5. **Blast radius** for anything you propose.
 
-Mapping never authorizes redesign, and a sensitive topic alone never forces Full.
+Mapping never authorizes redesign, and a sensitive topic alone never forces Full. When an
+audit turns into "and fix what you find", it has become a different route with a different
+gate — `code-health.md`.
 
 Steps 2 and 4 are where this route is usually weakest. `architecture.md` carries what to
 look *for* — the five assessment dimensions, how to trace a flow before calling it a

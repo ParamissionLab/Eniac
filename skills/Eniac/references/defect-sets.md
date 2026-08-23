@@ -19,7 +19,7 @@ of bug is *gone* rather than that one instance is fixed. Do not load it for one 
 one cause — that is the Diagnose chain, and running set logic over a set of one is ceremony.
 
 > **Owns** — more than one defect at once: why a scan is structurally incomplete rather than insufficiently thorough, finding the generator behind the instances, enumerating a defect class instead of sampling it, the interaction graph that decides fix order, where new defects come from during a fix sweep, closing a class rather than a ticket, and the frontier that keeps residue from being silent.
-> **Defers** — the chain for a single bug → `workflows.md#diagnose`; enumeration and case-coverage technique → `reasoning.md`; writing findings up for a reader → `findings.md`; proving any one fix → `reality-testing.md`; applying one known rule across many files → `workflows.md#batch`; the avoidance patterns that fire on attempt seven → `defenses.md`; deciding when the sweep has stopped learning → `loops.md#the-three-stops`.
+> **Defers** — the chain for a single bug → `workflows.md#diagnose`; enumeration and case-coverage technique → `reasoning.md`; writing findings up for a reader → `findings.md`; proving any one fix → `reality-testing.md`; applying one known rule across many files → `workflows.md#batch`; the avoidance patterns that fire on attempt seven → `defenses.md`; deciding when the sweep has stopped learning → `loops.md#the-three-stops`; a scan of the whole repository that has to generate its own defect list first → `code-health.md`.
 
 ## Contents
 

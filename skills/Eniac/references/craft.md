@@ -8,7 +8,7 @@ who touches it in six months?** That person is usually the user, sometimes you, 
 they will not have the context you have right now.
 
 > **Owns** — the code judgment calls — abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, comments, designing an interface others use, taking a dependency, commits.
-> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`.
+> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`; proving a whole set of code dead during a cleanup sweep → `code-health.md`.
 
 ## Make The Change Easy, Then Make The Easy Change
 
@@ -142,7 +142,9 @@ at a time and production does not.
   reason is not evidence there is none.
 - Code you *think* is unused needs evidence first. Code proven unreachable is worth
   removing — dead code is read, trusted, and maintained by people who do not know it is
-  dead.
+  dead. Deleting a whole set of it at once — unused files, dependencies, and exports in one
+  pass — needs the proof procedure in `code-health.md`, because grep finding nothing is one
+  modality reporting nothing.
 
 ## Make Illegal States Unrepresentable
 

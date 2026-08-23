@@ -53,11 +53,17 @@ VENDOR_FILE_ALLOWED = {
 # small. Raise it when the content earns it, in a commit that says why.
 # Raised from 560 when defect-sets.md landed. Three capability additions - system types,
 # collaboration, defect sets - each earned a hook in the always-loaded plane, and a hook
-# that only names a file does not fire on its own. The char budget is the real guard and
-# sits at roughly 38k of 40k; this number exists to make growth a decision rather than a
-# drift, so move it in a commit that says why.
-SKILL_MAX_LINES = 580
-SKILL_MAX_CHARS = 40_000
+# that only names a file does not fire on its own. The char budget is the real guard;
+# this number exists to make growth a decision rather than a drift, so move it in a
+# commit that says why.
+#
+# Raised again from 580/40k when code-health.md landed. A whole-codebase quality pass -
+# "clean this up", "scan the project" - was the one common request with no route, so it
+# arrived as an unbounded Sweep or an unrequested refactor. It earned four lines: a route
+# row, a map entry, and a clause on the triage ladder saying that cleanup as the *request*
+# is a route with its own scope gate rather than tier-6 work done anyway.
+SKILL_MAX_LINES = 590
+SKILL_MAX_CHARS = 41_000
 
 # `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
 # one file that drifts. Every H2 in SKILL.md maps to the compact section carrying it, or to

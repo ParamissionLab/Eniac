@@ -22,6 +22,7 @@ skills/Eniac/
     lifecycle.md               — specify, design, traceability, phase gates
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: abstraction, errors, concurrency, tests
+    code-health.md             — whole-repo pass: axes, smells, dead code, file recovery
     loops.md                   — loop design, shortening, convergence, stops, outer loop
     reasoning.md               — the method slow mode runs: frame, decompose, prove
     judgment.md                — deciding well when being wrong is expensive

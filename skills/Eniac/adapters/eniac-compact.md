@@ -174,6 +174,7 @@ Pick the cheapest that fits.
 | understand a system | **Audit** — inventory → map → trace one real flow → findings with fact/inference separated |
 | measurably slow | **Optimize** — see below |
 | many mechanical edits | **Batch** — one rule, enumerate, pilot, apply in verified groups |
+| the whole codebase is the target | **Health scan** — see below |
 | a user-facing surface | **Product UI** — see below |
 | docs are the deliverable | **Document** — see below |
 | release, deploy, migrate | **Ship** — authorization, dry run, smallest increment, rollback stated first |
@@ -462,6 +463,57 @@ untrusted content, private data, and an outbound channel in one context — that
 is how injected text exfiltrates. Model output is untrusted input to whatever consumes it.
 Ask for a schema rather than prose you will parse, and test by property and eval set
 rather than by equality.
+
+## Codebase health
+
+*Clean this up*, *scan the project*, *make it production-grade* — a request with no named
+defect and no named file, so it has no stopping point and no scope gate until you set one.
+
+Bound it before reading: the **surface** (which paths, generated code and vendored
+dependencies excluded by name), the **depth** (report only, or report and fix), and the
+**authority** (what may change without asking). A mandate to clean up reads like blanket
+permission and is not one.
+
+Then run the axes in order — **reliability, security, maintainability** — because a
+refactor applied to code that is wrong produces clean wrong code inside a diff large enough
+to hide the wrongness, and restructuring is the only one of the three that can create
+defects while it runs.
+
+- **Reliability** finds wrong conditions, swallowed failures, partial writes, resources
+  released only on the happy path, work repeated inside a loop, and version or platform
+  assumptions the manifest does not promise. Every finding names where the bad value came
+  from; a fix that only adds a guard at the crash site is a symptom fix until argued
+  otherwise. Never make a failing check pass by changing the check.
+- **Waste divides in two.** Unbounded growth — a leak, a cache with no eviction, an N+1
+  against a shared database — is a reliability finding needing no benchmark, because the
+  failure is eventual and certain. *This could be faster* needs a before-and-after number
+  or it is not a finding.
+- **Check what is absent.** Imports resolving to nothing, a script CI names that is not
+  there, a gap in a migration sequence. Then `git log --diff-filter=D --name-only`, and
+  `git reflog` or `git stash list` for work that never reached a commit. Deleted with its
+  tests and references means deliberate; vanished while imports still name it means
+  accidental, usually a merge that took the wrong side. **A file rewritten from its name is
+  not a recovered file** — if history does not have it, say it is unrecoverable.
+- **Security at this altitude buys enumeration, not depth.** Entry points, then
+  authorization per entry point checked on the object, then untrusted input reaching a
+  sink, then secrets and personal data in logs and history, then the dependency audit. An
+  advisory on an unreachable path is still a deadline. Never write that the codebase is
+  secure — write what you checked and what you did not.
+- **A smell is a question, not a verdict.** God class, long method, duplication, tight
+  coupling, feature envy, magic numbers, long parameter lists, an abstraction with one
+  implementation. Each earns a change when it charges interest or sits in the path of
+  requested work — not because it is unpleasant to read. Behaviour-preserving commits stay
+  strictly separate from behaviour changes.
+- **Prove it dead before deleting it.** Search strings as well as symbols, and data as well
+  as code: reflection and dynamic dispatch, DI containers and registries, config values and
+  feature flags, framework conventions that discover by filename, serialized class names in
+  a database or queue, packaging entry points, CI and deployment scripts, docs and
+  templates. Grep finding nothing is one modality reporting nothing. When reachability
+  cannot be settled, log a call for one release and delete on evidence. Deletions ship as
+  their own commit saying what proved it dead. A package used only transitively is an
+  undeclared dependency — declare it rather than drop it.
+- **Hand back a ranked backlog plus a small, defensible diff**, split into fixed, proposed,
+  and reported. Say what you did not scan. A count of fixes is not a result.
 
 ## Technical debt
 

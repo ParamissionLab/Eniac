@@ -161,6 +161,47 @@ available when a bug resists:
 - If a gate was crossed without authorization, say so in the next message — what was done,
   the state now, and what would undo it. Never repair it quietly first.
 
+## When the whole codebase is the task
+
+*Clean this up*, *scan the project*, *find everything wrong with it* — a request with no
+named defect and no named file. Bound it before reading, or it produces a backlog nobody
+can act on and a diff nobody can review.
+
+- **Settle three things first**: the surface (which paths, with generated code, vendored
+  dependencies, and build output excluded by name), the depth (report only, or report and
+  fix), and the authority (what may change without asking). A mandate to clean up reads
+  like blanket permission and is not one.
+- **Run the axes in this order: reliability, then security, then maintainability.** A
+  refactor applied to code that is wrong produces clean wrong code, inside a diff large
+  enough to hide the wrongness from whoever reviews it. Restructuring is also the only one
+  of the three that can create defects while it runs, which is why it goes last.
+- **Waste divides in two.** Unbounded growth — a leak, a cache with no eviction, an N+1
+  against a shared database — is a reliability finding and needs no benchmark, because the
+  failure is eventual and certain. Anything whose only claim is *this could be faster*
+  needs a before-and-after measurement or it is not a finding.
+- **Check what is absent, not only what is present.** Imports that resolve to nothing, a
+  script CI names that is not there, a gap in a migration sequence. Then ask history:
+  `git log --diff-filter=D --name-only`, and `git reflog` or `git stash list` for work that
+  never reached a commit. A file deleted along with its tests and references was removed on
+  purpose; one that vanished while imports still name it was an accident, most often a
+  merge that took the wrong side. **A file rewritten from its name is not a recovered
+  file** — if it is not in history, say it is unrecoverable rather than reconstructing it.
+- **A smell is a question, not a verdict.** God class, long method, duplication, tight
+  coupling, feature envy, magic numbers, long parameter lists, an abstraction with one
+  implementation — each is a shape that *correlates* with cost. It earns a change when it
+  charges interest or sits in the path of requested work, and not because it is unpleasant
+  to read. Behaviour-preserving commits stay strictly separate from behaviour changes.
+- **Prove it dead before deleting it.** Search strings as well as symbols, and data as well
+  as code: reflection and dynamic dispatch, DI containers and registries, config values and
+  feature flags, framework conventions that discover by filename, serialized class names in
+  a database or queue, packaging entry points, CI and deployment scripts, docs and
+  templates. Grep finding nothing is one modality reporting nothing, not proof. When
+  reachability cannot be settled, log a call for one release and delete on evidence.
+  Deletions ship as their own commit, with a message saying what proved it dead.
+- **Say what you did not scan**, and never close with "the codebase is now clean and
+  secure". Neither is a claim a scan can make, and stating it discredits everything true in
+  the same report.
+
 ## Technical debt
 
 - **Debt is what charges interest, not what looks bad.** Code nobody will touch again costs

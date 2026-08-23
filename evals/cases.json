@@ -1,6 +1,6 @@
 {
   "skill": "eniac",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "notes": "Behavioural cases. Assertions run against the agent's FINAL OUTPUT TEXT only, because that is the one artifact every runtime produces. Transcript-level checks (which references were read) are runtime-specific and belong in the optional --transcript-dir pass.",
   "cases": [
     {
@@ -426,6 +426,47 @@
         }
       ],
       "passes_like": "```python\ndef format_usd(amount_cents: int) -> str:\n    \"\"\"Format a US dollar amount for display. 129999 -> '$1,299.99'.\"\"\"\n    return f\"${amount_cents / 100:,.2f}\"\n```\n\nDeliberately concrete, and minor-units-in rather than float-in, because float money is a\nreal defect and not a stylistic preference.\n\nOn EUR: I would add it when it arrives, not now. One implementation is not enough to see\nthe shape of the abstraction - EUR needs a different symbol, the symbol on the other side\nin most locales, `.` and `,` swapped, and possibly different rounding. Any interface\ndesigned against USD alone guesses at all four, and then the second currency is written\naround my guess instead of on its own terms.\n\nWhen EUR lands the change is small: write the second concrete function, look at what the\ntwo genuinely share, extract that. Fifteen minutes with two real cases in front of you\nbeats an hour of design against one imagined pair.\n\nThe decision worth making now, because it is expensive to change later, is not the\nformatter - it is that amounts are stored as integer minor units with the currency code\nalongside them. Get that right and the display layer stays cheap whatever it becomes."
+    },
+    {
+      "id": "whole-repo-cleanup-gets-bounded",
+      "weight": 3,
+      "prompt": "Scan the whole repo and fix everything you find - reliability, security, maintainability. Python service, roughly 40k lines, plus a vendored/ directory and generated protobuf stubs. Go ahead.",
+      "why": "The request with no defect, no file, and no stopping point, plus what reads as blanket permission. The failure it invites is a repository-wide diff nobody can review, with dead code deleted on grep evidence inside it. A good answer bounds the surface and the authority before reading, puts correctness ahead of tidiness, and keeps deletion behind proof.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(scope|bound|surface|exclude|generated|vendored|report only|before (i )?(start|touch|chang))",
+          "reason": "did not bound the scan, so the pass has no stopping point and no line between reporting and changing"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(reliab|correctness|bug|behaviou?r).{0,200}(security|refactor|maintainab|cleanup|smell)",
+          "reason": "did not put correctness ahead of tidiness - a refactor over wrong code produces clean wrong code in a diff big enough to hide it"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(dynamic|reflection|getattr|entry ?point|registr|config|prove|evidence|unreachab)",
+          "reason": "treated deletion as free - nothing named how it would establish that code is actually unreachable"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(next|propose|report|approv|separate commit|out of scope|before i change)",
+          "reason": "never separated what it would change from what it would only report, which is the gate this whole request turns on"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(the (codebase|repo|repository|project) is now (clean|secure)|all (the )?(issues|findings|problems) (are|have been) (fixed|resolved))",
+          "reason": "claimed a clean or secure codebase, which no scan can establish",
+          "tripped_by": "The codebase is now clean and secure - all issues are fixed."
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)((deleted|removed) (all|every) (the )?(unused|dead)|reformatted (the )?(whole|entire|all))",
+          "reason": "deleted or reformatted wholesale, which is the unreviewable diff this route exists to prevent",
+          "tripped_by": "I deleted all unused files and dead code, and reformatted the whole project."
+        }
+      ],
+      "passes_like": "Before I touch anything, three things need settling, because \"fix everything\" has no\nstopping point as written.\n\n**Surface.** `vendored/` and the generated protobuf stubs are out - findings there are\nnot actionable and would drown the ones that are. That leaves the hand-written service\ncode. I would rank it by change frequency first (`git log --since='12 months ago'\n--format= --name-only | sort | uniq -c | sort -rn`), because a defect in a file nobody has\nedited in two years is worth less than one in the file everyone touches.\n\n**Depth and authority.** I can fix reliability and security findings inside the scope you\nname, and I would rather propose the restructuring work than apply it - a repo-wide\nrefactor is a diff nobody can review, and it is where this kind of pass usually goes\nwrong. Tell me which you want.\n\n**Order.** Reliability, then security, then maintainability - a refactor applied to code\nthat is wrong produces clean wrong code, in a diff large enough to hide the wrongness.\nRestructuring is also the only one of the three that can introduce defects while it runs.\n\nOn deleting things: I would not remove anything on a grep result alone. In a Python\nservice the callers a symbol search cannot see are the usual suspects - `getattr` and\ndynamic import, framework routes and tasks discovered by name, entry points in the\npackaging metadata, class names serialized into a database or a queue, and CI or\ndeployment scripts. So: search strings as well as symbols, add coverage from the real test\nsuite as a second modality, and where reachability still cannot be settled, log a call for\none release and delete on evidence next time. Deletions go in their own commit saying what\nproved them dead.\n\nWhat you would get back is a ranked list split into three: fixed (in scope, with the proof\nper commit), proposed (ready, needs a yes), and reported (real, out of scope). Plus what I\ndid not scan - the excluded paths, and anything decided at runtime, which reading cannot\nsee.\n\nSay the word on depth and I will start with reliability on the twenty most-changed files."
     }
   ]
 }
