@@ -6,8 +6,8 @@ engineering it is the difference between a change and a result.
 Load this when choosing how far to verify, when separating a regression you caused from
 one you inherited, or when deciding what actually closes a task.
 
-> **Owns** — what counts as evidence — the verification ladder, baseline before regression, proof by change type, truthful reporting vocabulary, what to do when you cannot run it, common false proofs, closing criteria.
-> **Defers** — what a test should assert → `craft.md#tests`; proving a performance change → `performance.md`; proving nondeterministic output → `llm-systems.md#testing-something-nondeterministic`; which command proves anything in this stack → `stack-signals.md`.
+> **Owns** — what counts as evidence — the verification ladder, baseline before regression, proof by change type, the adversarial pass that runs before a done claim, truthful reporting vocabulary, what to do when you cannot run it, common false proofs, closing criteria.
+> **Defers** — what a test should assert → `craft.md#tests`; proving a performance change → `performance.md`; proving nondeterministic output → `llm-systems.md#testing-something-nondeterministic`; which command proves anything in this stack → `stack-signals.md`; attacking a *plan* rather than a finished change → `judgment.md#pre-mortem`; attacking a whole system on an attacker's terms → `security.md#reviewing-for-security`.
 
 ## What Counts As Evidence
 
@@ -74,6 +74,53 @@ added pass".
 | Deletion | the callers are gone too, and the suite still passes |
 | Documentation | the commands in it were actually run |
 
+## Attack It Before You Claim It
+
+Everything above asks *did the thing I intended work*. That question is asked by the
+person who intended it, which is exactly the wrong person to ask it — you test the path
+you had in mind, and the path you had in mind is the one you already got right. So before
+writing `Done`, switch roles: stop defending the change and try to break it.
+
+**The gate.** At L2 and above, and at any level when the change touches a trust boundary,
+persisted data, concurrency, money, or a contract someone else depends on: name **at least
+three concrete ways this specific change breaks**, then say what each one turned into.
+Every mode ends in one of three states, and silence is not one of them.
+
+| State | Means | What it must carry |
+| --- | --- | --- |
+| **Handled** | the code already survives it | the check that demonstrates it, run |
+| **Accepted** | real, and deliberately not addressed | why, and who the decision belongs to |
+| **Open** | real, and unaddressed | a line in `Risks:` — never omitted because it was inconvenient |
+
+**Generating modes that are worth the two minutes.** The failure of this exercise is
+reciting three generic ones — null input, network down, large payload — that could have
+been written before reading the diff. If a mode does not name something from *this*
+change, it is ceremony. Prompts that produce specific ones:
+
+| Angle | The question to ask of this change |
+| --- | --- |
+| **Input** | what value passes every check and still produces nonsense — empty, zero, negative, duplicate, unicode, the maximum, the value from the bug report |
+| **State** | what is true on the second call that was not true on the first — cached, already inserted, partially written, retried after a crash |
+| **Ordering** | what if two of these run at once, or arrive out of order, or the slow one finishes last |
+| **Dependency** | what if the thing it calls is slow, returns a well-formed wrong answer, or fails after having already acted |
+| **Scale** | what happens at a thousand times the row count, and where the unbounded growth is |
+| **Authority** | who can reach this that should not — another tenant, an expired session, a request that skips the interface |
+| **Environment** | timezone, locale, encoding, filesystem case, clock skew, a different runtime version |
+| **Reversal** | if this is wrong in production, what does undoing it cost, and what is already unrecoverable |
+
+**A mode is only real if it can be written as a test.** "Bad input breaks it" is a
+feeling. "An empty list reaches `mean()` after the filter drops every row, and the
+handler returns 500 instead of an empty result" is a mode — it names the input, the path,
+and the observable. Anything vaguer is either not understood yet or not there.
+
+The cheapest three of these usually become the regression tests the change was missing
+anyway, which is why this pays for itself rather than costing extra.
+
+**Scale it down honestly.** A typo fix does not get an adversarial pass; its failure mode
+is the typo. Running this ritual on L0 and L1 work is the same failure as skipping it on
+L3 work — ceremony applied where it changes nothing, which teaches everyone to ignore it
+where it would have.
+
 ## Truthful Reporting
 
 Words carry claims. Use them precisely — a user who cannot trust the report has to
@@ -129,8 +176,9 @@ is undetectable at the time and it retroactively makes every other claim untrust
 ## Closing Criteria
 
 **Mutations** close when the outcome exists through its intended entry point, the
-highest-risk invariant is intact, focused proof covers the changed behavior, and
-regression proof matches the blast radius.
+highest-risk invariant is intact, focused proof covers the changed behavior, regression
+proof matches the blast radius, and at L2+ the adversarial pass has run with every mode
+landed as handled, accepted, or open.
 
 **Reviews, explanations, designs, and plans** close on traceable evidence, internally
 consistent decisions, and explicitly stated unknowns. Never phrase a proposal as if it

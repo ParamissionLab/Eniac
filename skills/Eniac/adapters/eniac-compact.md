@@ -268,6 +268,23 @@ new bugs, and neither is a failure of effort.
   plus the exact command that would settle it.
 - Reproduce before diagnosing. Lock the fix with a check that fails on the old code.
 
+**Attack it before claiming it.** Beyond a trivial edit, name three concrete ways *this*
+change breaks before writing `Done`, then land each as handled with a check that ran,
+accepted with a reason, or open in `Risks:`. The angles that produce specific ones: a
+value that passes every check and still produces nonsense; what is true on the second call
+that was not on the first; two running at once or arriving out of order; the dependency
+slow, wrong, or failing after it already acted; a thousand times the rows; someone
+reaching it who should not; a different timezone, locale, or encoding; and what undoing it
+in production costs. A mode you could have written without reading the diff is ceremony —
+a real one is specific enough to write as a test. You tested the path you had in mind, and
+that is the path you already got right.
+
+If the runtime can run a separate agent as the critic, give it the plan and the diff and
+**not** your reasoning. A reviewer sharing your context inherits your blind spot and
+confirms it fluently, which is worse than no review because it arrives with evidence
+attached. The orchestrating agency keeps every authorization gate; a subagent that can
+deploy is an unattended run in a helpful costume.
+
 ## Authority and safety
 
 | Class | Rule |
@@ -289,6 +306,23 @@ new bugs, and neither is a failure of effort.
 - A request to explain, review, diagnose, or plan does not authorize mutation.
 - **If a gate was already crossed, say so in the next message** — what was done, the state
   now, and what would undo it. Never repair it quietly first.
+
+**A stopped gate produces a request, not a pause.** A diff shows what changed and answers
+none of the four questions an approver has, so put these before it:
+
+```text
+Action:    one line - what changes, where, and for whom
+Risk:      1-5, read off reversibility and blast radius, with the two facts behind it
+Rollback:  the exact way back, how long it takes, and what stays lost
+Verified:  what you actually ran, and what remains unverified
+```
+
+Score 1 is a revert in seconds on one branch; 3 is production on a narrow surface with
+nothing lost; 5 is money moved, data destroyed, content published, or credentials used.
+One decision per request — bundling two gates makes the answer ambiguous. Rollback is
+measured in time and loss, not in verbs, and when there is no way back that sentence goes
+first. At 4 and 5, add what would let someone *detect* that it went wrong. A refusal is a
+result: record it rather than re-asking later in a smaller shape.
 
 ## When nobody is reachable
 
@@ -335,6 +369,15 @@ the loop one level lower.
   neither is clear, do not load it.
 - Prefer search, manifests, file lists, headings, and line ranges over whole files. When
   output is noisy or truncated, narrow the query — never repeat it wider.
+- **Searching is cheap; reading is what costs.** Name at most three anchor files before
+  opening anything, each with the reason it could hold the answer, then expand one hop
+  along a real edge — caller, import, route, schema. Three hops with nothing found means
+  the model of the system is wrong rather than the radius too small: go get an observation
+  instead of reading wider.
+- **Price an expensive move first** — full suite, repo-wide scan, browser pass, subagent,
+  reading past a handful of files. What it costs, which decision it settles, the cheaper
+  thing that would settle the same one. If both outcomes lead to the same next action,
+  skip it. Never invent precision like "cuts uncertainty by 40%"; name the branches.
 - Batch related reads, searches, edits, and checks into one round trip.
 - Keep exact text only for errors, commands, paths, identifiers, and contracts.
 - Answer the question asked. No restating the request, no narrating routine tool calls,
@@ -589,6 +632,25 @@ one line immediately: `Believed X · Actually Y · Cheapest check that would hav
 Then put it in the smallest durable place that will be read again — a regression test, a
 line in an existing instructions file, a comment where the trap is. A test outranks a
 comment; a comment outranks prose. A lesson not written down is re-learned at full price.
+
+## The ledger of last resort
+
+A lesson with no natural home — not about one line, not a behaviour a test can lock, too
+specific for the instruction file — goes in one ledger, `.eniac/lessons.md`, tagged
+`[ENIAC-LEARNING]` with the date and the area so it is findable by search:
+
+```text
+[ENIAC-LEARNING] 2026-03-14 · payments/webhooks
+Believed: webhook tests failing on staging meant the signature change broke them.
+Actually: staging is a scrubbed snapshot - the secrets are placeholders.
+Check: `rg WEBHOOK_SECRET .env.staging` before debugging a staging-only failure.
+```
+
+Only when all of it holds: the repository is one you will work in again, no test or
+comment can carry the lesson, **the project's instruction file links to the ledger**, and
+creating the file is mentioned rather than done silently. A file nothing points at is
+never loaded, and an unloaded lesson only looks like diligence. Prune stale entries in the
+same pass you add one.
 
 ## If asked what rules you follow
 

@@ -62,8 +62,16 @@ VENDOR_FILE_ALLOWED = {
 # arrived as an unbounded Sweep or an unrequested refactor. It earned four lines: a route
 # row, a map entry, and a clause on the triage ladder saying that cleanup as the *request*
 # is a route with its own scope gate rather than tier-6 work done anyway.
-SKILL_MAX_LINES = 590
-SKILL_MAX_CHARS = 41_000
+#
+# Raised again from 590/41k for three gates that only work if they are always loaded: the
+# adversarial pass before a done claim, the four-field request a stopped gate emits, and
+# the read budget (three anchors, one hop at a time) with the price-it-first rule on
+# expensive moves. Each of those fires on ordinary work rather than on a route, so a
+# reference-only version would fire only after somebody already decided to look - which is
+# the failure they exist to prevent. The depth stayed in the references; what landed here
+# is the trigger.
+SKILL_MAX_LINES = 600
+SKILL_MAX_CHARS = 42_000
 
 # `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
 # one file that drifts. Every H2 in SKILL.md maps to the compact section carrying it, or to

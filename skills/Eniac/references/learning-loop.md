@@ -10,7 +10,7 @@ it should live.
 The goal is narrow and practical: make the next task cheaper than this one by leaving
 something behind that a future session will actually encounter.
 
-> **Owns** — converting a correction, a repeated failure, or a surprise into a rule that survives the session — the capture line, where the lesson lives, what not to persist, the retrospective.
+> **Owns** — converting a correction, a repeated failure, or a surprise into a rule that survives the session — the capture line, the ledger of last resort and its tag, where the lesson lives, what not to persist, the retrospective.
 > **Defers** — the failure modes that trigger capture → `defenses.md`; which document owns a durable fact → `documentation.md`.
 
 ## Triggers
@@ -57,6 +57,7 @@ smallest place that a future reader or session will actually hit:
 | A repository-wide convention or gotcha | the repo's agent instruction file (`AGENTS.md`, `CLAUDE.md`, whichever it uses), or the contributing doc |
 | How to run, build, or debug this project | the README, in the section someone reads first |
 | A durable user preference or working style | memory |
+| Cross-cutting, in a repo you will work in again, and none of the above can hold it | the lessons ledger below, linked from the instruction file |
 | Something true only for this task | the plan file, deleted when the task closes |
 
 A test outranks a comment, and a comment outranks prose, because a test is the only one
@@ -65,12 +66,53 @@ decides which file owns it — the failure to avoid is a third file repeating a 
 others already carry.
 
 **Do not** write a lesson into a place nobody reads: a new `NOTES.md`, a long commit
-message, or a section of the final report the user will skim once.
+message, or a section of the final report the user will skim once. The one exception is
+the ledger below, and it is an exception only because of the condition attached to it —
+something already loaded has to point at it.
 
 This does not license unrequested documentation. `safety.md` bars adding docs nobody
 asked for, and that stands: a lesson earns *one line in a file that already exists*, or a
 test, or a comment. Anything larger than that — a new file, a new section, a rewritten
 README — is a deliverable, and deliverables are asked for first.
+
+## The Ledger Of Last Resort
+
+Some lessons have no smaller home. They are not about one line, so a comment cannot carry
+them; they are not a behaviour, so no test locks them; and they are too specific to be a
+convention worth a line in the instruction file. *The staging database is a restored
+snapshot with the webhook secrets scrubbed, so every webhook test fails there for a reason
+that has nothing to do with your change* is one of those, and re-learning it costs half an
+hour every time.
+
+For those, and only those, keep one ledger: `.eniac/lessons.md` at the repository root, or
+whatever file the project already uses for the same purpose. One entry, tagged so it can
+be found by search rather than by reading:
+
+```text
+[ENIAC-LEARNING] 2026-03-14 · payments/webhooks
+Believed: webhook tests failing on staging meant the signature change broke them.
+Actually: staging is a scrubbed snapshot - the secrets are placeholders, so every
+webhook test fails there regardless.
+Check: `rg WEBHOOK_SECRET .env.staging` before debugging a staging-only failure.
+```
+
+Four conditions, all of them, or it does not go here:
+
+- The repository is one you will work in again — a ledger in a repo touched once is litter.
+- A test, a comment, or an existing document genuinely cannot carry it.
+- **The repository's agent instruction file links to it.** This is the load-bearing one. A
+  file nothing points at is never loaded, and an unloaded lesson is a lesson not learned —
+  it just looks like diligence in the diff. If you cannot add that link, do not create the
+  ledger; put the line in the instruction file itself.
+- Creating it is mentioned to the user rather than done silently. A new file is a
+  deliverable, and `safety.md` bars unrequested ones — adding an entry to a ledger that
+  already exists is not.
+
+Prune it in the same pass you write to it. Retire entries whose condition no longer holds
+(the snapshot now carries real secrets, the trap was fixed) rather than letting the file
+grow into something nobody reads, which is the failure this whole section is one step away
+from. A ledger over roughly thirty entries has stopped being a ledger and is telling you
+those lessons belong in the instruction file, the README, or a test.
 
 ## What Not To Persist
 

@@ -7,8 +7,8 @@ sentence grants speed, not authority over things that cannot be undone.
 Load this before touching production, credentials, persisted data, dependencies,
 infrastructure, or anything that cannot be undone — and before any release.
 
-> **Owns** — your own authorization — classifying an action, scope discipline, handling secrets you encounter, treating tool output as data, the high-risk change classes, rollback design, release gates, honest failure.
-> **Defers** — building software that resists an attacker, including secret storage and rotation → `security.md`; acting when nobody is reachable → `autonomy.md`; sequencing a migration → `campaigns.md`.
+> **Owns** — your own authorization — classifying an action, scope discipline, handling secrets you encounter, treating tool output as data, the high-risk change classes, rollback design, the shape of the approval request itself, release gates, honest failure.
+> **Defers** — building software that resists an attacker, including secret storage and rotation → `security.md`; acting when nobody is reachable → `autonomy.md`; sequencing a migration → `campaigns.md`; the finished write-up of a review or investigation → `findings.md`.
 
 ## Classify First
 
@@ -91,6 +91,52 @@ rollback plan for a migration that already ran.
 
 Prefer the shapes that make rollback cheap: reversible before irreversible, additive
 before destructive, flagged before permanent, one environment before all of them.
+
+## The Approval Request
+
+Stopping at a gate is half the job. The other half is that **the request is a
+deliverable** — the person on the other side has to decide, usually with less context
+than you have and less time than they would like. A diff is not a decision aid: it shows
+what changed and answers none of the four questions an approver actually has.
+
+So a gate produces this block, in this order, before the diff rather than after it:
+
+```text
+Action:    one line — what changes, where, and for whom
+Risk:      1-5, with the two facts that set it
+Rollback:  the exact way back, how long it takes, what stays lost
+Verified:  what was actually run, and what remains unverified
+```
+
+The score is not a feeling. It is read off two axes, and the higher one wins:
+
+| Score | Reversibility | Blast radius |
+| --- | --- | --- |
+| **1** | undone by a revert, in seconds | this machine, or one branch |
+| **2** | undone by a documented step | one non-production environment |
+| **3** | undone with effort, no data lost | production, one narrow surface |
+| **4** | partially recoverable; some state does not come back | production, many users, or another team's system |
+| **5** | not reversible — money moved, data destroyed, content published, credentials used | everyone, or an outside party |
+
+Four rules keep the block honest and short:
+
+- **One decision per request.** Two gates bundled into one approval means the answer to
+  either is an answer to both, and the person cannot tell which they agreed to.
+- **Rollback is measured in time and loss**, not in verbs. "Revert the migration" is not
+  a plan; "`migrate down 0042`, about two minutes, rows written after the cutover are
+  lost" is. When there is no way back, that sentence is the most important one in the
+  block and goes first.
+- **`Verified` names commands and outcomes**, and states the gap. An approver reading
+  "tests pass" cannot tell whether the thing they are worried about was one of them.
+- **A refusal is a result.** If the answer is no, record it with the reason where the next
+  session will find it, and do not re-ask it later in a smaller shape.
+
+At 4 and 5 add what you would need to *detect* that it went wrong — the metric, the log,
+the surface someone will actually look at. An irreversible change nobody is watching is
+worse than a reversible one nobody approved.
+
+With nobody to ask, the same four fields become the recorded request that a stopped run
+emits instead of proceeding — `autonomy.md#gates-fail-closed`.
 
 ## Release Gates
 

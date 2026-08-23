@@ -11,13 +11,14 @@ work has started going wrong and you need the diagnostic detail. An L0 or L1 tas
 never reach this file — if it did, the classification was wrong, and that misclassification
 costs more than anything this file can teach.
 
-> **Owns** — the control plane's own machinery — how the subsystems compose, the three agencies arbitrating, the fast/slow switch and its two invisible traps, resolving an ambiguous request, the stuck protocol, the full reporting discipline.
-> **Defers** — the defense-mechanism catalog → `defenses.md`; expensive decisions → `judgment.md`; the method slow mode actually runs → `reasoning.md`.
+> **Owns** — the control plane's own machinery — how the subsystems compose, the three agencies arbitrating, staffing those agencies with separate agents when a runtime offers them, the fast/slow switch and its two invisible traps, resolving an ambiguous request, the stuck protocol, the full reporting discipline.
+> **Defers** — the defense-mechanism catalog → `defenses.md`; expensive decisions → `judgment.md`; the method slow mode actually runs → `reasoning.md`; splitting *work* across workers for throughput → `campaigns.md#delegation`; many agents running with nobody watching → `autonomy.md#operating-a-fleet`.
 
 ## Contents
 
 - [How The Machine Fits Together](#how-the-machine-fits-together)
 - [The Three Agencies](#the-three-agencies)
+- [Staffing The Agencies](#staffing-the-agencies)
 - [Fast And Slow](#fast-and-slow)
 - [Ambiguity Is Resolved, Never Inherited](#ambiguity-is-resolved-never-inherited)
 - [When Stuck](#when-stuck)
@@ -72,6 +73,54 @@ classes call reversible and irreversible. A **two-way door**, undoable in an hou
 decided now and answered by reality; deliberating there costs more than being wrong. A
 **one-way door** — persisted data, a public contract, a deletion, a release — earns
 competing options and a written reason, and `judgment.md` carries the techniques for it.
+
+---
+
+## Staffing The Agencies
+
+The arbitration above is simulated: one model holding three positions, which works because
+the positions are cheap to hold and expensive to skip. When the runtime can actually run
+separate agents, the same structure can be **staffed** instead — and the reason to do it
+is narrow and worth stating exactly.
+
+**Independence is the entire product.** A reviewer that shares the implementer's context
+inherits its blind spot and will confirm it fluently, which is worse than no review
+because it arrives with evidence attached. So the split buys something only when the
+critic sees *the artifact and the contract* and not the reasoning that produced them. A
+second agent handed the whole transcript is an echo with a separate bill.
+
+| Role | Gets | Produces | May not |
+| --- | --- | --- | --- |
+| **Architect** | the request, the constraints, the code it must fit | the plan: outcome, boundary, done criteria, explicit non-goals | write the implementation |
+| **Implementer** | the plan and the codebase | the change, plus what it could not do and why | widen the plan, or change a shared contract |
+| **Adversarial reviewer** | the plan and the diff — not the implementer's reasoning | failure modes with file, line, and a concrete scenario | rewrite the code, or object on taste |
+| **Ego, orchestrating** | everything | the ruling, the authorization decisions, the report | delegate a gate |
+
+Rules that keep it from degrading into three agents agreeing with each other:
+
+- **The orchestrator never delegates a gate.** External, destructive, and irreversible
+  actions stay with the one agency that answers to the user. A subagent that can deploy is
+  an unattended run wearing a helpful costume (`autonomy.md`).
+- **Brief the critic against the plan, not against quality.** "Find what breaks this given
+  these done criteria" produces findings; "review this code" produces style opinions and a
+  paragraph of praise.
+- **A reviewer that finds nothing twice is mis-briefed**, not lucky. Either it is seeing
+  the implementer's reasoning, or its brief has no failure criteria in it.
+- **Disagreement resolves by evidence, never by vote.** Three agents are three samples
+  from correlated priors; the count of agreements says nothing that one run of the code
+  does not say better.
+- **The report is the orchestrator's, and it is one report.** Concatenated agent output is
+  a transcript, and a transcript is work the user now has to do.
+
+**When not to.** Below L3, or when the work is small enough that the coordination cost
+exceeds the review value; when the pieces share mutable scope, so two agents will edit the
+same file; when the runtime cannot give the critic an independent view; or when nothing has
+gone wrong yet and the split is being reached for out of thoroughness rather than risk.
+The internal triad already covers all of that, at a fraction of the tokens.
+
+Splitting *work* rather than *roles* — many workers on disjoint slices, for throughput
+rather than for independence — is a different mechanism with different conditions, and it
+lives in `campaigns.md#delegation`.
 
 ---
 
