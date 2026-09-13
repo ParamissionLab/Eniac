@@ -7,8 +7,62 @@ Almost every decision here collapses to one question: **what will this cost the 
 who touches it in six months?** That person is usually the user, sometimes you, and
 they will not have the context you have right now.
 
-> **Owns** — the code judgment calls — abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, comments, designing an interface others use, taking a dependency, commits.
-> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`; proving a whole set of code dead during a cleanup sweep → `code-health.md`.
+> **Owns** — the code judgment calls — the write-less ladder climbed before writing any code and the same ladder as a review lens for excess, abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, comments, designing an interface others use, taking a dependency, commits.
+> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; the order of check and code, and what to do when a test is hard to write → `test-driven.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`; recording a shortcut taken on purpose → `debt.md#name-it-when-you-create-it`; proving a whole set of code dead during a cleanup sweep → `code-health.md`.
+
+## Write Less: The Ladder
+
+The best code is the code that was never written — not because short is pretty, but
+because every line is a permanent cost to whoever reads, tests, and maintains it, and most
+lines an agent writes are lines something already provided. So before writing any code,
+climb this ladder and stop at the first rung that holds:
+
+1. **Does this need to exist at all?** A feature nobody asked for, a case that cannot
+   occur, flexibility for a future that has not arrived — do not build it.
+2. **Does it already exist in this codebase?** The helper, the utility, the pattern two
+   files over. Reuse it rather than writing a second one; two implementations of one idea
+   is a permanent tax on every reader.
+3. **Does the standard library do it?** It usually does, with the edge cases handled.
+4. **Does the platform do it natively?** The browser, the database, the framework, the
+   runtime — a capability that is already there costs nothing to depend on.
+5. **Does an installed dependency do it?** Something the project already pays for.
+6. **Can it be one line?** Then it is one line.
+7. **Only then write the minimum that works** — and match the conventions around it.
+
+The ladder runs *after* understanding the problem, never instead of it: read the task,
+read the code it touches, trace the real flow, then climb. The shortest working diff wins
+— but the smallest change in the wrong place is not economy, it is a second bug. And when
+two options on the same rung are the same size, take the one that is correct at the
+edges; less code was the goal, not a flimsier algorithm.
+
+**What the ladder never cuts.** Input validation at a trust boundary, error handling that
+prevents data loss, security, accessibility, the calibration real hardware needs, the one
+check that proves the logic (`test-driven.md`), and anything the user explicitly asked
+for. Lean means fewer lines of *speculation*, not fewer lines of correctness.
+
+**When the request itself is the excess** — a framework for one config, an abstraction
+for one caller — say so once, in one line, and name the leaner thing that would cover it.
+Then build what was asked if they still want it; precedence is theirs. Explaining at
+length why you did not build something is itself complexity: in the report, the code
+comes first, then at most three short lines on what was skipped and what would make it
+worth adding.
+
+**A corner cut on purpose gets a record**, where the next reader will hit it, naming the
+ceiling and the condition that retires it — `debt.md#name-it-when-you-create-it`. A
+deliberate `O(n²)` scan with a note is a decision; the same scan without one is a bug
+someone will find in production.
+
+**The ladder as a review lens.** When the question about a diff is *what can be deleted*
+rather than *what is wrong*, walk it with the same rungs and report one line per finding,
+each carrying its class: **delete** (dead code, unused flexibility, a speculative feature —
+nothing replaces it), **stdlib** (a hand-rolled thing the standard library provides — name
+the function), **native** (a dependency or code replicating a platform capability — name
+the feature), **yagni** (an abstraction with one implementation, a layer with one caller,
+a configuration nobody sets), **shrink** (the same logic in fewer lines — show the form).
+Close with the net lines the diff could lose, or with *lean already* when it is. The
+minimum a review never flags as excess is the one check that proves the logic. This lens
+finds excess and only excess — correctness, security, and performance are the ordinary
+Review chain, and a lean bug is still a bug.
 
 ## Make The Change Easy, Then Make The Easy Change
 
@@ -98,9 +152,15 @@ Most bad error handling is a failure to decide. For each error, pick one:
 - The name states the scenario and the expectation: `rejects_expired_token`, not
   `test_auth_2`.
 - **Verify the test can fail.** Break the code deliberately, once. A test that cannot
-  fail is worse than no test, because it manufactures confidence.
+  fail is worse than no test, because it manufactures confidence. Writing the test
+  before the code is this check made structural — the order, the cycle, and what a
+  first-run green means are `test-driven.md`.
 - Real dependencies at the seam, fakes at the leaf. A mock of your own code tests your
-  mock.
+  mock. Prefer the simplest double that works — a value, a stub, a list that records —
+  over a framework asserting call order, which tests the implementation rather than the
+  behaviour.
+- Expected values are literals. A test that computes the expectation with the same logic
+  as the code proves the code equals itself.
 - Flaky tests are defects wearing a different symptom. Quarantine with a named owner or
   fix them; re-running until green is how a real bug becomes permanent.
 

@@ -61,6 +61,19 @@ execution.** Stop editing. State what you believed versus what happened, get the
 observation that discriminates, then continue. After three, change the approach rather
 than its parameters.
 
+**Before writing any code, climb the write-less ladder** and stop at the first rung that
+holds: not needed at all → already in this codebase → the standard library → a platform
+feature → an installed dependency → one line → only then the minimum that works. Climb
+*after* understanding the problem, never instead of it — the smallest change in the wrong
+place is a second bug. The ladder never cuts validation at a trust boundary, error handling that
+prevents data loss, security, accessibility, the one check that proves the logic, or
+anything explicitly asked for. When the request itself is the excess, say so once in one
+line and name the leaner thing, then build what was asked. A corner cut on purpose gets a
+note where the next reader will hit it: what was done instead, why now, what it costs, and
+the condition that retires it. As a review lens the same rungs classify what a diff could
+lose — delete, stdlib, native, yagni, shrink — one line each, closing with the net lines
+or *lean already*.
+
 **Engineer the loop before running it.** Almost all non-trivial work is iteration, so the
 loop is the thing being designed, and three properties decide what it costs:
 
@@ -163,11 +176,11 @@ Pick the cheapest that fits.
 | Signal | Route |
 | --- | --- |
 | a question | **Answer** — read the code, not a playbook |
-| broken, cause unknown | **Diagnose** — reproduce → localize → competing hypotheses with falsifiers → discriminating experiment → fix at cause → lock with a test |
+| broken, cause unknown | **Diagnose** — reproduce as a failing test → localize → competing hypotheses with falsifiers → discriminating experiment → fix at cause → the same test now passes, plus the sibling case |
 | production broken now | **Incident** — mitigate first, diagnose second; preserve evidence; communicate state, not theories |
 | the ask has no checkable done condition | **Specify** — outcome, boundary, criteria |
 | more than one shape would work | **Design** — options, chosen one, the reason, the falsifier |
-| build it | **Implement** — restate outcome → find the seam → contract → thin slice end to end → prove → widen → integrate |
+| build it | **Implement** — restate outcome → find the seam → contract as a test list → climb the write-less ladder → thin slice end to end → check first, then code → widen → integrate |
 | restructure without changing behavior | **Refactor** — characterization tests first, boundary drawn, never mixed with behavior change |
 | new project | **Greenfield** — contract → boring stack → skeleton that runs → slices → harden → README |
 | judge a diff | **Review** — intent, then correctness, then blast radius, then proof, then style |
@@ -266,7 +279,8 @@ new bugs, and neither is a failure of effort.
 - Say what you ran and what came back. Never write "fixed", "works now", or "should be
   fine" about something you did not execute. If you could not run it, write `Unverified`
   plus the exact command that would settle it.
-- Reproduce before diagnosing. Lock the fix with a check that fails on the old code.
+- Reproduce before diagnosing — as a failing test when it can be one, so the
+  reproduction is also the lock.
 
 **Attack it before claiming it.** Beyond a trivial edit, name three concrete ways *this*
 change breaks before writing `Done`, then land each as handled with a check that ran,
@@ -284,6 +298,43 @@ If the runtime can run a separate agent as the critic, give it the plan and the 
 confirms it fluently, which is worse than no review because it arrives with evidence
 attached. The orchestrating agency keeps every authorization gate; a subagent that can
 deploy is an unattended run in a helpful costume.
+
+## Proof before code
+
+Where the change has behaviour a check can fail on, the check is written first. Run it,
+watch it fail for the reason you expect — the assertion with the value the current code
+produces, not an import error — then write the simplest code that passes, then refactor
+on the green, in the test as well as the code. A test written after the code is written
+*to* the code and proves only that the code agrees with itself. Before the first red,
+write the test list: one line per behaviour, boundary, and error case; it is the done
+criterion made checkable and it is what makes "widen" an enumeration rather than a feeling.
+
+- **Green on the first run is a signal, not a result.** The behaviour already exists (no
+  production change — say so, keep the test if it pins something), the test asserts
+  nothing, or the wrong code is under test. Find out which before writing a line.
+- **A bug is reproduced as a failing test** with the input from the report, failing with
+  the exact wrong value from the report. Fix at the cause, watch it pass, add the sibling
+  input the same cause would have broken.
+- **A test that is hard to write is design feedback.** Extract the pure part and test it
+  with no doubles; pass the collaborator in with a default that is the real thing; patch
+  at the boundary only last, one thing, and say why. Patching six globals to reach one
+  assertion pins the internals and leaves the design as it was. Prefer the simplest
+  double — a value, a stub, a list that records — over a framework asserting call order.
+- **Not yet known how to build it? Spike:** one written question, throwaway code, record
+  the answer, delete the code, then build it test-first.
+- **Large input spaces get a property, not only examples** — round-trip, invariant,
+  idempotence, agreement with a naive oracle — and a suite that looks too green gets the
+  code broken once on purpose to prove it can fail.
+- **Not for a colour, a copy string, a config key, or a layout** — check those through
+  the real entry point. Test-first on a value with no behaviour is ceremony, and ceremony
+  teaches everyone to skip the ritual where it would have caught something.
+- **A check you ran and threw away locks nothing.** The cases in a scratch script are
+  the test — keep them as the smallest file that runs in CI. "No time for a suite"
+  declines the ceremony, not the check; only "no tests" means no tests, and that gets
+  one sentence naming the risk.
+- Report the order: what was written first, the failing line observed, the pass count
+  after, and where the check now lives. "Tests pass" alone is indistinguishable from a
+  test written afterwards.
 
 ## Authority and safety
 

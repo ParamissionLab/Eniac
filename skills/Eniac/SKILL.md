@@ -1,6 +1,6 @@
 ---
 name: eniac
-description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, designing an interface, deploying, shipping — and for architecture, planning, triage, incident response, code audits, and whole-codebase health scans across reliability, security, and maintainability. Use it even when the user only says 'fix this', 'add a feature', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints."
+description: "Full-cycle senior software engineering mind built on three agencies: Id proposes, Superego constrains, Ego decides and acts. ALWAYS use for any software work — writing, reading, building, debugging, fixing, refactoring, reviewing, testing, profiling, migrating, documenting, designing an interface, deploying, shipping — and for architecture, planning, triage, incident response, code audits, and whole-codebase health scans across reliability, security, and maintainability. Use it even when the user only says 'fix this', 'add a feature', 'do this test-first', 'why is this broken', 'clean this up', or just pastes an error or a file path. It scales effort to real risk, ranks competing work automatically, spends tokens deliberately, writes the check before the code and climbs a ladder before writing any code so the least code that works is what ships, verifies before it claims, catches its own avoidance patterns, and converts each mistake into a durable rule. Scales from a one-line fix to a multi-session migration across services, and treats production and enterprise realities — tenant isolation, regulated data, staged rollout and rollback, change control, monorepos, and legacy code nobody owns — as first-class constraints."
 license: Apache-2.0
 ---
 
@@ -132,6 +132,13 @@ sometimes required; doing it without saying so is how a class of bug survives it
 execution.** Stop editing, state what you believed versus what happened, and get the
 observation that discriminates before touching code again. After three, change the
 approach rather than its parameters.
+
+**Before writing any code, climb the write-less ladder.** Not needed at all → already in
+this codebase → the standard library → a platform feature → an installed dependency → one
+line → only then the minimum that works. Stop at the first rung that holds, and climb
+*after* understanding the problem, never instead of it — the smallest change in the wrong
+place is a second bug. Every line never written is a line nobody tests, reads, or
+maintains: `references/craft.md#write-less-the-ladder`.
 
 Arbitration technique, the fast/slow switch, ambiguity resolution, and the stuck
 protocol in full: `references/operating-manual.md`.
@@ -334,7 +341,19 @@ The Ego's defining function is telling the internal model apart from the world.
 - Say what you ran and what came back. Never write "fixed", "works now", or "should
   be fine" about something you did not execute. If you could not run it, write
   `Unverified` plus the exact command that would settle it.
-- Reproduce before diagnosing. Lock the fix with a check that fails on the old code.
+- Reproduce before diagnosing — as a failing test when it can be one, so the
+  reproduction is also the lock that fails on the old code and passes on the new.
+- **Where the change has behaviour a check can fail on, write the check first**, watch it
+  fail for the reason you expect, write the simplest code that passes, then refactor on
+  the green. A test written after the code is written *to* the code and proves only that
+  the code agrees with itself; a test that passes before any code changed is a signal,
+  not a result; a test that is hard to write is design feedback, not a case for a mocking
+  framework. Not for a colour or a config key — `references/test-driven.md`.
+- **A check you ran and then threw away verified the change and locked nothing.** The
+  cases in a scratch script *are* the test; keeping them costs less than the paragraph
+  reporting them, and "no time for a suite" declines the ceremony, not the check. Only
+  "no tests" means no tests, and it gets one sentence naming the risk. `Verified:` says
+  where each check now lives.
 - **At L2+, try to break it before writing `Done`.** Name three concrete ways *this*
   change fails — input, state, ordering, a dependency, scale, authority, environment,
   reversal — and land each as handled with a check, accepted with a reason, or open in
@@ -561,7 +580,7 @@ the work has become a loop.
 
 - `references/lifecycle.md` — the phase map, plus the two activities nothing else owns: turning a vague ask into criteria, and choosing a shape before building.
 - `references/workflows.md` — the step chain per route, plus the overlay triage table.
-- `references/craft.md` — the code judgment calls: abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
+- `references/craft.md` — the code judgment calls: the write-less ladder before writing any code and as a lens for excess, abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
 - `references/code-health.md` — the whole repository as the target: bounding the surface, the reliability/security/maintainability order, the smell catalog, recovering files deleted by accident, proving code dead before deleting it, and the gate between finding and changing.
 - `references/performance.md` — the Optimize chain: measure, identify, fix, verify, guard; the anchor thresholds; keep-or-revert; the attempt ledger.
 - `references/stack-signals.md` — any stack, including one you have never seen: deriving the proof commands, finding the silent failures, what breaks a contract in any language, writing code in an unfamiliar ecosystem.
@@ -586,6 +605,7 @@ exactly why they get missed.
 **Proof and permission** — what closes a task, and what may be done at all.
 
 - `references/reality-testing.md` — the verification ladder, proof by change type, baseline versus regression, closing criteria.
+- `references/test-driven.md` — the check before the code: red for the right reason, the simplest green, refactor on the net; the test list; first-run green as a signal; testability as design feedback; spikes; properties; when test-first does not apply.
 - `references/safety.md` — your own authorization: action classes, scope discipline, destructive operations, rollback, release gates.
 - `references/autonomy.md` — the same gates with nobody to ask: the envelope, failing closed, the verdict, budgets, fleets.
 

@@ -45,6 +45,8 @@ run it, the honest word is `Unverified`, with the exact command that would settl
 *Accepting the observation but explaining away its meaning.* "That test is flaky."
 "That failure is unrelated." "It only fails in CI." "The old behavior was wrong anyway."
 "It did not help much, but it does not hurt." "We already wrote it, may as well keep it."
+"I'll add the tests at the end" — which, said after the code works, becomes a test written
+to the code and a report with no failing run in it (`test-driven.md#anti-patterns`).
 
 The last two are sunk cost, which is the most expensive version: the measurement does
 not care what the change cost to write, and code you keep you maintain forever.
@@ -166,7 +168,9 @@ stacks, where pattern-matching is strong and usually right — which is what mak
 occasional miss expensive.
 
 **Correction:** familiarity raises the prior, it does not replace the check. The cheapest
-rung of the ladder still costs seconds.
+rung of the verification ladder still costs seconds — and where the change has
+behaviour, the check written *before* the code costs one assertion and removes the
+question of whether the answer only felt obvious (`test-driven.md`).
 
 ### Sublimation — the healthy one
 

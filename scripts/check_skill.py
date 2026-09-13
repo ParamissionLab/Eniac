@@ -70,8 +70,14 @@ VENDOR_FILE_ALLOWED = {
 # reference-only version would fire only after somebody already decided to look - which is
 # the failure they exist to prevent. The depth stayed in the references; what landed here
 # is the trigger.
-SKILL_MAX_LINES = 600
-SKILL_MAX_CHARS = 42_000
+#
+# Raised again from 600/42k for two rules that fire on ordinary implementation work rather
+# than on a route: the check written before the code (test-driven.md) and the ladder
+# climbed before writing any code (craft.md#write-less-the-ladder). Both change what the
+# agent does on an L1 edit, which is exactly the work that never loads a reference - so a
+# reference-only version would apply only to the tasks that least need it.
+SKILL_MAX_LINES = 620
+SKILL_MAX_CHARS = 44_000
 
 # `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
 # one file that drifts. Every H2 in SKILL.md maps to the compact section carrying it, or to

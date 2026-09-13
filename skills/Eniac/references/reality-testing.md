@@ -7,7 +7,7 @@ Load this when choosing how far to verify, when separating a regression you caus
 one you inherited, or when deciding what actually closes a task.
 
 > **Owns** — what counts as evidence — the verification ladder, baseline before regression, proof by change type, the adversarial pass that runs before a done claim, truthful reporting vocabulary, what to do when you cannot run it, common false proofs, closing criteria.
-> **Defers** — what a test should assert → `craft.md#tests`; proving a performance change → `performance.md`; proving nondeterministic output → `llm-systems.md#testing-something-nondeterministic`; which command proves anything in this stack → `stack-signals.md`; attacking a *plan* rather than a finished change → `judgment.md#pre-mortem`; attacking a whole system on an attacker's terms → `security.md#reviewing-for-security`.
+> **Defers** — what a test should assert → `craft.md#tests`; the order of check and code, and what a first-run green means → `test-driven.md`; proving a performance change → `performance.md`; proving nondeterministic output → `llm-systems.md#testing-something-nondeterministic`; which command proves anything in this stack → `stack-signals.md`; attacking a *plan* rather than a finished change → `judgment.md#pre-mortem`; attacking a whole system on an attacker's terms → `security.md#reviewing-for-security`.
 
 ## What Counts As Evidence
 
@@ -126,7 +126,9 @@ where it would have.
 Words carry claims. Use them precisely — a user who cannot trust the report has to
 re-verify everything, which costs far more than an honest "I could not run this".
 
-- **"Verified"** — you ran it and observed the result. Name the command.
+- **"Verified"** — you ran it and observed the result. Name the command, and where the
+  check now lives. A check that was run and then deleted is `Verified (discarded)`: true,
+  and a statement that the change has no lock.
 - **"Implemented"** — the code exists and is complete, and you are saying nothing
   about whether it runs.
 - **"Unverified"** — you could not execute it. Say why, and give the exact command
@@ -165,7 +167,10 @@ is undetectable at the time and it retroactively makes every other claim untrust
 - **The error changed, so it is fixed.** A different error is a different bug, possibly
   the same one wearing a coat.
 - **The test passes, so the code is right.** Check that the test fails when you break
-  the code. A test that cannot fail proves nothing.
+  the code — or write it first and watch it fail, which is the same check made
+  structural (`test-driven.md`). A test that cannot fail proves nothing, and a test
+  that passed on its first run before any code changed has not yet proven anything
+  either.
 - **It works locally.** Locale, timezone, filesystem case, environment variables, and
   installed versions are all part of the code path.
 - **The deploy succeeded.** That proves an upload, not a behavior.

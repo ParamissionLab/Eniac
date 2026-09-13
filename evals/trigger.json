@@ -1,6 +1,6 @@
 {
   "skill": "eniac",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "notes": "Does the description make the skill fire when it should and stay quiet when it should not. The should_trigger=false entries are deliberately near-misses: queries sharing vocabulary with the skill that genuinely need something else. Obviously irrelevant negatives test nothing.",
   "queries": [
     {
@@ -81,6 +81,22 @@
     },
     {
       "query": "is it worth learning rust in 2026 or should i stick with go for backend work",
+      "should_trigger": false
+    },
+    {
+      "query": "can you do this test-first? add a retry_with_backoff decorator to http_client.py - three attempts, exponential, only on 5xx and connection errors. we have pytest and i want to see the tests fail before the code exists",
+      "should_trigger": true
+    },
+    {
+      "query": "my manager keeps using TDD and BDD interchangeably in planning meetings. what's the actual difference, in two paragraphs i can paste into slack",
+      "should_trigger": false
+    },
+    {
+      "query": "our notifier cron job goes live next week. can you go through notifier/webhook.py and make sure it will actually survive production - timeouts, retries, the api key is hardcoded, that kind of thing",
+      "should_trigger": true
+    },
+    {
+      "query": "write a short blog post for our engineering blog about what 'production ready' means for an early-stage backend team, ~600 words, friendly tone",
       "should_trigger": false
     }
   ]

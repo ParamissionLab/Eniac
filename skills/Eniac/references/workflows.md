@@ -7,7 +7,7 @@ Load only the one section matching the route you selected — they are independe
 reading the others costs you the budget the route was supposed to save.
 
 > **Owns** — the step chain per route — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — and the overlay triage table.
-> **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; a quality pass whose target is the whole repository rather than a change → `code-health.md`; and each overlay's depth to the file its row names.
+> **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; a quality pass whose target is the whole repository rather than a change → `code-health.md`; the order of check and code inside a step, and what a first-run green or a hard-to-write test means → `test-driven.md`; the write-less ladder climbed before writing any code → `craft.md#write-less-the-ladder`; and each overlay's depth to the file its row names.
 
 ## Contents
 
@@ -31,8 +31,12 @@ reading the others costs you the budget the route was supposed to save.
 
 ## Diagnose
 
-1. **Reproduce.** Get a command that fails on demand. If you cannot reproduce it,
-   that is the first bug — say so instead of guessing at a fix.
+1. **Reproduce.** Get a command that fails on demand — and when the failure can be
+   expressed as a test, make it one, with the input from the report and the behaviour
+   that should have happened, run against the unchanged code so it fails with the
+   exact wrong value. That single artifact is also step 7 (`test-driven.md#bug-fixes`).
+   If you cannot reproduce it, that is the first bug — say so instead of guessing at a
+   fix.
 2. **Freeze the signal.** Exact error text, exact input, exact commit and
    environment. A vague symptom produces a vague fix.
 3. **Localize.** Halve the search space each step, not the line count: which layer,
@@ -52,8 +56,10 @@ reading the others costs you the budget the route was supposed to save.
    possible right now, say so explicitly, name the real cause with an owner, and make
    the mitigation visibly temporary in the code rather than a silent guard the next
    reader takes for design.
-7. **Lock it.** Add a check that fails on the old code and passes on the new.
-   Without this the bug comes back and nobody knows why.
+7. **Lock it.** The reproduction from step 1 now passes; if it was not a test, write
+   the check that fails on the old code and passes on the new, and add the sibling
+   input the same cause would have broken. Without this the bug comes back and nobody
+   knows why.
 8. **Sweep.** Does the same cause exist elsewhere? Report siblings; fix only those
    in scope. Once the answer is *yes, several* this stops being the last step of one
    diagnosis and becomes its own problem — `defect-sets.md`.
@@ -109,15 +115,20 @@ unilaterally only within whatever authority has already been granted.
    neighbor that already does something similar and match it. New code that ignores
    local convention is a permanent maintenance tax.
 3. **Contract first.** Signature, inputs, outputs, error behavior, and the one
-   invariant that must hold.
+   invariant that must hold — written down as the test list: one line per behaviour,
+   boundary, and error case (`test-driven.md#the-test-list`). Then climb the write-less
+   ladder before writing anything (`craft.md#write-less-the-ladder`).
 4. **Thin slice.** Make the smallest end-to-end path work through the real entry
    point before widening. One vertical slice that runs beats four horizontal layers
    that do not.
-5. **Prove the behavior.** A check that fails before and passes after. When
-   test-first is viable, use it — it is the cheapest way to know the test tests
-   anything at all.
-6. **Widen.** Edge cases, error paths, and the states the API or UI can actually
-   reach.
+5. **Check first, then code.** For each item on the list: write the check, run it, see
+   it fail for the reason you expect, write the simplest code that passes, refactor on
+   the green (`test-driven.md#the-cycle`). A test written after the code is written to
+   the code; a test that passes before any code changed is a signal, not a result. When
+   the change has no behaviour a check can fail on, say so and climb the verification
+   ladder instead (`test-driven.md#when-test-first-does-not-apply`).
+6. **Widen.** Cross the remaining items off the list — edge cases, error paths, the
+   states the API or UI can actually reach — and add the ones you discovered.
 7. **Integrate.** Run the surrounding suite. Check the callers whose shape you changed.
 8. **Close** with Done / Changed / Verified / Risks / Next.
 
@@ -139,7 +150,11 @@ two steps, separately reviewable and separately revertible. See `craft.md`.
 
 1. **Lock the contract** — write down exactly what behavior is preserved.
 2. **Build the safety net first** — characterization tests that pass on the *current*
-   code. Without a net this is not refactoring, it is redecorating in the dark.
+   code, written to what it does now rather than to the shape you intend. The technique
+   is the one `comprehension.md#characterization-tests-are-a-comprehension-tool` uses to
+   learn a system; here it serves as the net. Without a net this is not refactoring, it
+   is redecorating in the dark. When the code has no seam a test can reach through, the
+   smallest seam comes first (`test-driven.md#testability-is-design-feedback`).
 3. **Draw the boundary** — which files may change. Everything else is read-only for
    the duration.
 4. **Move in verified waves** — beyond about ten files, batch by one mechanical rule
@@ -163,7 +178,8 @@ two steps, separately reviewable and separately revertible. See `craft.md`.
    deployment. Boring beats clever; the user maintains this after you leave.
 3. **Skeleton.** The thinnest thing that runs end to end: entry point → one real path
    → one real output, committed. Do this before any feature.
-4. **Slices.** One capability at a time, each ending with something the user can run.
+4. **Slices.** One capability at a time, each ending with something the user can run,
+   each built check-first where it has behaviour (`test-driven.md`).
 5. **Harden.** Error paths, input validation, secrets handling, logging.
 6. **Handover.** A README a stranger can follow: install, run, test, deploy, layout,
    and the decisions someone would otherwise re-litigate.
@@ -208,7 +224,9 @@ Outcome first, style last. Reviewing style before correctness is how real bugs s
 3. **Blast radius.** Who calls this, which contracts moved, what data shape changed,
    what is now silently different for an existing caller.
 4. **Proof.** Do the tests actually exercise the change, or merely run near it?
-5. **Then** simplification, duplication, and convention.
+5. **Then** simplification, duplication, and convention — and when the question is
+   *what can be deleted*, the write-less ladder as a lens: one line per finding, classed
+   delete / stdlib / native / yagni / shrink (`craft.md#write-less-the-ladder`).
 
 Finding shape, severity honesty, the two legitimate baselines for judging code, and
 the list of things that are *not* findings are in `findings.md` — load it whenever the

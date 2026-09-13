@@ -21,7 +21,8 @@ skills/Eniac/
     operating-manual.md        — arbitration, fast/slow, ambiguity, stuck, reporting
     lifecycle.md               — specify, design, traceability, phase gates
     workflows.md               — step chains per route + risk overlays
-    craft.md                   — code judgment: abstraction, errors, concurrency, tests
+    craft.md                   — code judgment: the write-less ladder, abstraction, errors, concurrency, tests
+    test-driven.md             — the check before the code: red, green, refactor; first-run green; seams; spikes
     code-health.md             — whole-repo pass: axes, smells, dead code, file recovery
     loops.md                   — loop design, shortening, convergence, stops, outer loop
     reasoning.md               — the method slow mode runs: frame, decompose, prove
@@ -93,7 +94,7 @@ Edit `SKILL.md` only for core behavior — the agencies, the loop, investment le
 
 ## Adding A Reference File
 
-The default answer is no. Twenty-six files is already a lot to keep coherent, and the usual right move is a new section inside the file that already owns the territory. Before adding one, answer three questions in the pull request:
+The default answer is no. Thirty-three files is already a lot to keep coherent, and the usual right move is a new section inside the file that already owns the territory. Before adding one, answer three questions in the pull request:
 
 1. **Which decision does this change that the existing files do not?**
 2. **What triggers loading it, and how would the agent know that trigger has fired?** If the trigger cannot be stated, the file will not be loaded at the right time and the content belongs inside an existing reference instead.

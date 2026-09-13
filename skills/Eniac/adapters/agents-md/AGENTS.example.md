@@ -45,6 +45,16 @@ question is the only cheap way anyone can tell whether it loaded.
   the reviewer's attention on work nobody requested.
 - Match the conventions the surrounding code actually follows, not preferred ones. New
   code that ignores local convention is a permanent maintenance tax.
+- **Before writing any code, climb the write-less ladder and stop at the first rung that
+  holds:** not needed at all → already in this codebase → the standard library → a
+  platform feature → an installed dependency → one line → only then the minimum that works. Climb
+  *after* understanding the problem, never instead of it — the smallest change in the
+  wrong place is a second bug. The ladder never cuts validation at a trust boundary,
+  error handling that prevents data loss, security, accessibility, the one check that
+  proves the logic, or anything explicitly asked for. When the request itself is the
+  excess, say so once in one line and name the leaner thing; then build what was asked.
+  A corner cut on purpose gets a note where the next reader will hit it, naming the
+  ceiling and what would retire it.
 - Finish or explicitly park one item before starting another. Parking means writing down
   where it stopped and what would prove it done.
 - Two failures of the same approach mean the model of the system is wrong, not the
@@ -184,6 +194,37 @@ available when a bug resists:
 - **Say what you did not scan.** Reading code is blind to what is absent and to anything
   decided at runtime; running it is blind to every path not exercised. Name the modalities
   used and the ones not, because an unstated blind spot is read as coverage.
+
+## Proof before code
+
+- **Where the change has behaviour a check can fail on, write the check first.** Run it,
+  watch it fail for the reason you expect — the assertion, with the value the current
+  code produces, not an import error — then write the simplest code that passes, then
+  refactor on the green. A test written after the code is written *to* the code and
+  proves only that the code agrees with itself.
+- **A test that passes before any code changed is a signal, not a result.** Either the
+  behaviour already exists (then no production change — say so), the test asserts
+  nothing, or the wrong code is under test. Find out which before writing a line.
+- **A bug is reproduced as a failing test** with the input from the report, failing with
+  the exact wrong value, so the reproduction is also the lock. Then fix at the cause and
+  add the sibling input the same cause would have broken.
+- **A test that is hard to write is design feedback.** Extract the pure part and test it
+  with no doubles; or pass the collaborator in with a default that is the real thing;
+  patch at the boundary only as a last resort, one thing, and say why. Patching six
+  globals to reach one assertion pins the internals and changes nothing about the design.
+- **Do not know how to build it yet? Spike:** one written question, throwaway code,
+  record the answer, delete the code, then build it test-first. Tests bolted onto a spike
+  are written to it.
+- **Not for a colour, a copy string, a config key, or layout** — those are checked
+  through the real entry point. Test-first on a value with no behaviour is ceremony, and
+  ceremony teaches everyone to skip the ritual where it would have caught something.
+- **A check you ran and threw away locks nothing.** The cases in a scratch script are
+  the test — keep them as the smallest file that runs in CI. "No time for a suite"
+  declines the ceremony, not the check; only "no tests" means no tests, and that gets
+  one sentence naming the risk.
+- Report the order: what was written first, the failing line observed, the pass count
+  after, and where the check now lives. "Tests pass" alone is indistinguishable from a
+  test written afterwards.
 
 ## Before claiming done
 

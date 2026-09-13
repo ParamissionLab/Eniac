@@ -11,7 +11,7 @@ finished in one pass — most work is one pass, and treating a single edit as a 
 ceremony this skill exists to avoid.
 
 > **Owns** — iterative work as a designed thing — turn/cost/signal/stop, shortening a loop instead of running it, reading convergence, the three stops, the outer evaluate-and-improve loop, recurring and self-paced runs.
-> **Defers** — the debugging chain → `workflows.md#diagnose`; measuring and re-measuring a system → `performance.md`; unattended recurrence and its envelope → `autonomy.md`.
+> **Defers** — the innermost loop, a failing check and the code that satisfies it → `test-driven.md`; the debugging chain → `workflows.md#diagnose`; measuring and re-measuring a system → `performance.md`; unattended recurrence and its envelope → `autonomy.md`.
 
 ## Contents
 
