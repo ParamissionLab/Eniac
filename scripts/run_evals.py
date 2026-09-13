@@ -129,6 +129,7 @@ def grade(case: dict, output: str) -> dict:
     return {
         "id": case["id"],
         "weight": case.get("weight", 1),
+        "role": case.get("role"),
         "passed": all(c["passed"] for c in checks),
         "checks": checks,
         "output_chars": len(output),
@@ -175,7 +176,8 @@ def report_markdown(label: str, results: list[dict], meta: dict) -> str:
             bad = [c for c in r["checks"] if not c["passed"]]
             detail = bad[0]["reason"] if bad else ""
             mark = "pass" if r["passed"] else "FAIL"
-        name = f"`{r['id']}`" + (" *(gate)*" if r.get("gate") else "")
+        tag = " *(gate)*" if r.get("gate") else (" *(guard)*" if r.get("role") == "guard" else "")
+        name = f"`{r['id']}`" + tag
         weight = "-" if r.get("gate") else r["weight"]
         lines.append(f"| {name} | {weight} | {mark} | {detail} |")
 
@@ -189,7 +191,9 @@ def report_markdown(label: str, results: list[dict], meta: dict) -> str:
         "treating a pass as evidence.",
         "",
         "A score here is only meaningful against a baseline run of the same cases with the",
-        "skill not installed. One number alone measures the model, not the skill.",
+        "skill not installed. One number alone measures the model, not the skill. Cases",
+        "marked *(guard)* passed in both arms when they were last run: a pass there is a",
+        "regression check, not evidence the skill earned anything.",
         "",
     ]
     return "\n".join(lines)

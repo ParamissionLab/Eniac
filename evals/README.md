@@ -160,6 +160,26 @@ are many right answers and comparatively few characteristic wrong ones, so the n
 form is both more robust and less likely to reward an agent for reciting the skill's own
 vocabulary back.
 
+### `role` and `evidence`
+
+A case that both arms pass is not measuring the skill, and a suite that cannot say which
+of its cases those are reports every green as a win. So each case that has been run
+against a baseline carries what was seen:
+
+- **`role: discriminating`** — the with-skill arm passed and the baseline did not, at
+  least once. These are the cases that argue the guidance is worth its tokens.
+- **`role: guard`** — both arms passed when last run. Kept because the behaviour is one
+  the skill claims and a future model or a runtime with weaker defaults may lose it, but a
+  pass here is a regression check, not evidence. The report marks them.
+- **`evidence`** — one line: what was observed, when, in which harness. It is the reason
+  the role is what it is, and it goes stale — a role is a snapshot of the last run, not a
+  property of the case.
+
+A case with no role has not been run against a baseline yet. The honest reading of the
+suite as of 1.4.0: two cases discriminate (`hard-to-test-is-design-feedback`,
+`no-suite-still-keeps-the-check`), the rest guard. That is what the evidence says, and
+the skill's value on this model is those two behaviours plus insurance on the others.
+
 ## Triggering
 
 `trigger.json` is a separate question: not *does the skill behave well* but *does it fire

@@ -79,6 +79,26 @@ VENDOR_FILE_ALLOWED = {
 SKILL_MAX_LINES = 620
 SKILL_MAX_CHARS = 44_000
 
+# The compact file is loaded whole by runtimes with one instruction field, so its size is
+# the same kind of cost. It grew 7% per release across 1.2-1.4 without anyone deciding to;
+# this makes the next growth a decision. Not a target to shrink toward, for the same
+# reason as above.
+COMPACT_MAX_LINES = 760
+COMPACT_MAX_CHARS = 48_000
+
+# Rules that live in three places on purpose - the control plane, the adapter source, and
+# the compact file serve different runtimes - and therefore drift in three places. Each
+# phrase below is the load-bearing clause of one such rule, and it must read identically
+# in all three so that a rewording is a decision made once rather than a fork.
+SHARED_PHRASES: list[tuple[str, str]] = [
+    ("written *to* the code", "test-after proves only that the code agrees with itself"),
+    ("signal, not a result", "first-run green is a finding"),
+    ("design feedback", "a hard-to-write test says where the seam is missing"),
+    ("locks nothing", "a discarded scratch check leaves no lock"),
+    ("declines the ceremony, not the check", "no time for a suite is not no tests"),
+    ("climb the write-less ladder", "the ladder before writing any code"),
+]
+
 # `eniac-compact.md` is the one deliberate restatement in the package, which makes it the
 # one file that drifts. Every H2 in SKILL.md maps to the compact section carrying it, or to
 # None when it is intentionally absent. Adding a section to SKILL.md therefore fails this
@@ -404,6 +424,25 @@ def check_adapters() -> None:
         ]:
             if phrase not in text:
                 fail(f"adapters/eniac-compact.md: missing {why} (`{phrase}`)")
+        lines, chars = len(text.split("\n")), len(text)
+        if lines > COMPACT_MAX_LINES or chars > COMPACT_MAX_CHARS:
+            fail(f"adapters/eniac-compact.md: {lines} lines / {chars} chars exceeds the "
+                 f"{COMPACT_MAX_LINES} / {COMPACT_MAX_CHARS} budget - it is loaded whole "
+                 f"on every task by single-field runtimes; trim, or raise it in a commit "
+                 f"that says why")
+
+    # A rule stated in three files is a rule that can be reworded in one of them.
+    three = {
+        "SKILL.md": " ".join(read(SKILL).split()),
+        "adapters/_source/core.md": " ".join(read(ADAPTERS / "_source" / "core.md").split()),
+        "adapters/eniac-compact.md": " ".join(read(compact).split()),
+    }
+    for phrase, why in SHARED_PHRASES:
+        missing = [name for name, body in three.items() if phrase not in body]
+        if missing:
+            fail(f"shared phrase `{phrase}` ({why}) is missing from {', '.join(missing)} "
+                 f"- the rule was reworded in one place; make it identical in all three "
+                 f"or drop it from SHARED_PHRASES with a reason")
 
 
 def check_loaded_marker() -> None:

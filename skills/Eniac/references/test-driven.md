@@ -64,9 +64,8 @@ value the current code actually produces. Read the failure output rather than th
 if one test demands one value, returning that value is a legitimate step, and the second
 test is what earns the general case. Code that no test demanded is where untested branches
 come from, and every branch you add on speculation is a branch you have to remember to
-cover later. The step is legitimate because the cycle does not end at green — it ends
-when the test list is empty, and a stub that satisfies one test is a stub until the next
-test replaces it.
+cover later. A stub that satisfies one test is a stub until the next test replaces it —
+the cycle ends when the list is empty, not when the last test is green.
 
 **Refactor.** Now, with green as the net, restore the design: remove the duplication the
 last step introduced, name what became nameable, move what landed in the wrong place —

@@ -65,14 +65,12 @@ than its parameters.
 holds: not needed at all → already in this codebase → the standard library → a platform
 feature → an installed dependency → one line → only then the minimum that works. Climb
 *after* understanding the problem, never instead of it — the smallest change in the wrong
-place is a second bug. The ladder never cuts validation at a trust boundary, error handling that
+place is a second bug. It never cuts validation at a trust boundary, error handling that
 prevents data loss, security, accessibility, the one check that proves the logic, or
-anything explicitly asked for. When the request itself is the excess, say so once in one
-line and name the leaner thing, then build what was asked. A corner cut on purpose gets a
-note where the next reader will hit it: what was done instead, why now, what it costs, and
-the condition that retires it. As a review lens the same rungs classify what a diff could
-lose — delete, stdlib, native, yagni, shrink — one line each, closing with the net lines
-or *lean already*.
+anything explicitly asked for. When the request itself is the excess, say so once and
+build what was asked. A corner cut on purpose gets a note naming what it costs and what
+retires it. As a review lens the same rungs classify what a diff could lose — delete,
+stdlib, native, yagni, shrink — closing with the net lines or *lean already*.
 
 **Engineer the loop before running it.** Almost all non-trivial work is iteration, so the
 loop is the thing being designed, and three properties decide what it costs:
@@ -301,40 +299,32 @@ deploy is an unattended run in a helpful costume.
 
 ## Proof before code
 
-Where the change has behaviour a check can fail on, the check is written first. Run it,
-watch it fail for the reason you expect — the assertion with the value the current code
-produces, not an import error — then write the simplest code that passes, then refactor
-on the green, in the test as well as the code. A test written after the code is written
-*to* the code and proves only that the code agrees with itself. Before the first red,
-write the test list: one line per behaviour, boundary, and error case; it is the done
-criterion made checkable and it is what makes "widen" an enumeration rather than a feeling.
+Where the change has behaviour a check can fail on, the check is written first: run it,
+watch it fail for the reason you expect — the assertion, not an import error — write the
+simplest code that passes, then refactor on the green. A test written after the code is
+written *to* the code and proves only that the code agrees with itself. Before the first
+red, write the test list — one line per behaviour, boundary, and error case; it is the
+done criterion made checkable.
 
 - **Green on the first run is a signal, not a result.** The behaviour already exists (no
-  production change — say so, keep the test if it pins something), the test asserts
-  nothing, or the wrong code is under test. Find out which before writing a line.
+  production change — say so), the test asserts nothing, or the wrong code is under test.
 - **A bug is reproduced as a failing test** with the input from the report, failing with
-  the exact wrong value from the report. Fix at the cause, watch it pass, add the sibling
-  input the same cause would have broken.
+  the exact wrong value, so the reproduction is also the lock. Then the sibling input.
 - **A test that is hard to write is design feedback.** Extract the pure part and test it
-  with no doubles; pass the collaborator in with a default that is the real thing; patch
-  at the boundary only last, one thing, and say why. Patching six globals to reach one
-  assertion pins the internals and leaves the design as it was. Prefer the simplest
-  double — a value, a stub, a list that records — over a framework asserting call order.
+  with no doubles; pass the collaborator in with a real default; patch at the boundary
+  last, one thing, and say why. Prefer a value, a stub, or a recording list to a
+  framework asserting call order.
 - **Not yet known how to build it? Spike:** one written question, throwaway code, record
-  the answer, delete the code, then build it test-first.
-- **Large input spaces get a property, not only examples** — round-trip, invariant,
-  idempotence, agreement with a naive oracle — and a suite that looks too green gets the
-  code broken once on purpose to prove it can fail.
+  the answer, delete the code, build it test-first.
+- **Large input spaces get a property** — round-trip, invariant, idempotence, a naive
+  oracle — and a suite that looks too green gets the code broken once to prove it can fail.
 - **Not for a colour, a copy string, a config key, or a layout** — check those through
-  the real entry point. Test-first on a value with no behaviour is ceremony, and ceremony
-  teaches everyone to skip the ritual where it would have caught something.
-- **A check you ran and threw away locks nothing.** The cases in a scratch script are
-  the test — keep them as the smallest file that runs in CI. "No time for a suite"
-  declines the ceremony, not the check; only "no tests" means no tests, and that gets
-  one sentence naming the risk.
+  the real entry point. Ceremony there teaches everyone to skip the ritual where it counts.
+- **A check you ran and threw away locks nothing.** The cases in a scratch script are the
+  test — keep them as the smallest file that runs in CI. "No time for a suite" declines
+  the ceremony, not the check; only "no tests" means no tests, plus one sentence of risk.
 - Report the order: what was written first, the failing line observed, the pass count
-  after, and where the check now lives. "Tests pass" alone is indistinguishable from a
-  test written afterwards.
+  after, and where the check now lives.
 
 ## Authority and safety
 

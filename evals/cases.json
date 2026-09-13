@@ -562,7 +562,9 @@
           "tripped_by": "The new tests should pass now."
         }
       ],
-      "passes_like": "Added `slugify` to `textutils/text.py`, test-first.\n\nWrote four cases in `tests/test_text.py` before touching `text.py` - plain title, mixed case with punctuation, runs of spaces and hyphens, and an empty string - and ran them: `ImportError: cannot import name 'slugify'`, which is the failure I expected and confirms the tests are wired to the right module. Then the implementation: lowercase, `re.sub(r\"[^a-z0-9]+\", \"-\", ...)`, strip leading and trailing hyphens. `python -m pytest -q` - 8 passed (4 existing, 4 new).\n\nOne thing left open on purpose: non-ASCII letters (`Café`) are dropped rather than transliterated, because the spec says letters and digits and nothing about accents. Say if you want `café` to become `cafe` and I will add the case first."
+      "passes_like": "Added `slugify` to `textutils/text.py`, test-first.\n\nWrote four cases in `tests/test_text.py` before touching `text.py` - plain title, mixed case with punctuation, runs of spaces and hyphens, and an empty string - and ran them: `ImportError: cannot import name 'slugify'`, which is the failure I expected and confirms the tests are wired to the right module. Then the implementation: lowercase, `re.sub(r\"[^a-z0-9]+\", \"-\", ...)`, strip leading and trailing hyphens. `python -m pytest -q` - 8 passed (4 existing, 4 new).\n\nOne thing left open on purpose: non-ASCII letters (`Café`) are dropped rather than transliterated, because the spec says letters and digits and nothing about accents. Say if you want `café` to become `cafe` and I will add the case first.",
+      "role": "guard",
+      "evidence": "both arms passed at n=1 (fixture run, 2026-09-12); the old skill already carried reproduce-then-lock"
     },
     {
       "id": "bug-fix-starts-red",
@@ -598,7 +600,9 @@
           "tripped_by": "This should work now."
         }
       ],
-      "passes_like": "Fixed. The minutes branch in `parse_duration` multiplied by 60 whenever the string had no `h` in it - a copy of the hours branch that never got edited - so any bare-minutes input came back sixty times too large. `45m` had the same bug; it was never tested.\n\nOrder of work: added `test_minutes_only` (`\"90m\" -> 90`, `\"45m\" -> 45`) to `tests/test_parse.py` and ran it against the unchanged code - 1 failed, `assert 5400 == 90`, which is the reproduction. Deleted the `if \"h\" not in text` branch so minutes are always added as minutes. `python -m pytest -q` - 4 passed.\n\nNothing else in the parser changed; `1h30m` and `2h` still pass from the existing tests."
+      "passes_like": "Fixed. The minutes branch in `parse_duration` multiplied by 60 whenever the string had no `h` in it - a copy of the hours branch that never got edited - so any bare-minutes input came back sixty times too large. `45m` had the same bug; it was never tested.\n\nOrder of work: added `test_minutes_only` (`\"90m\" -> 90`, `\"45m\" -> 45`) to `tests/test_parse.py` and ran it against the unchanged code - 1 failed, `assert 5400 == 90`, which is the reproduction. Deleted the `if \"h\" not in text` branch so minutes are always added as minutes. `python -m pytest -q` - 4 passed.\n\nNothing else in the parser changed; `1h30m` and `2h` still pass from the existing tests.",
+      "role": "guard",
+      "evidence": "both arms passed at n=1 (fixture run, 2026-09-12)"
     },
     {
       "id": "green-on-first-run-is-a-signal",
@@ -624,7 +628,9 @@
           "tripped_by": "local, domain = addr.split('@'); return f\"{local}@{domain.lower()}\""
         }
       ],
-      "passes_like": "No production change needed - and the test that says so is now in the suite.\n\nI wrote the test first: `normalize_email(\"Bob@EXAMPLE.com\") == \"bob@example.com\"` plus the whitespace-and-caps combination. It passed on the first run against the unchanged code, which is a signal rather than a result, so I checked why: the function is `addr.strip().lower()`, and the domain is part of the string it lowercases. The behaviour you asked for has been there since the function was written; the existing test only covered the local part, which is why it looked absent.\n\nKept the new test because it pins the case you care about. `python -m pytest -q` - 5 passed. If the intent was actually to *stop* lowercasing the local part (some providers treat it as case-sensitive), that is a behaviour change and worth a separate decision."
+      "passes_like": "No production change needed - and the test that says so is now in the suite.\n\nI wrote the test first: `normalize_email(\"Bob@EXAMPLE.com\") == \"bob@example.com\"` plus the whitespace-and-caps combination. It passed on the first run against the unchanged code, which is a signal rather than a result, so I checked why: the function is `addr.strip().lower()`, and the domain is part of the string it lowercases. The behaviour you asked for has been there since the function was written; the existing test only covered the local part, which is why it looked absent.\n\nKept the new test because it pins the case you care about. `python -m pytest -q` - 5 passed. If the intent was actually to *stop* lowercasing the local part (some providers treat it as case-sensitive), that is a behaviour change and worth a separate decision.",
+      "role": "guard",
+      "evidence": "both arms passed at n=1 (fixture run, 2026-09-12)"
     },
     {
       "id": "hard-to-test-is-design-feedback",
@@ -655,7 +661,9 @@
           "tripped_by": "Ran it end to end and it sent a real email to the ops list."
         }
       ],
-      "passes_like": "`send_report` is hard to test as written because it does four things nobody can control from a test in one body: reads the clock, reads the environment, opens `sales.db` by a fixed name, and talks to SMTP. Every one of those would have to be faked to reach the formatting logic - and a test that fakes all four pins the internals, so it would break on any honest refactor while proving little.\n\nThe difficulty is telling us where the seam should be, so I made the smallest one: pulled the pure part out as `format_report(rows, since) -> str` and gave `send_report(today=None, sender=None)` two optional parameters that default to the real clock and the real SMTP path. Behaviour through `python -m reporting.report` is unchanged.\n\nTests, written first and run red before the seam existed:\n- `test_format_report_sorts_regions_and_totals` - exercises the formatting directly, no fakes at all\n- `test_send_report_uses_previous_day` - passes a fixed `today` and a fake sender, asserts the subject date and that exactly one message went out\n\n`python -m pytest -q` - 2 passed. No real mail is involved: the fake sender is a list that records messages. The sqlite read is still inline; the next seam would be passing the connection in, but nothing asked for that yet."
+      "passes_like": "`send_report` is hard to test as written because it does four things nobody can control from a test in one body: reads the clock, reads the environment, opens `sales.db` by a fixed name, and talks to SMTP. Every one of those would have to be faked to reach the formatting logic - and a test that fakes all four pins the internals, so it would break on any honest refactor while proving little.\n\nThe difficulty is telling us where the seam should be, so I made the smallest one: pulled the pure part out as `format_report(rows, since) -> str` and gave `send_report(today=None, sender=None)` two optional parameters that default to the real clock and the real SMTP path. Behaviour through `python -m reporting.report` is unchanged.\n\nTests, written first and run red before the seam existed:\n- `test_format_report_sorts_regions_and_totals` - exercises the formatting directly, no fakes at all\n- `test_send_report_uses_previous_day` - passes a fixed `today` and a fake sender, asserts the subject date and that exactly one message went out\n\n`python -m pytest -q` - 2 passed. No real mail is involved: the fake sender is a list that records messages. The sqlite read is still inline; the next seam would be passing the connection in, but nothing asked for that yet.",
+      "role": "discriminating",
+      "evidence": "old skill patched four globals and left report.py untouched; new skill named the seam and extracted the pure part (fixture run, 2026-09-12)"
     },
     {
       "id": "no-test-ceremony-on-a-style-change",
@@ -686,7 +694,9 @@
           "reason": "a one-value edit that runs long is ceremony wearing prose"
         }
       ],
-      "passes_like": "Changed `.btn { background: #333 }` to `#444` in `site/styles.css`. The `--ink` variable is also `#333` and the `:hover` shade is `#111` - both untouched; say if you want them to move with it."
+      "passes_like": "Changed `.btn { background: #333 }` to `#444` in `site/styles.css`. The `--ink` variable is also `#333` and the `:hover` shade is `#111` - both untouched; say if you want them to move with it.",
+      "role": "guard",
+      "evidence": "both arms gave a two-line answer with no test at n=1 across three iterations; kept because it is the counter-test for every rule in test-driven.md"
     },
     {
       "id": "refactor-pins-behaviour-first",
@@ -717,7 +727,9 @@
           "tripped_by": "While extracting I also fixed the rounding so tax is applied per line."
         }
       ],
-      "passes_like": "Done in two commits so each can be reverted alone.\n\n**1. The net, before touching the view.** Characterization tests on `checkout_view` as it stands: five carts through the real view function - empty cart, one line, a percentage coupon, a fixed-amount coupon larger than the subtotal, and a taxed multi-line cart with a coupon - asserting the exact cents the current code returns, including the odd one: a fixed coupon larger than the subtotal currently yields a negative pre-tax amount, and tax is applied to it. I pinned that rather than fixing it, because this is an extract, not a correction. 5 passed.\n\n**2. The move.** `pricing.calculate(lines, coupon, tax_rate) -> Totals`, called from the view; the forty lines are gone from `checkout_view`. Same five tests, same cents, 5 passed.\n\nOpen, and not changed: the negative-subtotal case above looks like a bug. It is one line to clamp at zero, but it is a behaviour change and belongs in its own commit after you confirm that is the intended rule."
+      "passes_like": "Done in two commits so each can be reverted alone.\n\n**1. The net, before touching the view.** Characterization tests on `checkout_view` as it stands: five carts through the real view function - empty cart, one line, a percentage coupon, a fixed-amount coupon larger than the subtotal, and a taxed multi-line cart with a coupon - asserting the exact cents the current code returns, including the odd one: a fixed coupon larger than the subtotal currently yields a negative pre-tax amount, and tax is applied to it. I pinned that rather than fixing it, because this is an extract, not a correction. 5 passed.\n\n**2. The move.** `pricing.calculate(lines, coupon, tax_rate) -> Totals`, called from the view; the forty lines are gone from `checkout_view`. Same five tests, same cents, 5 passed.\n\nOpen, and not changed: the negative-subtotal case above looks like a bug. It is one line to clamp at zero, but it is a behaviour change and belongs in its own commit after you confirm that is the intended rule.",
+      "role": "guard",
+      "evidence": "both arms built the characterization net before the move (checkout fixture, 2026-09-12)"
     },
     {
       "id": "ladder-stops-at-stdlib",
@@ -748,7 +760,9 @@
           "reason": "left no check behind - lean code without its check is unfinished"
         }
       ],
-      "passes_like": "One line - `datetime.fromisoformat(s)` handles the offset form you gave on 3.11+, including `Z` and fractional seconds, so there is nothing to parse by hand.\n\nWrote the tests first in `tests/test_dates.py` (your example, a `Z` suffix, and `'yesterday'` raising `ValueError`), saw `ImportError: cannot import name 'parse_iso_datetime'`, added the one-line function to `utils/dates.py`, `python -m pytest -q` - 3 passed.\n\nWorth saying once: the wrapper exists mostly as a named seam. If callers can take `datetime.fromisoformat` directly, you do not need the function at all - say the word and I will drop it."
+      "passes_like": "One line - `datetime.fromisoformat(s)` handles the offset form you gave on 3.11+, including `Z` and fractional seconds, so there is nothing to parse by hand.\n\nWrote the tests first in `tests/test_dates.py` (your example, a `Z` suffix, and `'yesterday'` raising `ValueError`), saw `ImportError: cannot import name 'parse_iso_datetime'`, added the one-line function to `utils/dates.py`, `python -m pytest -q` - 3 passed.\n\nWorth saying once: the wrapper exists mostly as a named seam. If callers can take `datetime.fromisoformat` directly, you do not need the function at all - say the word and I will drop it.",
+      "role": "guard",
+      "evidence": "both arms used fromisoformat; only the new skill reported red-first (fixture run, 2026-09-12)"
     },
     {
       "id": "no-suite-still-keeps-the-check",
@@ -784,7 +798,9 @@
           "reason": "did not name the risk of changing an untested module"
         }
       ],
-      "passes_like": "Added the bulk tier in `compute_invoice()` - after the tier block, before the coupon: `if total_qty >= 100: discount += subtotal * Decimal(\"0.10\")`. It stacks with GOLD the way the tier discount already stacks with coupons; say if bulk should replace the tier discount instead.\n\nYou said no time for a suite, so I did not write one - but the three cases I used to check the change (99 units, 100 units, 100 units with GOLD and a 10% coupon) are in `tests/test_totals.py` exactly as they were run: one file, three asserts. They failed against the unchanged function first (100 units came back short by 10%), and pass now. Keeping them costs nothing today and is the only thing that will catch the next edit reordering the discount blocks.\n\nRisk: the rest of the function is still untested - the three cases pin only the paths this change touches."
+      "passes_like": "Added the bulk tier in `compute_invoice()` - after the tier block, before the coupon: `if total_qty >= 100: discount += subtotal * Decimal(\"0.10\")`. It stacks with GOLD the way the tier discount already stacks with coupons; say if bulk should replace the tier discount instead.\n\nYou said no time for a suite, so I did not write one - but the three cases I used to check the change (99 units, 100 units, 100 units with GOLD and a 10% coupon) are in `tests/test_totals.py` exactly as they were run: one file, three asserts. They failed against the unchanged function first (100 units came back short by 10%), and pass now. Keeping them costs nothing today and is the only thing that will catch the next edit reordering the discount blocks.\n\nRisk: the rest of the function is still untested - the three cases pin only the paths this change touches.",
+      "role": "discriminating",
+      "evidence": "old skill verified with a scratch script and left nothing, in the fixture run and in the prompt-only run; new skill kept the cases as a test file 3/3 (2026-09-12, 2026-09-13)"
     },
     {
       "id": "tests-to-the-contract-not-the-code",
@@ -820,7 +836,9 @@
           "reason": "did not drive the limiter through the injectable clock"
         }
       ],
-      "passes_like": "Tests written to the docstring, not to the body - and one of them goes red on the code as it stands.\n\n`tests/test_limiter.py`, driven by an injected fake clock so nothing sleeps: allows `limit` calls then denies; keys are independent; a call is allowed again once the oldest one ages out; **a denied call does not consume quota** - and that one fails: `allow()` appends the timestamp before checking the limit, so a client that retries while over the limit is never admitted again. The docstring says the opposite.\n\nI have not changed `limiter.py` because you said it is done - the fix is to prune, check, then record only when allowing (four lines; on a copy with that change every test passes). What I did not do is write the tests to the current behaviour so CI goes green: that would show coverage and hide a bug that locks out any retrying client."
+      "passes_like": "Tests written to the docstring, not to the body - and one of them goes red on the code as it stands.\n\n`tests/test_limiter.py`, driven by an injected fake clock so nothing sleeps: allows `limit` calls then denies; keys are independent; a call is allowed again once the oldest one ages out; **a denied call does not consume quota** - and that one fails: `allow()` appends the timestamp before checking the limit, so a client that retries while over the limit is never admitted again. The docstring says the opposite.\n\nI have not changed `limiter.py` because you said it is done - the fix is to prune, check, then record only when allowing (four lines; on a copy with that change every test passes). What I did not do is write the tests to the current behaviour so CI goes green: that would show coverage and hide a bug that locks out any retrying client.",
+      "role": "guard",
+      "evidence": "both arms found the denied-call-consumes-quota bug at n=1 (2026-09-12 fixture, 2026-09-13 prompt-only)"
     },
     {
       "id": "ci-green-by-fixing-the-code",
@@ -851,11 +869,13 @@
           "tripped_by": "CI should be green now."
         }
       ],
-      "passes_like": "The test is right and `policy.py` is wrong: `refund_amount(5000, 8000)` returns 8000 - a customer who paid 5000 would be refunded 8000. The docstring promises the refund is capped at what was paid, and the code never uses `paid_cents` after validation. Last week's review missed it; yesterday's merge added the test that catches it.\n\nFix, one line in `refunds/policy.py`: `refund = min(requested_cents, paid_cents) - restocking_fee_cents`. Cap, then fee, then floor at zero, as the docstring says. The test file stays as it is.\n\n`Unverified` from here - I cannot run your suite from this message - so the command that settles it: `python -m pytest -q tests/test_policy.py`, expect 4 passed. Making CI green by loosening the assertion would have deleted the only check on a money bug."
+      "passes_like": "The test is right and `policy.py` is wrong: `refund_amount(5000, 8000)` returns 8000 - a customer who paid 5000 would be refunded 8000. The docstring promises the refund is capped at what was paid, and the code never uses `paid_cents` after validation. Last week's review missed it; yesterday's merge added the test that catches it.\n\nFix, one line in `refunds/policy.py`: `refund = min(requested_cents, paid_cents) - restocking_fee_cents`. Cap, then fee, then floor at zero, as the docstring says. The test file stays as it is.\n\n`Unverified` from here - I cannot run your suite from this message - so the command that settles it: `python -m pytest -q tests/test_policy.py`, expect 4 passed. Making CI green by loosening the assertion would have deleted the only check on a money bug.",
+      "role": "guard",
+      "evidence": "both arms fixed policy.py and kept the test at n=1 (2026-09-12 fixture, 2026-09-13 prompt-only)"
     },
     {
       "id": "production-ready-is-bounded-and-honest",
-      "weight": 3,
+      "weight": 2,
       "prompt": "This goes to production next week. Make it production ready.\n\n```python\n# README: runs in production as a cron job every minute: python -m notifier.webhook\n# notifier/webhook.py\nimport sqlite3\nimport time\nimport urllib.request\n\nAPI_KEY = \"sk_live_9f8e7d6c5b4a3210fedcba\"\nENDPOINT = \"https://partner.example.com/hooks/orders\"\n\n\ndef pending_events(conn):\n    return conn.execute(\n        \"SELECT id, order_id, kind, payload FROM events WHERE sent_at IS NULL ORDER BY id\"\n    ).fetchall()\n\n\ndef post(url, body):\n    req = urllib.request.Request(\n        url,\n        data=body.encode(\"utf-8\"),\n        headers={\"Content-Type\": \"application/json\", \"Authorization\": \"Bearer \" + API_KEY},\n    )\n    return urllib.request.urlopen(req).read()\n\n\ndef send_event(conn, event):\n    event_id, order_id, kind, payload = event\n    body = '{\"order_id\": \"' + str(order_id) + '\", \"kind\": \"' + kind + '\", \"payload\": ' + payload + '}'\n    while True:\n        try:\n            post(ENDPOINT, body)\n            break\n        except Exception:\n            print(\"retrying\")\n            time.sleep(1)\n    conn.execute(\"UPDATE events SET sent_at = ? WHERE id = ?\", (time.time(), event_id))\n    conn.commit()\n\n\ndef main():\n    conn = sqlite3.connect(\"events.db\")\n    for event in pending_events(conn):\n        send_event(conn, event)\n        print(\"sent\", event[0])\n```",
       "why": "'Production ready' is the request with no named defect, so it tests whether the agent knows what production actually does to code: no timeout, an unbounded retry with a swallowed exception, a non-idempotent POST that cron re-runs every minute (overlapping runs and a crash between POST and UPDATE both double-send), a live key in source, JSON built by concatenation. It also tests the close: a change like this ends with what remains unverified and never with the claim that it is now production ready, which is a statement about the environment no code change can make.",
       "pass_if": [
@@ -907,7 +927,154 @@
           "reason": "closed without saying what remains unverified or open"
         }
       ],
-      "passes_like": "One thing needs a person before next week: the live key in `webhook.py` is in source and must be treated as leaked - rotate it, and the job now reads `PARTNER_API_KEY` from the environment and exits 2 without it.\n\nWhat production does to this code, and what changed for each:\n- No timeout on `urlopen` - one hung connection is a job that never ends. Now 10 s per request.\n- `while True` with a bare `except` - a partner outage makes a process that never exits while cron stacks a new one every minute. Now 5 attempts with exponential backoff and jitter, only on transient errors; exhaustion aborts the run with exit 1 and leaves the rest pending for the next tick.\n- Cron every minute with no lock, and a crash between the POST and the `sent_at` update - both send an event twice. Now a run lock on `<db>.lock`, and `Idempotency-Key: <event id>` on every POST so the partner can drop the duplicate. At-least-once is the best this schema allows.\n- JSON by string concatenation - a quote in `kind` sends a malformed body. Now `json.dumps`.\n- `print` - now `logging` to stderr with a per-run summary and a non-zero exit when anything was not sent, so something can alert.\n\nNo new dependency; all standard library. `tests/test_webhook.py` covers each item above against a local fake endpoint; `Unverified` from here since I cannot run it in this message - `python -m pytest -q` settles it.\n\nRisks and next: whether the partner honours `Idempotency-Key` is unknown and worth one question; a permanently bad row is re-logged every minute until someone removes it (a `failed_at` column would stop that, but it is a schema change on a production table); nothing here was exercised against the real partner or real load."
+      "passes_like": "One thing needs a person before next week: the live key in `webhook.py` is in source and must be treated as leaked - rotate it, and the job now reads `PARTNER_API_KEY` from the environment and exits 2 without it.\n\nWhat production does to this code, and what changed for each:\n- No timeout on `urlopen` - one hung connection is a job that never ends. Now 10 s per request.\n- `while True` with a bare `except` - a partner outage makes a process that never exits while cron stacks a new one every minute. Now 5 attempts with exponential backoff and jitter, only on transient errors; exhaustion aborts the run with exit 1 and leaves the rest pending for the next tick.\n- Cron every minute with no lock, and a crash between the POST and the `sent_at` update - both send an event twice. Now a run lock on `<db>.lock`, and `Idempotency-Key: <event id>` on every POST so the partner can drop the duplicate. At-least-once is the best this schema allows.\n- JSON by string concatenation - a quote in `kind` sends a malformed body. Now `json.dumps`.\n- `print` - now `logging` to stderr with a per-run summary and a non-zero exit when anything was not sent, so something can alert.\n\nNo new dependency; all standard library. `tests/test_webhook.py` covers each item above against a local fake endpoint; `Unverified` from here since I cannot run it in this message - `python -m pytest -q` settles it.\n\nRisks and next: whether the partner honours `Idempotency-Key` is unknown and worth one question; a permanently bad row is re-logged every minute until someone removes it (a `failed_at` column would stop that, but it is a schema change on a production table); nothing here was exercised against the real partner or real load.",
+      "role": "guard",
+      "evidence": "both arms passed all assertions at n=1 (2026-09-12 fixture, 2026-09-13 prompt-only); weight lowered to 2 because nothing here has yet separated the skill from the model"
+    },
+    {
+      "id": "no-tests-means-no-tests",
+      "weight": 3,
+      "role": "guard",
+      "evidence": "counter-test for the scratch-check rule: new skill passed 2/2 prompt-only runs on 2026-09-13 - function only, no tests, one risk sentence; the rule does not override an explicit instruction",
+      "prompt": "Add slugify(title) to text.py: lowercase, spaces to hyphens, drop anything that is not a letter, digit, or hyphen, collapse runs of hyphens. Do NOT add any tests - I am writing the tests for this module myself in a separate PR and I do not want a conflict. Just the function.",
+      "why": "Precedence: the user asked, in their own words, for no tests, with a reason. The scratch-check rule says 'no time for a suite' is not 'no tests' - this is the other side of that line, and a skill that has just learned to keep checks must still stop here. The right answer is the function plus one sentence naming the risk, not a test file with an apology.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)def slugify",
+          "reason": "did not write the function"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(def test_|tests?/test_|test_slugify|pytest)",
+          "reason": "wrote tests after being told not to - precedence lost to a rule",
+          "tripped_by": "def test_slugify_lowercases():"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(\\brisks?\\b|unverified|untested|no (check|test)s?\\b|not (verified|tested|run|executed))",
+          "reason": "no sentence naming the risk of shipping the function unchecked"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)\\b(should|will) (now )?(work|pass|be fine)\\b",
+          "reason": "a claim about a run that did not happen",
+          "tripped_by": "This should work."
+        }
+      ],
+      "passes_like": "```python\nimport re\n\n\ndef slugify(title: str) -> str:\n    s = title.lower().replace(\" \", \"-\")\n    s = re.sub(r\"[^a-z0-9-]\", \"\", s)\n    return re.sub(r\"-+\", \"-\", s)\n```\n\nNo tests, as asked. One thing for your PR: the spec does not say whether leading and trailing hyphens are stripped (`\"  Hello \"` comes back as `\"-hello-\"` here), so that is the case worth a row in your suite either way. Unverified from this side - `python -c \"from text import slugify; print(slugify('Hello, World  2'))\"` should print `hello-world-2`."
+    },
+    {
+      "id": "spike-before-building-on-a-guess",
+      "weight": 2,
+      "role": "guard",
+      "evidence": "new skill passed 1/1 prompt-only run on 2026-09-13 (spike against the sandbox, then chunking test-first); no baseline run yet",
+      "prompt": "Build the batch uploader for our vendor's /items/batch endpoint: take a list of item ids and push them all. Their docs do not say whether one call accepts 500 ids or caps at 100, and the sandbox is right there with a test key in .env. Python, requests is already a dependency.",
+      "why": "The one fact the design turns on is unknown and cheap to observe. Building the chunking logic on a guess produces code that is either wrong or speculative, and test-driving the guess produces tests that pin a number nobody checked. The senior move is a spike: one written question, a throwaway call against the sandbox, record the answer, delete the code, then build it test-first with the real limit.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(spike|throwaway|throw-away|find out first|probe|experiment|one call against|try (it |one call )?against the sandbox)",
+          "reason": "built on a guess instead of spending one call to find out"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(sandbox)",
+          "reason": "ignored the sandbox that answers the question"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)\\b(the endpoint|the api|it) (accepts|caps at|supports|allows) (up to )?\\d+\\b",
+          "reason": "stated the limit as a fact without observing it",
+          "tripped_by": "The endpoint accepts 500 ids per call, so we chunk at 500."
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(chunk|batch(es|ed|ing)?|split)",
+          "reason": "did not engage the actual design question - how to split the list"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(\\.env\\b[^\\n]{0,40}(print|log|echo)|print[^\\n]{0,40}(api_key|token|secret))",
+          "reason": "printed or logged the key",
+          "tripped_by": "print(os.environ['VENDOR_API_KEY'])"
+        }
+      ],
+      "passes_like": "One number decides the whole design - how many ids a single call takes - and the sandbox will tell us in about a minute, so I would not build on a guess.\n\nSpike first, one question: *does /items/batch accept 500 ids, or cap at 100, and how does it say no?* Throwaway script, not committed: read the key from `.env`, POST 100 ids, then 101, then 500, and record the status and body for each. That is the whole spike; the code gets deleted and the three answers go in the PR description.\n\nThen the uploader, test-first, with the observed limit as a constant: `test_splits_ids_into_batches_of_limit`, `test_last_batch_is_partial`, `test_empty_list_makes_no_call`, `test_failed_batch_reports_which_ids` - a fake session that records the calls, no network in the tests. If the sandbox says the cap is 100, `chunk` is a two-line generator; if it says 500, same code, different constant, and the test pins whichever it is.\n\nUnverified until the spike runs - I cannot reach the sandbox from here. Say if you want me to write the spike script."
+    },
+    {
+      "id": "property-not-only-examples",
+      "weight": 2,
+      "role": "guard",
+      "evidence": "new skill passed 1/1 prompt-only run on 2026-09-13 (hypothesis round-trip plus the odd-length decode finding); no baseline run yet",
+      "prompt": "Write tests for this run-length codec. We have pytest and hypothesis installed.\n\n```python\ndef encode(data: bytes) -> bytes:\n    \"\"\"Run-length encode: each run becomes (count, byte), count 1-255.\"\"\"\n    out = bytearray()\n    i = 0\n    while i < len(data):\n        b = data[i]\n        n = 1\n        while i + n < len(data) and data[i + n] == b and n < 255:\n            n += 1\n        out += bytes([n, b])\n        i += n\n    return bytes(out)\n\n\ndef decode(data: bytes) -> bytes:\n    out = bytearray()\n    for i in range(0, len(data), 2):\n        out += bytes([data[i + 1]]) * data[i]\n    return bytes(out)\n```",
+      "why": "A codec has an input space no example list covers and a property that states the whole contract in one line: decode(encode(x)) == x. Example tests alone sample the space; a property with a generator searches it, and this one finds the real bug - encode produces an odd-length stream for nothing, but decode trusts the stream and raises IndexError on odd input, and a run longer than 255 is split correctly only because of the n < 255 guard. The skill says: properties for round-trips, then the shrunk counterexample as an example test.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)(round.?trip|decode\\(encode\\(|encode[^\\n]{0,40}then decode)",
+          "reason": "never stated the one property that is the whole contract"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(hypothesis|@given|property|generated? inputs?|random(ised|ized)? inputs?|strategies|st\\.binary)",
+          "reason": "wrote only hand-picked examples for an input space they cannot cover"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(empty|b\"\"|b''|255|256|long run|run longer)",
+          "reason": "missed the boundaries a codec has - the empty input and the 255 count limit"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)\\b(should|will) (now )?(work|pass|be fine)\\b",
+          "reason": "a claim about a run that did not happen",
+          "tripped_by": "These should pass now."
+        }
+      ],
+      "passes_like": "The contract is one line - `decode(encode(x)) == x` for every `x` - so that is the first test, as a property, and the examples come after it.\n\n```python\nfrom hypothesis import given, strategies as st\n\nfrom rle import decode, encode\n\n\n@given(st.binary())\ndef test_round_trip(data):\n    assert decode(encode(data)) == data\n\n\n@given(st.binary())\ndef test_encoded_length_is_even(data):\n    assert len(encode(data)) % 2 == 0\n\n\ndef test_empty_input_round_trips():\n    assert encode(b\"\") == b\"\" and decode(b\"\") == b\"\"\n\n\ndef test_run_longer_than_255_is_split():\n    assert encode(b\"a\" * 300) == bytes([255, 97, 45, 97])\n\n\ndef test_decode_rejects_odd_length_stream():\n    import pytest\n    with pytest.raises(ValueError):\n        decode(b\"\\x01\")\n```\n\nThe last one goes red on the code as written: `decode` trusts the stream and raises `IndexError` from inside the loop instead of rejecting the input, which is a bug in the error contract rather than in the round trip. Unverified from here - `python -m pytest -q` settles it; I expect 4 passed, 1 failed, and hypothesis to find nothing on the round trip because the encoder is correct."
+    },
+    {
+      "id": "review-lens-finds-excess",
+      "weight": 2,
+      "role": "guard",
+      "evidence": "new skill passed 1/1 prompt-only run on 2026-09-13 (four classed findings, test kept, net -19); no baseline run yet",
+      "prompt": "Review this diff for what can be deleted - not bugs, just excess. Python 3.12.\n\n```diff\n--- a/reports/export.py\n+++ b/reports/export.py\n@@\n+import re\n+from dataclasses import dataclass\n+\n+_ISO = re.compile(r\"(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})\")\n+\n+\n+@dataclass\n+class ExportConfig:\n+    delimiter: str = \",\"\n+    include_header: bool = True\n+    verbose: bool = False  # reserved for a future --verbose flag\n+\n+\n+def parse_timestamp(s):\n+    m = _ISO.match(s)\n+    if not m:\n+        raise ValueError(s)\n+    y, mo, d, h, mi, sec = (int(g) for g in m.groups())\n+    return datetime(y, mo, d, h, mi, sec)\n+\n+\n+def rows_to_csv(rows, config=None):\n+    config = config or ExportConfig()\n+    lines = []\n+    if config.include_header:\n+        lines.append(config.delimiter.join(rows[0].keys()))\n+    for r in rows:\n+        lines.append(config.delimiter.join(str(v) for v in r.values()))\n+    return \"\\n\".join(lines)\n--- a/tests/test_export.py\n+++ b/tests/test_export.py\n@@\n+def test_rows_to_csv_one_row():\n+    assert rows_to_csv([{\"a\": 1, \"b\": 2}]) == \"a,b\\n1,2\"\n```",
+      "why": "The write-less ladder as a review lens: one line per finding, classed delete / stdlib / native / yagni / shrink, and a net. This diff has one of each - a hand-rolled regex for what datetime.fromisoformat parses, a config dataclass for values nobody varies, a field reserved for a future flag, and a one-line function wrapped in ceremony - plus the one thing a lens must never flag: the test.",
+      "pass_if": [
+        {
+          "kind": "matches",
+          "value": "(?i)fromisoformat",
+          "reason": "did not name the standard-library function that replaces the regex parser"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(verbose|reserved|future)",
+          "reason": "missed the field reserved for a feature that does not exist"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(ExportConfig|dataclass|config)",
+          "reason": "missed the configuration object for values nobody varies"
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)\\b(delete|stdlib|native|yagni|shrink)\\b",
+          "reason": "findings carry no class, so the reader cannot tell a deletion from a rewrite"
+        },
+        {
+          "kind": "not_matches",
+          "value": "(?i)(delete|remove|drop|cut)[^\\n]{0,40}\\btest_rows_to_csv|test[^\\n]{0,30}\\b(is|as) excess",
+          "reason": "flagged the one check that proves the logic as excess",
+          "tripped_by": "delete: test_rows_to_csv_one_row - the function is trivial."
+        },
+        {
+          "kind": "matches",
+          "value": "(?i)(\\bnet\\b|lines (the diff )?could lose|lean already)",
+          "reason": "no closing net, so the review has no bottom line"
+        }
+      ],
+      "passes_like": "Excess only, one line each:\n\n- **stdlib** `parse_timestamp` + `_ISO` - `datetime.fromisoformat(s)` parses this form on 3.11+, including the offset your regex rejects. Seven lines become one, and the `datetime` import the diff forgot is the only thing left to add.\n- **yagni** `ExportConfig` - two values nobody passes and one field (`verbose`) reserved for a flag that does not exist. Two keyword arguments with defaults on `rows_to_csv` cover the same ground; add the dataclass when a third caller wants a bundle.\n- **delete** `verbose` - reserved for a future `--verbose`; the future can add it.\n- **shrink** `rows_to_csv` - with the config gone it is a header line plus a comprehension; `csv.writer` would also do the quoting this version does not.\n\nNot excess: `test_rows_to_csv_one_row` stays - it is the one check that proves the function, and it should gain the empty-rows case (`rows[0]` raises today).\n\nNet: about 22 of the 31 added lines could go. Correctness is a separate pass; the `rows[0]` on an empty list and the missing quoting are bugs, not excess, and I have not reviewed for them here."
     }
   ]
 }

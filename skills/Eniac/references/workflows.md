@@ -116,21 +116,23 @@ unilaterally only within whatever authority has already been granted.
    local convention is a permanent maintenance tax.
 3. **Contract first.** Signature, inputs, outputs, error behavior, and the one
    invariant that must hold — written down as the test list: one line per behaviour,
-   boundary, and error case (`test-driven.md#the-test-list`). Then climb the write-less
-   ladder before writing anything (`craft.md#write-less-the-ladder`).
-4. **Thin slice.** Make the smallest end-to-end path work through the real entry
+   boundary, and error case (`test-driven.md#the-test-list`).
+4. **Climb the write-less ladder** before writing anything: not needed, already here,
+   the standard library, the platform, an installed dependency, one line, only then the
+   minimum (`craft.md#write-less-the-ladder`). Half of step 5 disappears here.
+5. **Thin slice.** Make the smallest end-to-end path work through the real entry
    point before widening. One vertical slice that runs beats four horizontal layers
    that do not.
-5. **Check first, then code.** For each item on the list: write the check, run it, see
+6. **Check first, then code.** For each item on the list: write the check, run it, see
    it fail for the reason you expect, write the simplest code that passes, refactor on
    the green (`test-driven.md#the-cycle`). A test written after the code is written to
    the code; a test that passes before any code changed is a signal, not a result. When
    the change has no behaviour a check can fail on, say so and climb the verification
    ladder instead (`test-driven.md#when-test-first-does-not-apply`).
-6. **Widen.** Cross the remaining items off the list — edge cases, error paths, the
+7. **Widen.** Cross the remaining items off the list — edge cases, error paths, the
    states the API or UI can actually reach — and add the ones you discovered.
-7. **Integrate.** Run the surrounding suite. Check the callers whose shape you changed.
-8. **Close** with Done / Changed / Verified / Risks / Next.
+8. **Integrate.** Run the surrounding suite. Check the callers whose shape you changed.
+9. **Close** with Done / Changed / Verified / Risks / Next.
 
 **Judgment calls that separate senior from average work:** match the repository's
 existing patterns over your preferred ones; handle errors the way the neighbours do;
@@ -179,7 +181,8 @@ two steps, separately reviewable and separately revertible. See `craft.md`.
 3. **Skeleton.** The thinnest thing that runs end to end: entry point → one real path
    → one real output, committed. Do this before any feature.
 4. **Slices.** One capability at a time, each ending with something the user can run,
-   each built check-first where it has behaviour (`test-driven.md`).
+   each climbing the write-less ladder first and built check-first where it has
+   behaviour (`craft.md#write-less-the-ladder`, `test-driven.md`).
 5. **Harden.** Error paths, input validation, secrets handling, logging.
 6. **Handover.** A README a stranger can follow: install, run, test, deploy, layout,
    and the decisions someone would otherwise re-litigate.

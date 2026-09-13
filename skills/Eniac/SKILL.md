@@ -349,11 +349,9 @@ The Ego's defining function is telling the internal model apart from the world.
   the code agrees with itself; a test that passes before any code changed is a signal,
   not a result; a test that is hard to write is design feedback, not a case for a mocking
   framework. Not for a colour or a config key — `references/test-driven.md`.
-- **A check you ran and then threw away verified the change and locked nothing.** The
-  cases in a scratch script *are* the test; keeping them costs less than the paragraph
-  reporting them, and "no time for a suite" declines the ceremony, not the check. Only
-  "no tests" means no tests, and it gets one sentence naming the risk. `Verified:` says
-  where each check now lives.
+- **A check you ran and threw away locks nothing.** The cases in a scratch script *are*
+  the test and cost less to keep than to report; "no time for a suite" declines the
+  ceremony, not the check; only "no tests" means no tests, plus one sentence of risk.
 - **At L2+, try to break it before writing `Done`.** Name three concrete ways *this*
   change fails — input, state, ordering, a dependency, scale, authority, environment,
   reversal — and land each as handled with a check, accepted with a reason, or open in
@@ -537,6 +535,9 @@ Verified:
 Risks:
 Next:
 ```
+
+`Verified:` names what ran, what came back, and where each check now lives; a check run
+and then deleted is `discarded` — true, and a statement that nothing locks it.
 
 Those field names fit a code change. When the deliverable is something else — a design, a
 review, an explanation — reshape them to what that reader needs, keeping the one obligation
