@@ -22,6 +22,7 @@ skills/Eniac/
     lifecycle.md               — specify, design, traceability, phase gates
     workflows.md               — step chains per route + risk overlays
     craft.md                   — code judgment: the write-less ladder, abstraction, errors, concurrency, tests
+    data-modelling.md          — entity and identity, state machines, stored vs derived, history, deletion
     test-driven.md             — the check before the code: red, green, refactor; first-run green; seams; spikes
     code-health.md             — whole-repo pass: axes, smells, dead code, file recovery
     loops.md                   — loop design, shortening, convergence, stops, outer loop

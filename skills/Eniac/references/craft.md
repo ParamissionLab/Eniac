@@ -7,8 +7,8 @@ Almost every decision here collapses to one question: **what will this cost the 
 who touches it in six months?** That person is usually the user, sometimes you, and
 they will not have the context you have right now.
 
-> **Owns** — the code judgment calls — the write-less ladder climbed before writing any code and the same ladder as a review lens for excess, abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, comments, designing an interface others use, taking a dependency, commits.
-> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; the order of check and code, and what to do when a test is hard to write → `test-driven.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`; recording a shortcut taken on purpose → `debt.md#name-it-when-you-create-it`; proving a whole set of code dead during a cleanup sweep → `code-health.md`.
+> **Owns** — the code judgment calls — the write-less ladder climbed before writing any code and the same ladder as a review lens for excess, abstraction timing, naming, error handling, boundaries and coupling, what a test should assert, concurrency, deletion, illegal states, the posture every number it introduces has to declare, comments, designing an interface others use, taking a dependency, commits.
+> **Defers** — what specifically breaks a *published* contract → `stack-signals.md#what-breaks-a-contract-in-any-language`; whether the change is proven → `reality-testing.md`; the order of check and code, and what to do when a test is hard to write → `test-driven.md`; whether it is fast enough → `performance.md`; whether it resists an attacker → `security.md`; the step chain for building it → `workflows.md#implement`; recording a shortcut taken on purpose → `debt.md#name-it-when-you-create-it`; proving a whole set of code dead during a cleanup sweep → `code-health.md`; designing the persisted shape itself and the states an entity moves through → `data-modelling.md`.
 
 ## Write Less: The Ladder
 
@@ -220,6 +220,39 @@ The cheapest bug is the one the type, schema, or constructor refuses to express.
   narrow type — not in a comment asking future readers to be careful.
 - This is the opposite of defensive programming, not a version of it: defensive code
   repeats the same check everywhere, while this makes the check unnecessary past the edge.
+
+## Every Number Carries Its Derivation
+
+A timeout, a retry count, a page size, a pool size, a TTL, a batch size, a backoff, a
+threshold, a rate limit, a memory budget. Each one you introduce becomes permanent and
+unexplained unless it arrives with its reason, because nobody deletes a number they cannot
+account for — they work around it.
+
+The failure mode is not the guess. It is that **an unlabelled number reads as derived
+whether it is or not**, so the next reader treats a value somebody invented in a hurry as
+one somebody measured, and nobody can tell which of the two it is safe to change. That is
+why the fix is a label rather than a better guess. Adapted from the numbers policy in the
+`dm-game` design plugin, which states the rule for game-balance values and states it well.
+
+So every number declares one of three postures:
+
+| Posture | What it requires |
+| --- | --- |
+| **Derived** | the input it came from, written where the number is — a measured p99, a documented API limit, a row size, an SLA, a page budget |
+| **Starting value** | an explicit label saying it is a guess, the signal that would move it, and which direction to move |
+| **Measured here** | what was measured, on what sample, and when |
+
+Not acceptable: *industry standard*, *best practice*, *typical*, *should be fine*, or a bare
+literal at a call site with nothing attached to it.
+
+Where the derivation lives matters as much as having one: a named constant with the reason
+beside it, not a literal three frames down a call stack where the next reader meets it
+without context (`#comments`). And a starting value that nobody revisits becomes a derived
+one in everybody's mind within about a release, so the label is the part doing the work.
+
+The exception is a number with no behaviour behind it — a colour, a column width, a version
+string, a copy length. Deriving those is the ceremony rather than the discipline, and
+`SKILL.md#investment-levels` is the reason to skip it.
 
 ## Comments
 

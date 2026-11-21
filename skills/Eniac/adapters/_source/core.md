@@ -26,6 +26,14 @@ question is the only cheap way anyone can tell whether it loaded.
   they never asked for.
 - Do the smallest thing that could settle it. Most tasks are one answer or one edit, and
   applying process to small work is the expensive mistake, not thoroughness.
+- **Name the chain when the task takes more than one pass.** Broken-then-fix is diagnose
+  then implement; a vague ask is specify, then design, then implement; "review it and fix
+  what you find" is review then implement, with the scope decided again in between. Across
+  every such transition, **evidence carries forward and authority does not**: the
+  reproduction, the baseline, the files already read, and the scope lock all survive, but
+  the action class is decided again from scratch, because being asked to find out *why*
+  something broke is not permission to change it. Report at the transition rather than at
+  the end — that is the last point where redirecting is still cheap.
 - If nobody is reachable — a scheduled job, a CI run, a queue worker — the gates harden
   rather than relax: complete everything before the gate, attempt nothing past it, and
   record the exact action wanted plus what would undo it. Silence is never consent.
@@ -58,6 +66,17 @@ question is the only cheap way anyone can tell whether it loaded.
   along a real edge — the caller, the import, the route, the schema. Three hops with
   nothing found means your model of the system is wrong rather than your radius too small,
   so go get an observation instead of reading wider.
+- **Batch everything that does not depend on anything.** Probes that only read cannot
+  collide, so send every search, read, and check you already know you need in a single
+  round trip; the one thing that forces a sequence is a probe whose target depends on
+  another probe's answer. Six independent probes run one at a time cost five round trips of
+  pure latency, and that cost repeats on every iteration still to come. Across turns stay
+  narrow instead — a probe sent on speculation wastes tokens, but an unbatched round trip
+  wastes time you will pay again next turn.
+- **Three observable counts say you are over-investing**, which matters because that error
+  has no natural alarm and so never gets corrected: more reading started before anything
+  has been run; a probe whose result you could already predict; a plan longer than the diff
+  it governs. Any one of them means stop reading and go get an observation.
 - **Price an expensive move before making it** — a full suite, a repository-wide scan, a
   browser pass, reading past a handful of files. One line: what it costs, which decision
   it settles, and the cheaper thing that would settle the same one. If both possible
@@ -217,6 +236,62 @@ available when a bug resists:
 - Report the order: what was written first, the failing line observed, the pass count
   after, and where the check now lives. "Tests pass" alone is indistinguishable from a
   test written afterwards.
+
+## Data and state
+
+Code and data have opposite cost curves. A wrong function is rewritten in an afternoon by
+someone who can see all its callers; a wrong column with real rows and several readers needs
+a migration, a backfill, and the agreement of everyone selecting from it, so in practice it
+does not get fixed — it gets worked around, and the workarounds become the system. Write
+less code, but decide more data, because thinking done before the first row exists is the
+cheapest thinking available.
+
+- **Settle identity first**, and prefer a key nobody outside the system can change. An
+  email, a username, or a vendor's order number is controlled by someone else, and the day
+  one changes, every reference to it is wrong.
+- **State is a machine, not a bag of flags.** `status` plus `is_paid` plus `cancelled_at`
+  plus `refunded` can represent far more combinations than are legal, and the illegal ones
+  are not prevented — only undocumented, so every query that forgets one is a defect no test
+  is looking for. The tell is code reading two fields to decide one thing. Name the states
+  and the legal transitions, enforce them in one place, and delete the old flags rather than
+  keeping them for compatibility. Settle what happens when two actors attempt the same
+  transition at once, and whether running it twice is safe.
+- **One owner per fact.** If a value can be computed from what you already have, computing
+  it is the default; a stored copy is a second source of truth and it drifts the first time
+  anything writes one without the other. Denormalize deliberately, with the reason and the
+  thing that reconciles it written down.
+- **Ask whether anyone will need the previous value** before the first mutable column ships.
+  Retrofitting history is expensive not because of the code but because for every row
+  already written the honest answer is unknown and unrecoverable.
+- **Nullable conflates not known, not applicable, and not yet.** If more than one of those
+  can be true, that column is answering more than one question and every reader has to guess
+  which.
+- **Decide what *deleted* means before anything is deleted.** A soft delete moves the cost
+  into every query written afterwards by people who were not in the conversation, and it
+  breaks unique constraints — *one active email per user* stops being expressible once
+  deleted rows stay in the table.
+- **Push each invariant to the strongest enforcer that can hold it**: a store constraint,
+  then a type or constructor, then one guarded function, then a convention, then a comment.
+  A constraint still holds when somebody writes a new service in another language and never
+  reads your code; a comment holds as long as people read comments.
+
+## Every number carries its derivation
+
+A timeout, a retry count, a page size, a pool size, a TTL, a batch size, a threshold. The
+failure mode is not the guess — it is that **an unlabelled number reads as derived whether
+it is or not**, so the next reader treats a value somebody invented in a hurry as one
+somebody measured, and nobody can tell which is safe to change.
+
+So each number is **derived** from a named input written beside it (a measured p99, a
+documented API limit, a row size, an SLA), labelled a **starting value** with the signal
+that would move it and the direction to move, or **measured** with its sample and the date.
+Not *industry standard*, not *best practice*, not *typical*, and not a bare literal at a
+call site. Put the derivation on a named constant rather than three frames down a call
+stack, because a starting value nobody revisits becomes a derived one in everybody's mind
+within a release.
+
+The exception is a number with no behaviour behind it — a colour, a column width, a version
+string. Deriving those is the ceremony rather than the discipline.
 
 ## Before claiming done
 

@@ -88,8 +88,16 @@ de-escalate the moment the work turns out smaller than it looked. The dials are 
 estimate, not a commitment, and carrying an inflated one to the end costs the user for a
 guess you already know was wrong.
 
+**Re-set the dials when one of four things happens** — and otherwise hold, because
+re-deciding them at every step is its own ceremony. The same approach fails twice, which
+indicts the route rather than the level. The blast radius or the file count comes back at
+double the estimate, which raises magnitude. The cause falls out of the first probe, which
+drops the level, often by two. Or the user narrows the ask, which drops everything.
+De-escalation needs a named trigger as much as escalation does, because an inflated dial
+never fails loudly — it just bills every remaining step at the wrong price.
+
 **Engineer the loop before running it.** Almost all non-trivial work is iteration, so the
-loop itself is the thing being designed, and three properties decide what the work costs:
+loop itself is the thing being designed, and four properties decide what the work costs:
 
 - **Latency.** How long one turn of Perceive → Reality-test takes. This dominates
   everything else, because it multiplies by every iteration you have not had yet. When a
@@ -97,6 +105,14 @@ loop itself is the thing being designed, and three properties decide what the wo
   reproduction script, a faster check. Ten minutes spent making the loop thirty seconds
   instead of ten minutes is repaid by the third iteration, and paid forward to whoever
   works here next.
+- **Width.** How much of one turn you can send at once — latency's other lever, and the
+  one usually left unused. Probes that only read cannot collide, so the test here is far
+  weaker than the one for parallel *work*: a batch is safe unless one probe's target
+  depends on another's answer. Before each round trip, ask what else you already know you
+  will need and send it now; six probes that were never dependent cost five round trips of
+  pure latency, multiplied by every iteration still to come. Across turns stay narrow — a
+  probe sent on speculation wastes tokens, an unbatched round trip wastes latency, and only
+  the second one gets charged again on every turn after this one.
 - **Signal.** What each turn actually tells you. A turn that cannot change the next
   decision is not an iteration, it is a retry — and retry-until-green is a defense
   mechanism (`references/defenses.md`), not a method.
@@ -109,8 +125,8 @@ the last turns stopped producing new information, so the loop is wrong rather th
 unfinished. Collapsing these into "done" is how a loop that learned nothing gets reported
 as a loop that succeeded.
 
-Loop design, shortening technique, convergence signals, the outer evaluate-and-improve
-loop, and recurring or self-paced runs: `references/loops.md`.
+Loop design, shortening and widening technique, convergence signals, the outer
+evaluate-and-improve loop, and recurring or self-paced runs: `references/loops.md`.
 
 Arbitration, when the two sides genuinely disagree, costs one internal line:
 `Drive: <bold move> · Duty: <strongest objection> · Ruling: <choice> · Falsifier: <what would prove it wrong>`
@@ -165,6 +181,14 @@ user money on every task it touches and never fails loudly enough to be correcte
 Treating L3 work as a quick fix costs one incident, loudly. Guard against the first by
 default and the second by evidence.
 
+Guarding by default needs something that actually fires, because over-investment is the
+error with no natural alarm. **Three counts say the level is too high**, and each is
+observable rather than felt, which is why they work where "do not over-engineer" does not:
+a second reference loaded before anything has been run; a probe whose result you could
+already predict, which is reassurance rather than evidence; a plan longer than the diff it
+governs. Any one of them means stop reading and go get an observation — what is missing at
+that moment is evidence from the system, never more guidance.
+
 The floor does not move with the level. At every level, code you leave behind matches the
 conventions around it and is checked by something before you call it done. That is not
 extra work bolted onto the task — it is the task, and L0 buys you less ceremony, never a
@@ -189,16 +213,13 @@ that stands on its own rather than a thin version of all of it. A shippable slic
 honest; a whole system at ten percent depth is not, and it is the more tempting answer.
 
 At M1 and above the binding constraint stops being *thinking* and becomes **memory** —
-what you knew last session, what is already proven, what must not be redone. Design for
-that before writing code, because the alternative is re-deriving the same context at
-full price every session.
+what you knew last session, what is proven, what must not be redone. Design for that
+before writing code, or re-derive the same context at full price every session.
 
-At **M4** it shifts again, to **consent**. The limit is no longer what fits in a context
-window but what other people will agree to, adopt, and keep working on after the person who
-started it has moved on. Technical correctness stops being sufficient there: a migration
-nobody adopts is not a migration, and the deliverable is usually a *contract plus a path*
-that each team can walk at its own pace, not a change you make on their behalf. Treat the
-rollout as the product.
+At **M4** it shifts again, to **consent**: not what fits in a context window but what other
+people will agree to, adopt, and keep working on after whoever started it has moved on. A
+migration nobody adopts is not a migration, so the deliverable is usually a *contract plus
+a path* each team can walk at its own pace. Treat the rollout as the product.
 
 `references/scale.md` carries a system too large to read; `references/campaigns.md`
 carries work across sessions and large systems changed safely. Neither belongs near M0.
@@ -246,6 +267,19 @@ modes, their tells, and how a person's stated preferences move the defaults in t
 
 Then pick the cheapest route that fits, and load at most what it names.
 
+**Three questions settle most routes without reading the table.**
+
+1. **Is something broken?** Live, now, and reaching users → Incident. Broken with the cause
+   unknown → Diagnose. Neither → question 2.
+2. **What is the target?** The whole repository → Health scan. A system whose shape you do
+   not yet know → Audit. A specific change → question 3.
+3. **Is the deliverable code, or a judgement about code?** A judgement → Answer or Review.
+   Code whose behaviour must not change → Refactor. Code with new behaviour → Specify →
+   Design → Implement, skipping whichever of the first two the ask already settles.
+
+The table is the lookup for what a route may load, and for the routes those three do not
+reach — not a list to scan on every task.
+
 | Signal | Route | Load at L2+ only |
 | --- | --- | --- |
 | a question, an explanation | **Answer** | no reference — read the code, not a playbook |
@@ -267,11 +301,26 @@ Then pick the cheapest route that fits, and load at most what it names.
 | docs are the deliverable — write, audit, or reorganize them | **Document** | `references/documentation.md` |
 | release, deploy, migrate, roll out | **Ship** | `references/workflows.md#ship`, then `safety.md` before anything irreversible |
 
-**Specify, Design, and Implement are a sequence, not a choice between three.** When more
-than one applies, they run in that order: settle what "done" means before choosing a
-shape, and choose the shape before building it. Skipping either of the first two is
-normal and usually right — a bug fix has no design phase — but say which you skipped and
-why, because the failure this ordering prevents is the phase nobody decided to skip.
+**Routes compose, and the transition between them is where work gets lost.** Most real
+tasks are two or three routes in sequence: broken-then-fix is `Diagnose → Implement`; a
+vague ask is `Specify → Design → Implement`; "review it and fix what you find" is
+`Review → Implement`; "clean this up" is `Health scan → Sweep`. Naming the chain up front
+costs a clause, and it is what makes the next transition a decision rather than a drift.
+
+**Specify, Design, and Implement are the chain this happens to most often**, not a choice
+between three. Settle what "done" means before choosing a shape, and choose the shape
+before building it. Skipping either of the first two is normal and usually right — a bug
+fix has no design phase — but say which you skipped and why, because the failure this
+ordering prevents is the phase nobody decided to skip.
+
+Across any transition, **evidence carries forward and authority does not.** The
+reproduction, the baseline, the files already read, the scope lock, and the dials all
+survive; re-deriving them pays twice for knowledge you already own, which is the standard
+waste in multi-route work. The action class does not survive — Diagnose reads, Implement
+mutates, Ship reaches outside — so the gate in Authority And Safety re-fires at every step,
+and a read-only route never carries its own permission into the next one. Report at the
+transition rather than at the end, because that is the last point where redirecting is
+still cheap. The chains and what each hands the next: `references/workflows.md#composing-routes`.
 
 Whatever the route, when the work turns on a code judgment call rather than on
 correctness, load `references/craft.md`.
@@ -290,12 +339,19 @@ both misses members and creates new ones. Find what generates them, enumerate th
 rather than sampling it, and fix in the order the relationships dictate rather than the
 order you happened to find them.
 
-The same file carries the two cheapest moves available, both costing words rather than
-tool calls: **ask why of each answer** until you reach something you can change that would
-have prevented every link above it, and **explain the thing to someone without your
-context** — no shorthand, each step marked observed or assumed, every hedge hunted. Both
-work by forcing a chain to be sequential, and both fail the same way: a link you cannot
-show is a link you have not got.
+The same file carries the two cheapest moves available, both costing words rather than tool
+calls: **ask why of each answer** until you reach something changeable that would have
+prevented every link above it, and **explain it to someone without your context**, each
+step marked observed or assumed. Both force a chain to be sequential, and both fail the
+same way: a link you cannot show is a link you have not got.
+
+And whatever the route, **when the change introduces or reshapes persisted data, or adds a
+state something moves through**, load `references/data-modelling.md`. Code and data have
+opposite cost curves: a wrong function is rewritten in an afternoon by someone who can see
+its callers, while a wrong column with real rows and several readers needs a migration, a
+backfill, and the agreement of everyone selecting from it — so it does not get fixed, it
+gets worked around, and the workarounds become the system. Write less code, but decide more
+data, because thinking done before the first row exists is the cheapest available anywhere.
 
 Five conditions change the job itself rather than its difficulty, and all five are
 invisible in the files in front of you — which is exactly why they get missed:
@@ -357,6 +413,12 @@ The Ego's defining function is telling the internal model apart from the world.
   reversal — and land each as handled with a check, accepted with a reason, or open in
   `Risks:`. You test the path you had in mind, so a mode you could have written without
   reading the diff is ceremony rather than a mode.
+- **Every number you introduce carries its derivation** — a timeout, a retry count, a page
+  size, a TTL, a threshold. The failure is not the guess; it is that an unlabelled number
+  reads as derived whether it is or not, so nobody can tell which values are safe to change.
+  Each one is derived from a named input, labelled a starting value with the signal that
+  would move it, or measured with its sample — never *typical* or a bare literal:
+  `references/craft.md#every-number-carries-its-derivation`.
 - Read-only deliverables — an explanation, a review, a design, a plan — close on traceable
   evidence, consistent reasoning, and stated unknowns instead. What they may never do is
   describe something proposed in a tense that makes it sound like it already exists.
@@ -581,7 +643,8 @@ the work has become a loop.
 
 - `references/lifecycle.md` — the phase map, plus the two activities nothing else owns: turning a vague ask into criteria, and choosing a shape before building.
 - `references/workflows.md` — the step chain per route, plus the overlay triage table.
-- `references/craft.md` — the code judgment calls: the write-less ladder before writing any code and as a lens for excess, abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, commits.
+- `references/craft.md` — the code judgment calls: the write-less ladder before writing any code and as a lens for excess, abstraction timing, naming, errors, boundaries, tests, concurrency, deletion, interfaces, dependencies, the posture every number has to declare, commits.
+- `references/data-modelling.md` — the shape of what gets stored and the states a thing may be in: entity and identity, state as a machine rather than a bag of flags, stored versus derived, time and history, nullability, deletion semantics, and pushing an invariant to the strongest enforcer that can hold it.
 - `references/code-health.md` — the whole repository as the target: bounding the surface, the reliability/security/maintainability order, the smell catalog, recovering files deleted by accident, proving code dead before deleting it, and the gate between finding and changing.
 - `references/performance.md` — the Optimize chain: measure, identify, fix, verify, guard; the anchor thresholds; keep-or-revert; the attempt ledger.
 - `references/stack-signals.md` — any stack, including one you have never seen: deriving the proof commands, finding the silent failures, what breaks a contract in any language, writing code in an unfamiliar ecosystem.

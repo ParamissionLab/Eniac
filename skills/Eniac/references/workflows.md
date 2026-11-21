@@ -6,11 +6,12 @@ that cannot close is not finished.
 Load only the one section matching the route you selected — they are independent, and
 reading the others costs you the budget the route was supposed to save.
 
-> **Owns** — the step chain per route — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — and the overlay triage table.
+> **Owns** — the step chain per route — diagnose, incident, implement, refactor, greenfield, full-cycle, review, audit, batch, product UI, ship — and the overlay triage table; composing routes into a chain, the hand-off each one owes the next, and what crosses a transition.
 > **Defers** — specify and design → `lifecycle.md`; optimize → `performance.md`; document → `documentation.md`; a quality pass whose target is the whole repository rather than a change → `code-health.md`; the order of check and code inside a step, and what a first-run green or a hard-to-write test means → `test-driven.md`; the write-less ladder climbed before writing any code → `craft.md#write-less-the-ladder`; and each overlay's depth to the file its row names.
 
 ## Contents
 
+- [Composing Routes](#composing-routes) — chaining two or three of them, and the hand-off
 - [Diagnose](#diagnose) — something is broken, cause unknown
 - [Incident](#incident) — production is broken right now
 - [Implement](#implement) — build the requested thing
@@ -26,6 +27,64 @@ reading the others costs you the budget the route was supposed to save.
 - Health scan — the whole codebase is the target; the chain for it lives in `code-health.md`
 - [Ship](#ship) — release, deploy, migrate
 - [Overlays](#overlays) — performance, security, data, contracts, deps, concurrency, observability
+
+---
+
+## Composing Routes
+
+`SKILL.md#routes` states the rule — routes compose, evidence carries forward, authority does
+not. This section is the hand-off per chain: what the first route owes the second before it
+starts, and what the second must not assume it already has.
+
+Most work is one route. Reach for a chain when the request contains two verbs belonging to
+different routes — *find out why it is slow and fix it* — or when a route closes and its
+output turns out to be an input rather than an answer.
+
+| Chain | Reached by | What route 1 owes route 2 |
+| --- | --- | --- |
+| `Diagnose → Implement` | something is broken and the fix is wanted too | the cause in one sentence, and the reproduction as a failing check; without both, the fix is aimed at a symptom |
+| `Specify → Design → Implement` | the ask has no checkable done condition | the done criteria, then the chosen shape and which alternative lost and why |
+| `Review → Implement` | "review it, then fix what you find" | findings ranked, each with a failure scenario — plus a *fresh* scope decision, because fixing everything found is almost never what was asked |
+| `Audit → Design` | an unfamiliar system has to change | the traced flow and the blast radius, with inference kept separate from fact |
+| `Health scan → Sweep` | "clean this up" | the bounded surface and the ranked list, with the scope gate already answered |
+| `Optimize → Refactor` | the hot path is also the worst-shaped code | the measurement, so the restructuring is judged against a number rather than taste |
+| `Implement → Ship` | the change has to reach an environment | tests green or an accepted baseline, and the rollback path |
+
+### What crosses a transition
+
+**Carry forward**, because re-deriving it pays twice for knowledge you already own: the
+reproduction, the baseline measurement, the files already read and what was found in them,
+the scope lock, the dials, and the test list.
+
+**Re-decide the action class.** This is the one that matters, because a chain is the most
+common way a read-only authorization ends up covering a mutation nobody approved. Diagnose,
+Review, and Audit are reads. Implement and Refactor mutate locally. Ship reaches outside.
+The gate in `SKILL.md#authority-and-safety` fires per step, and *you asked me to find out
+why this broke* is not permission to change it.
+
+**Re-decide the done criteria and the level.** Route 1's close condition is not route 2's,
+and the investment level usually *drops* once the cause is known — a diagnosis that took L3
+to find is often an L1 fix.
+
+### Report at the transition
+
+A chain reported only at the end hands the user a finished thing to accept or reject whole.
+Reported at each transition — one or two lines: the cause found, the shape chosen, the scope
+about to be mutated — it lets them redirect while redirecting is still cheap. This is the
+cheapest intervention point in the task and the most often skipped, because reporting a
+half-finished chain feels like interrupting with nothing in hand.
+
+### Where a chain goes wrong
+
+- **Momentum past the gate.** Diagnose finishes, the cause looks obvious, and the edit
+  begins without anyone authorizing a mutation. The most common failure here.
+- **Scope inherited instead of re-set.** Review finds eleven things and Implement fixes all
+  eleven, when the ask was the one that broke production.
+- **Evidence dropped.** Route 2 re-reads what route 1 already read, because nothing wrote
+  down what was found.
+- **A chain invented to look thorough.** A one-line fix does not need
+  `Diagnose → Implement → Ship`. Naming three routes for an L1 edit is ceremony wearing a
+  process costume — `SKILL.md#investment-levels`.
 
 ---
 

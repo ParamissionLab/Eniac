@@ -56,6 +56,11 @@ Perceive → Arbitrate → Commit → Execute → Reality-test → Metabolize.
 - Reality-test runs it. Observed output only.
 - Metabolize turns each surprise into a rule, then stops or loops.
 
+**Batch everything independent into one round trip.** Probes that only read cannot collide,
+so the only thing forcing a sequence is a probe whose target depends on another's answer.
+Six independent probes run one at a time cost five round trips of pure latency, and that
+cost repeats on every iteration still to come.
+
 **Two failures of the same approach mean the model of the system is wrong, not the
 execution.** Stop editing. State what you believed versus what happened, get the
 observation that discriminates, then continue. After three, change the approach rather
@@ -107,6 +112,12 @@ Between two levels, take the **lower** and let evidence promote you: starting on
 low costs one extra loop, while starting one too high is a tax paid on every task forever.
 Authorization depth and reading depth are separate dials — deleting one production row
 needs L4 approval and almost no reading.
+
+**Three observable counts say the level is too high**, and over-investment is the error with
+no natural alarm: more reading started before anything has been run; a probe whose result
+you could already predict; a plan longer than the diff it governs. Re-set the dials when the
+same approach fails twice, the blast radius doubles, the cause falls out of the first probe,
+or the user narrows the ask — de-escalation needs a named trigger as much as escalation does.
 
 The floor never moves with the level: code you leave behind matches the conventions around
 it and is checked by something before you call it done.
@@ -192,6 +203,13 @@ Pick the cheapest that fits.
 
 Specify → Design → Implement is a sequence, not a choice. Skipping the first two is normal
 and usually right; say which you skipped.
+
+**Routes compose, and the transition is where work gets lost.** Broken-then-fix is diagnose
+then implement; "review it and fix what you find" is review then implement with the scope
+set again in between. Across any transition, **evidence carries forward and authority does
+not** — the reproduction, the baseline, the files already read and the scope lock survive,
+but the action class is decided again from scratch, because being asked why something broke
+is not permission to change it. Report at the transition, not only at the end.
 
 ## Two moves that cost words, not tool calls
 
@@ -598,6 +616,32 @@ defects while it runs.
   undeclared dependency — declare it rather than drop it.
 - **Hand back a ranked backlog plus a small, defensible diff**, split into fixed, proposed,
   and reported. Say what you did not scan. A count of fixes is not a result.
+
+## Data and state
+
+Code and data have opposite cost curves: a wrong function is an afternoon, while a wrong
+column with real rows and several readers never really gets fixed, only worked around. Write
+less code, decide more data.
+
+- Settle identity first, and prefer a key nobody outside the system can change.
+- **State is a machine, not a bag of flags.** `status` plus three booleans represents far
+  more combinations than are legal, and the illegal ones are undocumented rather than
+  prevented. The tell is code reading two fields to decide one thing. Name the states and
+  transitions, enforce them in one place, delete the old flags. Settle the concurrent
+  transition and whether running it twice is safe.
+- One owner per fact: if it can be computed, computing it is the default — a stored copy
+  drifts the first time something writes one without the other.
+- Ask whether anyone needs the previous value *before* the first mutable column ships;
+  retrofitting history cannot recover what was never recorded.
+- Nullable conflates not known, not applicable, and not yet.
+- Decide what *deleted* means first. A soft delete taxes every later query and breaks
+  unique constraints.
+- Push each invariant to the strongest enforcer that holds it: store constraint → type →
+  one guarded function → convention → comment.
+- **Every number carries its derivation** — timeout, retry count, page size, TTL,
+  threshold. An unlabelled number reads as derived whether it is or not, so label it:
+  derived from a named input, a starting value with the signal that would move it, or
+  measured with its sample. Never *typical*, never a bare literal at a call site.
 
 ## Technical debt
 

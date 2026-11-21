@@ -76,15 +76,70 @@ VENDOR_FILE_ALLOWED = {
 # climbed before writing any code (craft.md#write-less-the-ladder). Both change what the
 # agent does on an L1 edit, which is exactly the work that never loads a reference - so a
 # reference-only version would apply only to the tasks that least need it.
-SKILL_MAX_LINES = 620
-SKILL_MAX_CHARS = 44_000
+#
+# Raised again from 620/44k for five mechanisms, after a benchmark said the control plane
+# was costing more than it returned: +40s (+37%) wall clock and +8% tokens against a
+# pass-rate delta of +4% inside a +/-10% stddev. Reading the arms, the cost was not the
+# file's size - it was behaviour the file described but never triggered. So each of these
+# is a trigger rather than a topic, and four of the five exist to make the agent spend
+# *less*: the Width property (batch independent probes into one round trip, the second
+# latency lever the loop section never had); the three over-investment counts in
+# Investment Levels, which fire on an observable rather than on a feeling; the four
+# re-set-the-dials triggers, giving de-escalation the same named moment escalation
+# already had; and the three-question route discriminator, so the common case stops
+# scanning a 31-row table. The fifth closed a real hole: routes compose, and nothing
+# said what crosses a transition - which is how a read-only Diagnose authorization ends
+# up covering an unapproved mutation. Depth went to workflows.md#composing-routes; what
+# landed here is the rule that evidence carries forward and authority does not. Net +48
+# lines against an expected saving of one avoided reference load (150-200 lines at full
+# price), so the trade is roughly 4:1 in the file's favour on any task that avoids one.
+#
+# Raised again from 672/47.5k for two capability additions rather than mechanism changes,
+# found by comparing this package against the other skills installed alongside it.
+#
+# `data-modelling.md` closed the largest gap in the set: `data model`, `state machine`,
+# `entity`, `natural key`, `surrogate`, `denormaliz`, `soft delete` and `temporal` returned
+# zero hits across every reference. The nearest neighbours were four bullets in
+# craft.md#make-illegal-states-unrepresentable, which is the type-level tactic, and
+# lifecycle.md#design-before-building, which is the process for comparing shapes. Neither
+# owns the shape of what gets stored. That is an odd hole for a package built to scale
+# effort to risk, because data is the least reversible artifact in software - a wrong
+# function is an afternoon, a wrong column with real rows and several readers never gets
+# fixed at all, only worked around.
+#
+# The numbers policy in craft.md is borrowed, with credit, from the dm-game design plugin,
+# which requires every balance value to declare a posture. Adapted here for timeouts,
+# retries, page sizes, TTLs and thresholds. The load-bearing insight is theirs and is worth
+# repeating: an unlabelled number reads as derived whether it is or not, so the failure mode
+# is the missing label rather than the guess. Worth noting that this package already had an
+# eval case rejecting a bare `time.sleep(0.3)` with no comment, and no rule anywhere that
+# would have stopped an agent writing one.
+#
+# Both hooks fire on ordinary implementation work rather than on a route, so a
+# reference-only version would reach only the tasks that least need it. The control plane
+# has now grown 620 -> 688 across 1.5.0, about 11%, which is the largest single-release
+# growth in its history and is deliberate: five mechanism triggers and two capabilities.
+SKILL_MAX_LINES = 688
+SKILL_MAX_CHARS = 48_600
 
 # The compact file is loaded whole by runtimes with one instruction field, so its size is
 # the same kind of cost. It grew 7% per release across 1.2-1.4 without anyone deciding to;
 # this makes the next growth a decision. Not a target to shrink toward, for the same
 # reason as above.
-COMPACT_MAX_LINES = 760
-COMPACT_MAX_CHARS = 48_000
+#
+# Raised from 760/48k when 1.5.0 added the three mechanism rules that the single-field
+# runtimes also need - batching, the three over-investment counts, and the chain rule that
+# evidence carries forward while authority does not. Those fit, but left a 97-character
+# margin, and a ceiling that tight gets raised thoughtlessly by whoever's one-line edit
+# trips it next. This is the deliberate version of that raise.
+#
+# Raised again from 764/48.4k so the single-field runtimes get the two 1.5.0 capabilities
+# rather than only the mechanism triggers. These runtimes have no references to fall back
+# on - this file is the whole package for them - so a capability omitted here is a
+# capability they simply do not have. Data and state, and the numbers policy, both fire on
+# ordinary implementation work, which is most of what those runtimes are asked to do.
+COMPACT_MAX_LINES = 790
+COMPACT_MAX_CHARS = 49_800
 
 # Rules that live in three places on purpose - the control plane, the adapter source, and
 # the compact file serve different runtimes - and therefore drift in three places. Each

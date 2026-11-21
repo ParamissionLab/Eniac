@@ -10,13 +10,14 @@ recurring run that has to decide its own pace. Do not load it for a task that wi
 finished in one pass — most work is one pass, and treating a single edit as a loop is the
 ceremony this skill exists to avoid.
 
-> **Owns** — iterative work as a designed thing — turn/cost/signal/stop, shortening a loop instead of running it, reading convergence, the three stops, the outer evaluate-and-improve loop, recurring and self-paced runs.
+> **Owns** — iterative work as a designed thing — turn/cost/signal/stop, shortening a loop instead of running it, widening a turn so independent probes share one round trip, reading convergence, the three stops, the outer evaluate-and-improve loop, recurring and self-paced runs.
 > **Defers** — the innermost loop, a failing check and the code that satisfies it → `test-driven.md`; the debugging chain → `workflows.md#diagnose`; measuring and re-measuring a system → `performance.md`; unattended recurrence and its envelope → `autonomy.md`.
 
 ## Contents
 
 - [Design The Loop First](#design-the-loop-first)
 - [Shortening Beats Running](#shortening-beats-running)
+- [Widening The Turn](#widening-the-turn)
 - [Is It Converging](#is-it-converging)
 - [The Three Stops](#the-three-stops)
 - [The Outer Loop](#the-outer-loop)
@@ -72,10 +73,36 @@ Ways a loop gets shorter, cheapest first:
 - **Move the check earlier.** A type error caught by the editor never enters the loop at
   all. The cheapest iteration is the one that does not happen.
 
+## Widening The Turn
+
+Shortening is one lever on latency. The other is how much of a turn goes out at once, and
+it is the less used of the two, because a sequence is what thinking feels like: ask one
+thing, read the answer, then decide what to ask next.
+
+Often that sequence is invented rather than required. **The test is narrow — a probe has to
+wait only when its target depends on another probe's answer.** Reads cannot collide with
+each other, so there is no safety argument for running them one at a time, unlike parallel
+*work*, which has four conditions to satisfy before it is safe at all
+(`triage.md#parallel-lanes`). So before a round trip, ask what else you already know you
+will need, and send it in the same one.
+
+The arithmetic mirrors shortening. Six independent probes run singly cost five round trips
+of pure latency, and because that repeats per iteration it multiplies by every turn still to
+come — the same quantity shortening attacks from the other side.
+
+Two limits keep this from turning into shotgun probing:
+
+- **Within a turn, batch generously; across turns, stay narrow.** A speculative probe wastes
+  its tokens once, while an unbatched round trip wastes time again on every turn after this
+  one. Only one of the two compounds, which is why the asymmetry runs in this direction.
+- **A batch is not a substitute for a hypothesis.** Sending twelve probes because you do not
+  know what you are looking for is the wide version of retry-until-green. The question is
+  still *which decision does this turn change* — width makes a well-chosen turn cheaper, it
+  does not excuse an aimless one.
+
 When the loop cannot be shortened — a twenty-minute CI run, a nightly job, a deploy —
-change strategy rather than accepting the cost: batch several hypotheses into one turn,
-each independently observable, so one expensive turn discriminates between four candidates
-instead of one.
+widening is what is left: batch several hypotheses into one turn, each independently
+observable, so one expensive turn discriminates between four candidates instead of one.
 
 ## Is It Converging
 
