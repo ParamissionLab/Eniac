@@ -7,7 +7,7 @@ sentence grants speed, not authority over things that cannot be undone.
 Load this before touching production, credentials, persisted data, dependencies,
 infrastructure, or anything that cannot be undone — and before any release.
 
-> **Owns** — your own authorization — classifying an action, scope discipline, handling secrets you encounter, treating tool output as data, the high-risk change classes, rollback design, the shape of the approval request itself, release gates, honest failure.
+> **Owns** — your own authorization — classifying an action, scope discipline, handling secrets you encounter, treating tool output as data, the high-risk change classes, rollback design, the shape of the approval request itself, what changes when the approver pre-authorized it and is away, release gates, honest failure.
 > **Defers** — building software that resists an attacker, including secret storage and rotation → `security.md`; acting when nobody is reachable → `autonomy.md`; sequencing a migration → `campaigns.md`; the finished write-up of a review or investigation → `findings.md`.
 
 ## Classify First
@@ -137,6 +137,36 @@ worse than a reversible one nobody approved.
 
 With nobody to ask, the same four fields become the recorded request that a stopped run
 emits instead of proceeding — `autonomy.md#gates-fail-closed`.
+
+### When They Pre-Approved It And Are Not There
+
+The common middle case, and the one that falls between this section and `autonomy.md`:
+somebody said *do not ask me, just go ahead*, the work turns out to contain a step that
+cannot be undone, and they will not read anything for hours. This section above assumes an
+approver who is present; `autonomy.md` assumes nobody exists at all. Neither fits, and the
+difference matters because a human who is merely *away* can still decide — later, and
+cheaply, if you set it up for them.
+
+`SKILL.md#precedence` already settles the decision: standing approval covers reversible
+work and does not remove a confirmation on something irreversible. What is left is the
+*shape* of the response, and the standing approval changes it in a specific direction.
+Somebody who pre-authorized has told you they do not want to be a bottleneck, so the
+obligation is to minimise their involvement rather than to refuse and wait. Three
+consequences:
+
+- **Do all the reversible work first, and finish it.** Not a plan for it, the work. The
+  only thing still waiting when they return should be the one step that needed them. Work
+  banked behind an unasked question is the expensive reading of this gate.
+- **Make the decision one word and make acting on it cost seconds.** The exact command,
+  already rehearsed somewhere safe, with the read-only check beside it that tells them
+  whether it is still the right call. An approval that requires them to reconstruct your
+  reasoning is an approval that waits another day.
+- **Say that you noticed the standing approval and why it did not extend.** One sentence,
+  before anything else. Without it, somebody who told you not to ask comes back to find
+  their instruction quietly ignored, which reads as not having listened rather than as
+  having drawn a line. It is also the difference between a justification that holds only
+  because their premise happened to be wrong, and one that holds because the step cannot
+  be undone — and only the second survives the premise turning out to be right.
 
 ## Release Gates
 

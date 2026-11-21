@@ -186,6 +186,41 @@ every query written afterwards by people who were not in this conversation.
   be retained for years, and which is which is not a code-reading question —
   `enterprise.md`, never your own judgment.
 
+### Retiring A Field
+
+Dropping a *column* is a different operation from deleting *rows*, and it arrives in a
+predictable way: a migration finished, or is believed to have finished, and somebody wants
+the old field gone. The request usually carries its own justification — *we need the
+space*, *nothing reads it any more* — and both halves are worth checking rather than
+accepting.
+
+**Is anything still reading it?** That question has two halves and only one is greppable.
+Code is findable; a `SELECT *` is not, because it narrows silently when the column goes,
+and neither is a report, an export, a dashboard query, or a warehouse job living outside
+this repository. Enumerate the consumers you cannot grep for by asking who receives the
+data, not by searching for the field name.
+
+**Is the data actually elsewhere?** The populated column is no evidence either way — see
+*One Owner Per Fact* above for why, and for the join that does answer it. A migration
+script is not a record of what it did.
+
+**Archive outside the store before destroying.** This is the move that satisfies both
+sides of the usual request: the rows leave the database, so the space argument holds, while
+the values survive in a file that costs nothing to keep. A column dropped with no archive
+is unrecoverable; a column dropped with one is a decision somebody can revisit. Do it even
+when the join says every row migrated, because the join tests the rows you knew to look at.
+
+**Reclaiming the space is a separate step from dropping, and the obvious command often
+does not do it.** Dropping frequently only marks the column dead while the pages stay
+allocated, so the stated goal goes unmet by the very change that was supposed to meet it —
+and the operation that *does* reclaim is usually the heavy one that needs its own
+authorization. Check what your store actually does before promising the space back; this
+is the most common way a retirement ships, takes the risk, and delivers nothing.
+
+Order: move the readers off it, finish and verify the migration, archive, drop, then
+reclaim. Each step is reversible until the drop, which is where the gate in
+`SKILL.md#authority-and-safety` fires.
+
 ## Push The Invariant Down
 
 A rule can live in a comment, a convention, one function, a type, or the store itself. That
