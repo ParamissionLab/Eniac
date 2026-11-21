@@ -117,6 +117,25 @@ disagree *per row*, silently, and nothing raises an error.
   measurement comes from.
 - **The tell** is a total that needs a nightly job to stay correct. The job is not
   maintenance; it is the schema admitting the number has two owners.
+- **A copy left behind is evidence of nothing.** A migration that copies without clearing
+  leaves the old column populated on every row — the ones it moved *and* the ones it never
+  reached — so the column holding data stops being evidence that the data lives there, and
+  equally stops being evidence that the row was missed. Both readings are wrong and both
+  feel obvious. The only honest question is the join: which rows have the old value and no
+  new one.
+
+  ```sql
+  SELECT count(*) FROM old o
+  WHERE o.legacy IS NOT NULL
+    AND NOT EXISTS (SELECT 1 FROM new n WHERE n.old_id = o.id)
+  ```
+
+  This is worth its own line because it is the state every half-finished migration leaves,
+  it is indistinguishable at a glance from a finished one, and it is the state somebody
+  eventually proposes dropping the old column from. A migration script is not a record of
+  what it did: run the count, do not read the script and infer. Two agents given exactly
+  this situation both found the unmigrated rows and neither noticed that the populated
+  column had told them nothing either way.
 
 ## Time And History
 
