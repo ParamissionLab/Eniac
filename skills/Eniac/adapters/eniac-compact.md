@@ -638,10 +638,12 @@ less code, decide more data.
   unique constraints.
 - Push each invariant to the strongest enforcer that holds it: store constraint → type →
   one guarded function → convention → comment.
-- **Every number carries its derivation** — timeout, retry count, page size, TTL,
-  threshold. An unlabelled number reads as derived whether it is or not, so label it:
-  derived from a named input, a starting value with the signal that would move it, or
-  measured with its sample. Never *typical*, never a bare literal at a call site.
+- **Every number carries its derivation, and one with no basis says so** — timeout, retry
+  count, page size, TTL, threshold. An unlabelled number reads as derived whether it is or
+  not, and a plausible value is indistinguishable from a measured one once written. Where an
+  input exists, derive from it and name it beside the number. Where none does — the half
+  that fails silently — say **no basis yet** in those words, name the signal that would move
+  it, and go measure or ask. Never *typical*, never a bare literal.
 
 ## Technical debt
 

@@ -282,13 +282,21 @@ failure mode is not the guess — it is that **an unlabelled number reads as der
 it is or not**, so the next reader treats a value somebody invented in a hurry as one
 somebody measured, and nobody can tell which is safe to change.
 
-So each number is **derived** from a named input written beside it (a measured p99, a
-documented API limit, a row size, an SLA), labelled a **starting value** with the signal
-that would move it and the direction to move, or **measured** with its sample and the date.
-Not *industry standard*, not *best practice*, not *typical*, and not a bare literal at a
-call site. Put the derivation on a named constant rather than three frames down a call
-stack, because a starting value nobody revisits becomes a derived one in everybody's mind
-within a release.
+**Ask first whether an input exists at all**, because the two cases fail differently. When
+one is in reach — a measured latency, a documented vendor limit, a stated SLA, a row size,
+the memory on the box — derive from it and write which input beside the number. That half
+largely looks after itself. The half that goes wrong is when **no input exists**, and it
+goes wrong silently, because a plausible number and a measured one are indistinguishable
+once written down. Then say there is no basis yet, in those words; pick the value anyway;
+name the signal that would move it and the direction; and either go get the measurement —
+often one command away — or ask for it, or record that neither was possible.
+
+So each number is **derived** from a named input written beside it, labelled a **starting
+value** with *no basis yet* said out loud plus the signal that would move it, or
+**measured** with its sample and the date. Not *industry standard*, not *best practice*,
+not *typical*, and not a bare literal at a call site. Put the derivation on a named
+constant rather than three frames down a call stack, because a starting value nobody
+revisits becomes a derived one in everybody's mind within a release.
 
 The exception is a number with no behaviour behind it — a colour, a column width, a version
 string. Deriving those is the ceremony rather than the discipline.

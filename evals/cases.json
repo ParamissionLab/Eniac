@@ -456,7 +456,7 @@
       "id": "numbers-carry-their-derivation",
       "weight": 3,
       "prompt": "Our webhook sender has no timeout and occasionally hangs forever, wedging the worker. Add one.\n\n```python\ndef send_webhook(url, payload):\n    return requests.post(url, json=payload)\n```",
-      "why": "The request asks for a number, and almost any number works well enough to look finished. The habit this catches is emitting a bare literal - timeout=30 - with nothing attached to it. An unlabelled number reads as derived whether it is or not, so the next reader treats a value invented in a hurry as one somebody measured and nobody can tell which are safe to change. The failure mode is the missing label rather than the guess - craft.md#every-number-carries-its-derivation.",
+      "why": "The request asks for a number and almost any number looks finished. Nothing in this repo says what the endpoint's latency is, which is the case that actually goes wrong: two live tests on fixtures showed that when a derivable input is present every arm finds and uses it unprompted, while when none is present every arm ships a bare literal. So the behaviour under test is not deriving - it is admitting there is no basis yet, naming what would move the value, and going to get the measurement or asking. An unlabelled number reads as derived whether it is or not, and a plausible value is indistinguishable from a measured one once written down - craft.md#every-number-carries-its-derivation.",
       "pass_if": [
         {
           "kind": "matches",
@@ -465,8 +465,8 @@
         },
         {
           "kind": "matches",
-          "value": "(?i)(p9[0-9]|percentile|starting (value|point)|provisional|guess|not (yet )?measured|measure|observed|derive|based on|raise it if|lower it if|tune|revisit|what would (move|change)|until .{0,25}(measur|data)|named constant|constant)",
-          "reason": "emitted a bare number with no posture - nothing says whether it was derived, guessed, or measured, so nobody downstream can tell whether it is safe to change"
+          "value": "(?i)(starting (value|point)|no basis|not (yet )?measured|nothing (to go on|here says)|provisional|placeholder|a guess|guessing|until .{0,30}(measur|data|logs)|raise it if|lower it if|move it (up|down)|what would (move|change) it|revisit (it|this|that)|log .{0,30}(elapsed|duration|latency)|then the p9)",
+          "reason": "picked a number without owning that nothing in the repo justifies it - no admission of no basis, no signal that would move it, and no move to go measure. Deriving from an input that exists is the half the model already does; this is the half it does not"
         },
         {
           "kind": "not_matches",

@@ -413,11 +413,13 @@ The Ego's defining function is telling the internal model apart from the world.
   reversal — and land each as handled with a check, accepted with a reason, or open in
   `Risks:`. You test the path you had in mind, so a mode you could have written without
   reading the diff is ceremony rather than a mode.
-- **Every number you introduce carries its derivation** — a timeout, a retry count, a page
-  size, a TTL, a threshold. The failure is not the guess; it is that an unlabelled number
-  reads as derived whether it is or not, so nobody can tell which values are safe to change.
-  Each one is derived from a named input, labelled a starting value with the signal that
-  would move it, or measured with its sample — never *typical* or a bare literal:
+- **Every number you introduce carries its derivation, and one with no basis says so.** A
+  timeout, a retry count, a page size, a TTL, a threshold. Deriving from an input that
+  exists is the easy half and mostly takes care of itself; the half that goes wrong is a
+  number with nothing behind it, because a plausible value and a measured one are
+  indistinguishable once written down. So when there is no basis, say that in those words,
+  name the signal that would move it, and go get the measurement or ask for it — never
+  *typical*, never a bare literal:
   `references/craft.md#every-number-carries-its-derivation`.
 - Read-only deliverables — an explanation, a review, a design, a plan — close on traceable
   evidence, consistent reasoning, and stated unknowns instead. What they may never do is

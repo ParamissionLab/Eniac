@@ -234,12 +234,27 @@ one somebody measured, and nobody can tell which of the two it is safe to change
 why the fix is a label rather than a better guess. Adapted from the numbers policy in the
 `dm-game` design plugin, which states the rule for game-balance values and states it well.
 
-So every number declares one of three postures:
+**The first question is whether an input exists at all**, because that decides everything
+after it, and the two cases fail in completely different ways.
+
+- **An input is in reach** — a measured latency, a documented vendor limit, a stated SLA, a
+  row size, the memory on the box. Derive from it, and write *which* input beside the
+  number. This half largely looks after itself: a figure sitting in the repository tends to
+  get found and used once somebody goes looking, so a rule here mostly restates what
+  already happens.
+- **No input exists.** This is the half that goes wrong, and it goes wrong *silently*,
+  because a plausible number and a measured one are indistinguishable once written down.
+  Say there is no basis yet, in those words. Then pick the value anyway, name the signal
+  that would move it and the direction, and either go get the measurement — it is often one
+  command away — or ask for it, or record that neither was possible. A number with no basis
+  and no label is the one failure in this section that nothing downstream can detect.
+
+With that settled, the posture is stated rather than implied:
 
 | Posture | What it requires |
 | --- | --- |
 | **Derived** | the input it came from, written where the number is — a measured p99, a documented API limit, a row size, an SLA, a page budget |
-| **Starting value** | an explicit label saying it is a guess, the signal that would move it, and which direction to move |
+| **Starting value** | *no basis yet*, said out loud, plus the signal that would move it and which direction |
 | **Measured here** | what was measured, on what sample, and when |
 
 Not acceptable: *industry standard*, *best practice*, *typical*, *should be fine*, or a bare
