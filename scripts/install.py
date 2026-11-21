@@ -17,7 +17,17 @@ once, here, and never retyped.
                                                     # the runtime documents one
     python scripts/install.py --into ~/.config/some-agent/skills
     python scripts/install.py --dry-run             # print the plan, touch nothing
+    python scripts/install.py --doctor              # is it working, and what is wrong
     python scripts/install.py --uninstall
+
+Three things are checked that nothing errors on by itself, because this script's whole
+premise - a wrong destination produces no error on any runtime - applies equally to its
+own input and its own writes. The **source** has to be a complete skill before anything
+is copied, so a truncated download cannot install. What **landed** is re-read and hashed
+against the source, because a full disk, a sync client or an antivirus tool each leave a
+file that exists and is wrong. And each install records what it wrote, so a later run can
+tell a file somebody **edited** from one that is merely **out of date** - opposite
+treatments, and guessing means discarding somebody's work silently.
 
 It also runs with no clone at all. Downloaded on its own it has no `skills/Eniac` beside
 it, so it fetches the repository archive over HTTPS and installs from that:
@@ -37,8 +47,11 @@ from __future__ import annotations
 
 import argparse
 import filecmp
+import hashlib
 import io
+import json
 import os
+import re
 import shutil
 import sys
 import tarfile
@@ -377,6 +390,24 @@ def install_skill(source: Path, dest: Path, *, force: bool, prune: bool, dry_run
             return refuse(f"{show_path(dest)} is not an install of this skill",
                           "Nothing was overwritten. Move it aside, or re-run with",
                           "--force if it is a stale copy.")
+        # Somebody's edit is work, not drift. This package tells everyone else never to
+        # discard a user's changes as incidental cleanup, so it does not get to do it
+        # here either - and without the manifest it could not even tell, which is most of
+        # why the manifest exists. Both ways forward are deliberate acts.
+        edited = local_edits(dest)
+        if edited and not (force or backup):
+            return refuse(
+                f"{len(edited)} file(s) in {show_path(dest)} changed after they were "
+                f"installed",
+                *(f"    {p}" for p in edited[:6]),
+                *(["    ..."] if len(edited) > 6 else []),
+                "Installing over them would throw that work away silently. Keep it with",
+                "--backup, which copies the folder aside first, or discard it on purpose",
+                "with --force.")
+        if edited and force and not backup:
+            item("warn", f"discarding {len(edited)} local edit(s) as asked", "yellow")
+            for p in edited[:6]:
+                detail(p)
         if backup:
             back_up(dest, dry_run)
 
@@ -397,7 +428,9 @@ def install_skill(source: Path, dest: Path, *, force: bool, prune: bool, dry_run
     # is scoped to files this skill ships, so anything else in the folder is left alone.
     stale: list[Path] = []
     if prune and dest.is_dir():
-        known = set(files)
+        # The manifest is this installer's own bookkeeping rather than a file the skill
+        # ships, so pruning must not treat it as stale and delete the record it needs.
+        known = set(files) | {Path(MANIFEST)}
         stale = [rel for rel in installed_files(dest) if rel not in known]
         for rel in stale:
             if not dry_run:
@@ -407,6 +440,18 @@ def install_skill(source: Path, dest: Path, *, force: bool, prune: bool, dry_run
                             key=lambda p: len(p.parts), reverse=True):
                 if not any(d.iterdir()):
                     d.rmdir()
+
+    if not dry_run and written:
+        bad = verify_written(source, dest, written)
+        if bad:
+            return refuse(
+                f"{len(bad)} file(s) did not land correctly in {show_path(dest)}",
+                *bad[:5],
+                "The install is incomplete, and an incomplete skill loads and then",
+                "under-delivers rather than failing visibly. Check free space and any",
+                "sync or antivirus tool watching that folder, then re-run.")
+    if not dry_run:
+        write_manifest(source, dest, files)
 
     if not written and not stale:
         item("same", f"already up to date, {unchanged} files", "dim",
@@ -559,6 +604,203 @@ def table(rows: list[tuple[str, str, str, tuple[str, ...]]], headers: tuple[str,
               f"{paint(dest.ljust(widths[1]), 'dim')}  {paint(state, *styles)}")
 
 
+# ----------------------------------------------------------------------- integrity
+#
+# This script is organised around one fact: a wrong destination produces no error on any
+# runtime. That fact applies in two more places nothing was checking - the source it
+# copies *from*, and the bytes that actually land. Both fail the same silent way, and a
+# half-installed skill is worse than an absent one, because it loads and then
+# under-delivers on exactly the task that reached for the missing part.
+
+MANIFEST = ".eniac-install.json"
+
+
+def digest(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def verify_source(source: Path) -> list[str]:
+    """Is this a coherent skill, or half of a download?
+
+    A truncated archive, an interrupted extract, or a `--ref` pointing at a broken commit
+    all produce a directory that copies without complaining. These checks are derived from
+    the file itself rather than from a threshold somebody picked: the front matter the
+    runtime keys on, and the references the control plane actually names.
+    """
+    problems: list[str] = []
+    skill = source / "SKILL.md"
+    if not skill.is_file():
+        return [f"{show_path(source)} has no SKILL.md"]
+
+    text = skill.read_text(encoding="utf-8", errors="replace")
+    if not text.startswith("---\n") or text.find("\n---\n", 4) == -1:
+        problems.append("SKILL.md front matter is missing or unterminated")
+    if "name: eniac" not in text[:800]:
+        problems.append("SKILL.md does not declare `name: eniac` in its front matter")
+
+    named = sorted(set(re.findall(r"`references/([a-z][a-z0-9\-]*\.md)", text)))
+    missing = [n for n in named if not (source / "references" / n).is_file()]
+    if missing:
+        shown = ", ".join(missing[:4]) + (", ..." if len(missing) > 4 else "")
+        problems.append(f"SKILL.md names {len(missing)} reference file(s) that are not "
+                        f"in this copy: {shown}")
+    return problems
+
+
+def verify_written(source: Path, dest: Path, files: list[Path]) -> list[str]:
+    """Re-read what landed. The copy reported success; this asks the filesystem.
+
+    `shutil.copyfile` raising is not the only way a write goes wrong. A full disk, a sync
+    client rewriting the file underneath, an antivirus quarantine, or a permission quirk
+    each leave a file that exists and is wrong, and counting bytes on the write side
+    cannot see any of it.
+    """
+    bad: list[str] = []
+    for rel in files:
+        target = dest / rel
+        if not target.is_file():
+            bad.append(f"{rel.as_posix()} did not land")
+        elif digest(source / rel) != digest(target):
+            bad.append(f"{rel.as_posix()} differs from the source after copying")
+    return bad
+
+
+def write_manifest(source: Path, dest: Path, files: list[Path]) -> None:
+    """Record what this install wrote, so a later run can tell an edit from an upgrade.
+
+    Without it, a file differing from the current source is ambiguous - somebody changed
+    it, or it is simply older - and those deserve opposite treatment: one is work to
+    preserve, the other is a file to replace. Guessing means silently discarding
+    somebody's edit, which this package tells everyone else never to do.
+    """
+    data = {
+        "installed_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "files": {rel.as_posix(): digest(source / rel) for rel in files},
+    }
+    (dest / MANIFEST).write_text(json.dumps(data, indent=2, sort_keys=True) + "\n",
+                                 encoding="utf-8")
+
+
+def read_manifest(dest: Path) -> dict:
+    path = dest / MANIFEST
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def local_edits(dest: Path) -> list[str]:
+    """Installed files whose bytes no longer match what the last install put there."""
+    recorded = (read_manifest(dest).get("files") or {})
+    return sorted(rel for rel, want in recorded.items()
+                  if (dest / rel).is_file() and digest(dest / rel) != want)
+
+
+def do_doctor(repo_root: Path | None, project: Path | None) -> int:
+    """Judgement, where `--list` is inventory.
+
+    The question people actually arrive with is "is it working?", and the package's own
+    claim is that a failed install says nothing anywhere. Four states need separating
+    because the fix differs for each: current, out of date, edited here, and loading
+    twice. The last one is the quietest - two copies of this guidance both load, and
+    neither reports the other.
+    """
+    source = skill_source(repo_root) if repo_root else None
+    problems = 0
+
+    title("Source")
+    if source is None or not source.is_dir():
+        item("warn", "no checkout beside this script, so nothing to compare against",
+             "yellow")
+        detail("run from a clone, or pass --source, for the currency and edit checks")
+    else:
+        bad = verify_source(source)
+        if bad:
+            problems += 1
+            item("no", f"{show_path(source)} is not a complete skill", "red")
+            for line in bad:
+                detail(line)
+        else:
+            item("ok", "complete and self-consistent", "green", trail=show_path(source))
+
+    title("Installs")
+    live: list[str] = []
+    for key in SKILL_RUNTIMES:
+        dest = skill_destination(key, project)
+        if not dest.is_dir():
+            if detected(key, project):
+                problems += 1
+                item("warn", f"{key}: runtime is here, skill is not installed", "yellow")
+                detail(f"install it: python scripts/install.py --runtime {key}")
+            continue
+        if not looks_like_eniac(dest):
+            problems += 1
+            item("no", f"{key}: {show_path(dest)} holds something else", "red")
+            continue
+
+        live.append(key)
+        edited = local_edits(dest)
+        if source is not None and source.is_dir():
+            files = source_files(source)
+            stale = [r.as_posix() for r in files
+                     if not (dest / r).is_file()
+                     or not filecmp.cmp(source / r, dest / r, shallow=False)]
+            outdated = [p for p in stale if p not in edited]
+        else:
+            outdated = []
+
+        if edited:
+            problems += 1
+            item("warn", f"{key}: {len(edited)} file(s) edited here since install",
+                 "yellow", trail=show_path(dest))
+            for p in edited[:5]:
+                detail(p)
+            detail("re-installing overwrites these - use --backup, or copy them aside")
+        if outdated:
+            problems += 1
+            item("warn", f"{key}: {len(outdated)} file(s) out of date", "yellow",
+                 trail=show_path(dest))
+            detail(f"re-run: python scripts/install.py --runtime {key}")
+        if not edited and not outdated:
+            trail = show_path(dest)
+            if not read_manifest(dest):
+                item("ok", f"{key}: installed (no manifest, so no edit check)", "green",
+                     trail=trail)
+            else:
+                item("ok", f"{key}: current", "green", trail=trail)
+
+    # Two copies of the same guidance, each unaware of the other. The skill folder and an
+    # adapter say the same things in different words, so an agent that reads both spends
+    # the tokens twice and gets two slightly different phrasings of one rule.
+    adapters_here = [k for k in ADAPTER_RUNTIMES
+                     if (d := adapter_destination(k, project)) is not None and d.exists()]
+    if live and adapters_here:
+        title("Loading twice")
+        item("warn", f"the skill folder is installed for {', '.join(live)} and an adapter "
+                     f"file is present for {', '.join(adapters_here)}", "yellow")
+        detail("an agent reading both gets this guidance twice, in two wordings")
+        detail("keep whichever its runtime actually reads; --uninstall removes the other")
+        problems += 1
+
+    print()
+    if problems:
+        print(f"  {paint(MARKS['warn'] + ' ' + str(problems) + ' thing(s) to look at',
+                         'yellow', 'bold')}")
+    else:
+        print(f"  {paint(MARKS['ok'] + ' nothing to fix here', 'green', 'bold')}")
+    print(f"\n  {paint('Still ask the agent', 'cyan', 'bold')}  nothing above proves the "
+          f"runtime reads it:")
+    print(f"        {paint(QUESTION, 'bold')}")
+    print()
+    return 0
+
+
 def do_list(project: Path | None) -> int:
     title("Skill folder" + paint("   runtimes with a skills directory", "dim"))
     rows = []
@@ -634,6 +876,9 @@ def main() -> int:
                     help="keep files an older version left behind")
     ap.add_argument("--backup", action="store_true",
                     help="copy an existing install to <runtime>/eniac-backups/ first")
+    ap.add_argument("--doctor", action="store_true",
+                    help="is it working? reports current / out of date / edited here / "
+                         "loading twice, and what to do about each")
     ap.add_argument("--uninstall", action="store_true", help="remove what was installed")
     ap.add_argument("--no-color", action="store_true",
                     help="plain output (also honours NO_COLOR)")
@@ -649,6 +894,20 @@ def main() -> int:
 
     if args.list:
         return do_list(project)
+
+    if args.doctor:
+        root = None
+        if args.source or args.from_github or ROOT is None:
+            keep: list = []
+            try:
+                root = resolve_repo_root(args, keep)
+            except SystemExit:
+                raise
+            except Exception:
+                root = None
+        else:
+            root = ROOT
+        return do_doctor(root, project)
 
     keys: list[str] = []
     for name in args.runtime or []:
@@ -679,6 +938,19 @@ def main() -> int:
     keep: list = []
     repo_root = resolve_repo_root(args, keep)
     source = skill_source(repo_root)
+
+    # Check the source before touching any destination. A partial download copies happily
+    # and the result loads, which is the failure this whole script is built around -
+    # applied here to its own input rather than only to where it writes.
+    if not args.uninstall and (skills or args.into):
+        bad = verify_source(source)
+        if bad:
+            return refuse(f"{show_path(source)} is not a complete copy of this skill",
+                          *bad,
+                          "Nothing was written. Re-download, or use --source to point at",
+                          "a good checkout. --force deliberately does not override this:",
+                          "a partial install loads and then under-delivers, which is",
+                          "worse than no install at all.")
 
     failures = 0
     for key in skills:
